@@ -1,4 +1,5 @@
 #GIT - Versionsverwaltung
+
 ## Lokales GIT
 ### GIT konfigurieren
 Nutzer-Name abfragen  ``git config --global user.name``  
@@ -8,10 +9,25 @@ Nutzer-Email ``git config --global user.email <x@y.com>``
 ### Ein Verzeichnis unter Versionskontrolle nehmen: 
 1) in das Ziel-Verzeichnis wechseln ``cd <Zielverzeichnis>``  
 2) Repository initialisieren (= Verzeichnis .git anlegen) ``git init``
-3) Alles, was im Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
-4) Alles aus dem Index in das Repository übernehmen: ``git commit``
+3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
+5) Änderungen aus Index zurückziehen ``git restore --staged <file>...``
+4) Index in das Repository überführen: ``git commit``
 4a) Schritte 3 und 4 können mit ``git commit -a`` abgekürzt werden 
 
 ### Unterschiede untersuchen
-Unterschiede zwischen geänderten und gespeicherten Dateien: ``git diff`` 
+Genereller Status im working directory und in stage; ``git status``  
+Änderungen, die noch nicht in der Staging-Area sind: ``git diff``   
+Änderungen, die gestaged, aber noch nicht im Repository sind: ``git diff   --cached``
+
+### Projekthistorie
+Liste aller Commits ``git log``  
+Liste aller Commits inkl. Details und DIFFs ``git log -p``  
+Überblick über Commits ``git log --stat --summary``  
+
+### Branching
+Neuen Branch initialisieren ``git branch <branch-name>``  
+Branch abfragen (* markiert den "aktuellen") ``git branch``
+Branch wechseln ``git switch <Zielbranch>``
+
 ## Kommunikation mit GITHUB
+
