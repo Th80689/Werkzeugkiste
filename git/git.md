@@ -1,10 +1,10 @@
-#GIT - Versionsverwaltung
+# GIT - Versionsverwaltung
 
 ## Lokales GIT
 ### GIT konfigurieren
-Nutzer-Name abfragen  ``git config --global user.name``  
-Nutzer-Name eingeben  ``git config --global user.name <Vorname Nachname>``  
-Nutzer-Email ``git config --global user.email <x@y.com>``  
+|Nutzer-Name abfragen|``git config --global user.name``|
+|Nutzer-Name eingeben|``git config --global user.name <Vorname Nachname>``|
+|Nutzer-Email| ``git config --global user.email <x@y.com>``|
 
 ### Ein Verzeichnis unter Versionskontrolle nehmen: 
 1) in das Ziel-Verzeichnis wechseln ``cd <Zielverzeichnis>``  
