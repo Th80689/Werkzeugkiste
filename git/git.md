@@ -28,6 +28,7 @@ Liste aller Commits inkl. Details und DIFFs ``git log -p``
 Neuen Branch initialisieren ``git branch <branch-name>``  
 Branch abfragen (* markiert den "aktuellen") ``git branch``
 Branch wechseln ``git switch <Zielbranch>``
+Branches verschmelzen (im main) ``git merge <branch to merge>``
 
 ## Kommunikation mit GITHUB
 
