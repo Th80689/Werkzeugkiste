@@ -2,6 +2,8 @@
 
 ## Lokales GIT
 ### GIT konfigurieren
+|Beschreibung|Code|
+|------------|---------------------|
 |Nutzer-Name abfragen|``git config --global user.name``|
 |Nutzer-Name eingeben|``git config --global user.name <Vorname Nachname>``|
 |Nutzer-Email| ``git config --global user.email <x@y.com>``|
