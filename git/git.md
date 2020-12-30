@@ -29,11 +29,11 @@ Grafische Übersicht der Commits``gitk``
 
 ### Branching
 Neuen Branch initialisieren ``git branch <branch-name>``  
-Branch abfragen (* markiert den "aktuellen") ``git branch``
-Branch wechseln ``git switch <Zielbranch>``
-Branches verschmelzen (im main) ``git merge <branch to merge>``
-Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``
-Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``
+Branch abfragen (* markiert den "aktuellen") ``git branch``  
+Branch wechseln ``git switch <Zielbranch>``  
+Branches verschmelzen (im main) ``git merge <branch to merge>``  
+Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``  
+Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
 
 ## Kommunikation mit GITHUB
 
