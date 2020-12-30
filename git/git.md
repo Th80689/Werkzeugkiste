@@ -36,8 +36,8 @@ Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
 
 ### Repo-übergreifende Aktionen
-Repository clonen ``git clone <Quelle> <Zielverzeichnis>``
-Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``
+Repository clonen ``git clone <Quelle> <Zielverzeichnis>``  
+Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``  
 
 ## Kommunikation mit GITHUB
 
