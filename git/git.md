@@ -38,6 +38,9 @@ Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``
 ### Repo-übergreifende Aktionen
 Repository clonen ``git clone <Quelle> <Zielverzeichnis>``  
 Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``  
+Vorschau auf Änderungen ``git fetch <Pfad Quell-Repository> <branch>`` + ``git log -p HEAD..FETCH_HEAD`` (nur Änderungen im "anderen" Repo)  
+Grafische Sicht (nur Änderungen im "anderen" Repo)``gitk HEAD..FETCH_HEAD``  
+Grafische Sicht (ALLE Änderungen in BEIDEN Repos)``gitk HEAD...FETCH_HEAD``  
 
 ## Kommunikation mit GITHUB
 
