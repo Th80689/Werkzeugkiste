@@ -1,5 +1,23 @@
 # md Basic Syntax
 
+|Typ|Code|Ergebnis|
+|---------------|--------------------------|----------------------------|
+|Fenced Code Block|\`\`\`{  
+  "Vorname":"Thomas",  
+  "Nachname":"Helmker",  
+  "Ort":"München"   
+  }\`\`\`|
+  ```  
+  {  
+  "Vorname":"Thomas",  
+  "Nachname":"Helmker",  
+  "Ort":"München"  
+  }  
+  ```
+  |
+
+
+
 ## Gliederung
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
@@ -27,6 +45,7 @@
 |Fett|`**fett**`|**fett**|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
 |Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
+|Bilder|`![alt text](image.jpg)`|![Testbild](image.jpg)|
 
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
