@@ -2,7 +2,7 @@
 
 ## Lokales GIT
 ### GIT konfigurieren
-|Beschreibung|Code|
+|Aktion|Code|
 |------------|---------------------|
 |Nutzer-Name abfragen|``git config --global user.name``|
 |Nutzer-Name eingeben|``git config --global user.name <Vorname Nachname>``|
@@ -34,6 +34,10 @@ Branch wechseln ``git switch <Zielbranch>``
 Branches verschmelzen (im main) ``git merge <branch to merge>``
 Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``
+
+### Repo-übergreifende Aktionen
+Repository clonen ``git clone <Quelle> <Zielverzeichnis>``
+Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``
 
 ## Kommunikation mit GITHUB
 
