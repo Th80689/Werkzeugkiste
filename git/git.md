@@ -21,7 +21,7 @@
 Genereller Status im working directory und in stage; ``git status``  
 Änderungen, die noch nicht in der Staging-Area sind: ``git diff``   
 Änderungen, die gestaged, aber noch nicht im Repository sind: ``git diff   --cached``  
-Im Repo suchen ``git grep "<-Such-Ausdruck>" [Version]``
+Im Repo suchen ``git grep "<-Such-Ausdruck>" [Version]``  
 Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
 
 ### Projekthistorie
@@ -30,13 +30,14 @@ Liste aller Commits inkl. Details und DIFFs ``git log -p``
 Überblick über Commits ``git log --stat --summary``  
 Grafische Übersicht der Commits``gitk``
 
-### Branching
+### Administration
 Neuen Branch initialisieren ``git branch <branch-name>``  
 Branch abfragen (* markiert den "aktuellen") ``git branch``  
 Branch wechseln ``git switch <Zielbranch>``  
 Branches verschmelzen (im main) ``git merge <branch to merge>``  
 Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``  
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
+Commits zusammenfassen ``git rebase --interactive``
 
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
