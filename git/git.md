@@ -27,6 +27,8 @@ Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
 ### Projekthistorie
 Liste aller Commits ``git log``  
 Liste aller Commits inkl. Details und DIFFs ``git log -p``  
+Commits mit Zeit-Einschränkungen ``git log --since '(Menge) '[hour/day/...] ago'``
+Commits zu einem Verzeichnis ``git log <Verzeichnis>/``
 Überblick über Commits ``git log --stat --summary``  
 Grafische Übersicht der Commits``gitk``
 
@@ -37,8 +39,8 @@ Branch wechseln ``git switch <Zielbranch>``
 Branches verschmelzen (im main) ``git merge <branch to merge>``  
 Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``  
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
-Commits zusammenfassen ``git rebase --interactive``
-
+"Lightweigt Tagging" ``git tag <tag name>``
+Aufräumen (garbage collection) ``git gc``  
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
 Aktuelles "origin" Repo abfragen ``git config --get remote.origin.url``  
