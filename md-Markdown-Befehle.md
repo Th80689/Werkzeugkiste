@@ -1,20 +1,15 @@
 # md Basic Syntax
 
-|Typ|Code|Ergebnis|
-|---------------|--------------------------|----------------------------|
-|Fenced Code Block|\`\`\`{  
+|Typ|Code|
+|---------------|--------------------------|
+|Fenced Code Block|\`\`\`{"Vorname":"Thomas","Nachname":"Helmker","Ort":"München"}\`\`\`|
+```
+{  
   "Vorname":"Thomas",  
   "Nachname":"Helmker",  
-  "Ort":"München"   
-  }\`\`\`|
-  ```  
-  {  
-  "Vorname":"Thomas",  
-  "Nachname":"Helmker",  
-  "Ort":"München"  
-  }  
-  ```
-  |
+  "Ort":"München"
+}
+```
 
 
 
