@@ -6,4 +6,5 @@ In meiner Werkzeugkiste will ich jetzt die wichtigsten Dinge zum schnellen Wiede
 ## GIT (lokale Installation)
 Versionsverwaltungstool: die wichtigsten Command-Line-Befehle habe ich im Dokument [git.md](git/git.md) zusammengefasst.
 ## Markdown
-Eine einfache, textorientierte Möglichkeit in GIT o.ä zu formatieren. Die wichtigsten Befehle findens sich in der Datei [md-Markdown-Befehle.md](md-Markdown-Befehle.md)
+Eine einfache, textorientierte Möglichkeit in GIT o.ä zu formatieren. Die wichtigsten Befehle findens sich in der Datei [md-Markdown-Befehle.md](md-Markdown-Befehle.md).   
+Eine sehr ausführliche Übersicht findet sich auf der Website des Markdown Erfinders John Gruber: [daringfireball.net](https://daringfireball.net/projects/markdown/syntax#backslash)
