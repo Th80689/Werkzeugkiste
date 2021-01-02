@@ -1,16 +1,5 @@
 # md Basic Syntax
 
-|Typ|Code|
-|---------------|--------------------------|
-|Fenced Code Block|\`\`\`{"Vorname":"Thomas","Nachname":"Helmker","Ort":"München"}\`\`\`|
-```
-{  
-  "Vorname":"Thomas",  
-  "Nachname":"Helmker",  
-  "Ort":"München"
-}
-```
-
 
 
 ## Gliederung
@@ -28,14 +17,14 @@
 |---------------|--------------------------|----------------------------|
 |Tabelle: Zeile|&#124;Spalte1&#124;Spalte2&#124;Spalte3&#124;||
 |Tabelle: Kopf-Trenner|&#124;-----&#124;-----&#124;-----&#124;||
-|Tabelle: Spalten-Trenner '\|'|\&#124;|||
+|Tabelle: Spalten-Trenner |'|'|&#124;||
 |Liste (sortiert)|`1. Erster Eintrag`|1. Eintrag|
 |Liste (unsortiert)|`- Eintrag` |- Eintrag|
 
 ## Formatierung im Text
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
-|Code| ``Codeblock``|`Codeblock`|
+|Codeblock|```Code```| `Code`|
 |Blockquote|`> Das ist ein Zitat`|> Das ist ein Zitat|
 |Fett|`**fett**`|**fett**|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
@@ -45,4 +34,19 @@
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
-|Escape: |`\`|||
+|Escape: |`\`|\|
+
+## Fenced Code 
+\`\`\`{  
+ "Vorname":"Thomas",  
+ "Nachname":"Helmker",  
+ "Ort":"München"  
+ }\`\`\`  
+```
+{  
+  "Vorname":"Thomas",  
+  "Nachname":"Helmker",  
+  "Ort":"München"
+}
+```
+
