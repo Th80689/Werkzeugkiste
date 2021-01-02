@@ -34,7 +34,7 @@
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
-|Escape: |`\**NICHT_FETT**`|\**NICHT_FETT**|
+|Escape: |`\_nicht-kursiv_`|\_nicht-kursiv_|
 
 ## Fenced Code 
 \`\`\`{  
