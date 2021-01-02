@@ -25,16 +25,21 @@
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
 |Codeblock|\`Input\`| `Input`|
-|Blockquote|`> Das ist ein Zitat`|> Das ist ein Zitat|
 |Fett|`**FETT**`|**FETT**|
+|durchgestrichen|`~~falsch~~`|~~falsch~~|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
 |Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
-|Bilder|`![alt text](image.jpg)`|![Testbild](image.jpg)|
+|Bilder|`![alt text](img/image.jpg)`|![Testbild](img/image.jpg)|
 
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
 |---------------|--------------------------|----------------------------|
 |Escape: |`\_nicht-kursiv_`|\_nicht-kursiv_|
+
+## Zitate
+`> Das ist ein Zitat`  
+> Das ist ein Zitat|
+
 
 ## Fenced Code 
 \`\`\`{  
