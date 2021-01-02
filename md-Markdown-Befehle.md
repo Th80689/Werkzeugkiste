@@ -18,8 +18,31 @@
 |Tabelle: Zeile|&#124;Spalte1&#124;Spalte2&#124;Spalte3&#124;||
 |Tabelle: Kopf-Trenner|&#124;-----&#124;-----&#124;-----&#124;||
 |Tabelle: Spalten-Trenner |`&#124;`|&#124;|
-|Liste (sortiert)|`1. Erster Eintrag`|1. Eintrag|
-|Liste (unsortiert)|`- Eintrag` |- Eintrag|
+
+## Listen
+### sortierte Liste
+
+```
+1. Erster Eintrag
+2. Zweiter Eintrag
+```  
+ergibt:   
+
+### unsortierte Liste
+```
+- Erster Eintrag
+- Zweiter Eintrag
+```  
+ergibt  
+
+### Aufgaben / Checkbox
+```
+- [x] erste Aufgabe
+- [ ] zweite Aufgabe
+```
+ergibt
+- [x] erste Aufgabe
+- [ ] zweite Aufgabe
 
 ## Formatierung im Text
 |Typ|Code|Ergebnis|
@@ -38,7 +61,7 @@
 
 ## Zitate
 `> Das ist ein Zitat`  
-> Das ist ein Zitat|
+> Das ist ein Zitat
 
 
 ## Fenced Code 
