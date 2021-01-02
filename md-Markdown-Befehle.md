@@ -21,19 +21,20 @@
 
 ## Listen
 ### sortierte Liste
-
 ```
 1. Erster Eintrag
 2. Zweiter Eintrag
 ```  
-ergibt:   
+1. Erster Eintrag
+2. Zweiter Eintrag
 
 ### unsortierte Liste
 ```
 - Erster Eintrag
 - Zweiter Eintrag
 ```  
-ergibt  
+- Erster Eintrag
+- Zweiter Eintrag
 
 ### Aufgaben / Checkbox
 ```
