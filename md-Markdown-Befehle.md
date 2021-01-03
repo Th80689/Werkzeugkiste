@@ -53,7 +53,8 @@ ergibt
 |durchgestrichen|`~~falsch~~`|~~falsch~~|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
 |Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
-|Bilder|`![Hover Text](images/Werkzeugkiste_Logo_klein.jpg )`|![Testbild](images/Werkzeugkiste_Logo_klein.jpg )|
+|Bilder|`![Alternativ-Text](images/Werkzeugkiste_Logo_klein.jpg )`|![Alternativ-Text](images/Werkzeugkiste_Logo_klein.jpg )|
+|(ungültige) Bildreferenz|`![Alternativ-Text](images/kein_bild.jpg)`|![Alternativ-Text](images/kein_bild.jpg)|
 
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
