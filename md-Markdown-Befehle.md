@@ -53,7 +53,7 @@ ergibt
 |durchgestrichen|`~~falsch~~`|~~falsch~~|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
 |Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
-|Bilder|`![alt text](img/image.jpg)`|![Testbild](img/image.jpg)|
+|Bilder|`![Hover Text](images/TH_LOGO_Quadrat_klein.png)`|![Testbild](images/TH_LOGO_Quadrat_klein.png)|
 
 ## Sonderzeichen
 |Typ|Code|Ergebnis|
