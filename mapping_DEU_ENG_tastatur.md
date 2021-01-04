@@ -4,32 +4,32 @@
 |,|Komma|comma||,|
 |.|Punkt|dot||.|
 |-|Bindestrich|||/|
-|;|Semikolon|||<|
-|:|Doppelpunkt|||>|
-|_|Unterstrich|||?|
-|ö|kleines ö|||;|
-|ä|kleines ä|||'|
-|#|Hashtag|||\|
-|Ö|großes Ö|||:|
-|Ä|großes Ä|||"|
+|;|Semikolon|semicolon||<|
+|:|Doppelpunkt|colon||>|
+|_|Unterstrich|underscore||?|
+|ö|kleines ö|n.a.||;|
+|ä|kleines ä|n.a.||'|
+|#|Hashtag|pound||\|
+|Ö|großes Ö|n.a.||:|
+|Ä|großes Ä|n.a.||"|
 |'|Apostroph|||\||
-|ü|kleines Ü|||\[|
-|+|Plus|||\]|
-|Ü|großes Ü|||{|
-|\*|Stern|||\}|
-|´|Backtick|||=|
-|ß|sz|||-|
+|ü|kleines Ü|n.a.||\[|
+|+|Plus|plus||\]|
+|Ü|großes Ü|n.a.||{|
+|\*|Stern|asterisk||\}|
+|´|Backtick|backtick||=|
+|ß|sz|n.a.||-|
 |^|Potenzzeichen|||\`|
-|\`|Backslash|||+|
-|?|Fragezeichen|||_|
+|\`|Backslash|backslash||+|
+|?|Fragezeichen|questionmark||_|
 |°|XXX|||~|
-|!|Ausrufezeichen|||!|
+|!|Ausrufezeichen|exclamation mark||!|
 |"|Doppelte Anführungszeichen|||@|
-|§|Paragraph|||#|
-|$|Dollar|||$|
-|%|Prozent|||%|
-|&|Und-Zeichen|||^|
-|/|Schrägstrich|||&|
-|(|Klammer auf|||°|
-|)|Klammer zu|||(|
-|=|Gleichheitszeichen|||)|
+|§|Paragraph|paragraph||#|
+|$|Dollar|dollar||$|
+|%|Prozent|percent||%|
+|&|Und-Zeichen|ampersand||^|
+|/|Schrägstrich|slash||&|
+|(|Klammer auf|opening bracket||°|
+|)|Klammer zu|closing bracket||(|
+|=|Gleichheitszeichen|equal sign||)|
