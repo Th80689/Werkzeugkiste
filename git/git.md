@@ -1,6 +1,7 @@
 # GIT - Versionsverwaltung
 
 ## Lokales GIT
+
 ### GIT konfigurieren
 |Aktion|Code|
 |------------|---------------------|
@@ -14,7 +15,7 @@
 2) Repository initialisieren (= Verzeichnis .git anlegen) ``git init``
 3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
 5) Änderungen aus Index zurückziehen ``git restore --staged <file>...``
-4) Index in das Repository überführen: ``git commit``
+4) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
 4a) Schritte 3 und 4 können mit ``git commit -a`` abgekürzt werden 
 
 ### Erforschen und suchen
