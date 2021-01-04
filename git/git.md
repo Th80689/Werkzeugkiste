@@ -16,7 +16,7 @@
 3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
 5) Änderungen aus Index zurückziehen ``git restore --staged <file>...``
 4) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
-4a) Schritte 3 und 4 können mit ``git commit -a`` abgekürzt werden 
+4a) Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
 
 ### Erforschen und suchen
 Genereller Status im working directory und in stage; ``git status``  
