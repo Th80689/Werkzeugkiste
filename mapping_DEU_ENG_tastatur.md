@@ -40,4 +40,4 @@
 |`\`|Backslash|backslash|x|`\`|
 |<|kleiner als|opening angular bracket (less than)||<|
 |\>|größer als|opening angular bracket (greater than)|x|\>|
-|\||Pipe|pipe|x|\||
+|\||Pipe|pipe|x|n.a.|
