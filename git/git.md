@@ -14,8 +14,8 @@
 1) in das Ziel-Verzeichnis wechseln ``cd <Zielverzeichnis>``  
 2) Repository initialisieren (= Verzeichnis .git anlegen) ``git init``
 3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
-5) Änderungen aus Index zurückziehen ``git restore --staged <file>...``
-4) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
+4) Änderungen aus Index zurückziehen ``git restore --staged <file>...`` oder ``git rm``   
+5) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
 4a) Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
 
 ### Erforschen und suchen
@@ -42,6 +42,8 @@ Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
 "Lightweigt Tagging" ``git tag <tag name>``
 Aufräumen (garbage collection) ``git gc``  
+File verschieben ``git mv <Filename> <Zielpfad und -name>``  
+
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
 Aktuelles "origin" Repo abfragen ``git config --get remote.origin.url``  
