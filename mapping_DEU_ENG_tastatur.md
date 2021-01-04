@@ -3,7 +3,7 @@
 |---|---|---|---|---|
 |,|Komma|comma||,|
 |.|Punkt|dot||.|
-|-|Bindestrich|||/|
+|-|Bindestrich|minus sign (hyphen)||/|
 |;|Semikolon|semicolon||<|
 |:|Doppelpunkt|colon||>|
 |_|Unterstrich|underscore||?|
@@ -14,22 +14,30 @@
 |Ä|großes Ä|n.a.||"|
 |'|Apostroph|||\||
 |ü|kleines Ü|n.a.||\[|
-|+|Plus|plus||\]|
+|+|Plus|plus sign||\]|
 |Ü|großes Ü|n.a.||{|
-|\*|Stern|asterisk||\}|
-|´|Backtick|backtick||=|
+|\*|Stern|asterisk|x|\}|
+|´|accent grave|tick||=|
 |ß|sz|n.a.||-|
 |^|Potenzzeichen|||\`|
-|\`|Backslash|backslash||+|
+|\`|accent egu|backtick|x|+|
 |?|Fragezeichen|questionmark||_|
 |°|XXX|||~|
-|!|Ausrufezeichen|exclamation mark||!|
+|!|Ausrufezeichen|exclamation mark|x|!|
 |"|Doppelte Anführungszeichen|||@|
 |§|Paragraph|paragraph||#|
 |$|Dollar|dollar||$|
 |%|Prozent|percent||%|
 |&|Und-Zeichen|ampersand||^|
 |/|Schrägstrich|slash||&|
-|(|Klammer auf|opening bracket||°|
-|)|Klammer zu|closing bracket||(|
+|(|Klammer auf|opening parenthesis||°|
+|)|Klammer zu|closing parenthesis||(|
 |=|Gleichheitszeichen|equal sign||)|
+|\[|eckige Klammer auf|opening bracket|x|\[|
+|\]|eckige Klammer zu|closing bracket|x|\]|
+|\{|geschweifte Klammer auf|opening curly bracket|x|\{|
+|\}|geschweifte Klammer zu|closing curly bracket|x|\}|
+|\\|Backslash|backslash|x|\\|
+|<|kleiner als|opening angular bracket (less than)||<|
+|\>|größer als|opening angular bracket (greater than)|x|\>|
+|\||Pipe|pipe|x|\||
