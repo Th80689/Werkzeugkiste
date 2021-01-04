@@ -9,10 +9,10 @@
 |_|Unterstrich|underscore||?|
 |ö|kleines ö|n.a.||;|
 |ä|kleines ä|n.a.||'|
-|#|Hashtag|pound||\|
+|#|Hashtag|pound||`\`|
 |Ö|großes Ö|n.a.||:|
 |Ä|großes Ä|n.a.||"|
-|'|Apostroph|||\||
+|'|einfaches Anführungszeichen|tick||\||
 |ü|kleines Ü|n.a.||\[|
 |+|Plus|plus sign||\]|
 |Ü|großes Ü|n.a.||{|
@@ -37,7 +37,7 @@
 |\]|eckige Klammer zu|closing bracket|x|\]|
 |\{|geschweifte Klammer auf|opening curly bracket|x|\{|
 |\}|geschweifte Klammer zu|closing curly bracket|x|\}|
-|\\|Backslash|backslash|x|\\|
+|`\`|Backslash|backslash|x|`\`|
 |<|kleiner als|opening angular bracket (less than)||<|
 |\>|größer als|opening angular bracket (greater than)|x|\>|
 |\||Pipe|pipe|x|\||
