@@ -52,7 +52,7 @@ ergibt
 |Fett|`**FETT**`|**FETT**|
 |durchgestrichen|`~~falsch~~`|~~falsch~~|
 |Kursiv|`_kursivierter Text_`|_kursivierter Text_|
-|Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
+|Web-Link|`<https://www.helmker.de>`|<https://www.helmker.de>|
 |Bilder|`![Alternativ-Text](images/Werkzeugkiste_Logo_klein.jpg "Tooltip-Text")`|![Alternativ-Text](images/Werkzeugkiste_Logo_klein.jpg "Werkzeugkasten")|
 |(ungültige) Bildreferenz|`![Alternativ-Text](images/kein_bild.jpg)`|![Alternativ-Text](images/kein_bild.jpg)|
 
