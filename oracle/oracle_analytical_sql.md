@@ -7,8 +7,8 @@ Beispiele für "ungewöhnliche" SQL-Befehle
 
 ## `CONNECT BY` - Hierarchische Abfragen
 Hierarchische Strukturen über Self-Join einer Tabelle aufbauen  
-Beispiele in CONNECT_BY_examples.sql: 
-*Zahlenreihe von 1-9 erzeugen* `select level from dual connect by level <10`,  
+Beispiele in [CONNECT_BY_Beispiele](CONNECT_BY_examples.sql):   
+*Zahlenreihe von 1-9 erzeugen* `select level from dual connect by level <10`,    
 *Abfragen in einer Hierarchie*   
 
 ## `LISTAGG` - Werte-Aggregation
