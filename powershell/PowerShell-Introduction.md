@@ -3,6 +3,9 @@
 ## Filesystem-Aktionen
 `Get-ChildItem | Get-Member`
 
+### Dateien suchen, die in den letzten x/y Tagen geändert wurden
+`Get-ChildItem -Path *node*.log -Recurse| ? {$_.LastWriteTime -gt (Get-Date).AddDays(-0.1)}`
+
  
 ```
 Get-ChildItem -Recurse |   
