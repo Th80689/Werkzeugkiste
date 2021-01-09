@@ -6,7 +6,9 @@ Einzelne Befehle, die für die Orientierung in PowerShell nützlich sind:
 |Befehl|Erläuterungen|
 |---|---|
 |`$PSVersionTable`|Powershell Versions-Infos anzeigen|
-
+|`Alias`|Liste aller definierten Alias-Befehle|
+| `Get-Alias -Definition Get-C*`|Alias zu bestimmten Befehlen suchen|
+| `Get-Alias -Name gci*`|Bedeutung Alias suchen|
 
 ## Help System
 
@@ -17,8 +19,9 @@ Die Syntax für Help ist "Get-Help [-name] <cmdlet-name> ".
 - `help Get-Member` - zeigt die Hilfe Seitenweise (wie "less") - weiterblättern mit "Leertaste"
 - `Get-Help Get-Member -Examples` - Zeigt Hilfe mit Beispielen
 - `help Get-Member -Full` - Zeigt Hilfe mit allen Input- und Output-Parameter und Beispielen
+- `help Get-Member -Online` - zeigt Hilfe im Standard-Browser (aber nur, wenn Internet-Zugriff besteht)
 
-Wildcard bei der Suche ist `*`. 
+Wildcard bei der Suche für 0-n Zeichen ist `*`, für EIN Zeichen `?`. Bereiche können mit eckigen Klammern und Minus `[x-z]` abgefragt werden, mehrere bestimmte Zeichen mit eckigen Klammern und den Zeichen (`[bc]ook` findet `book` UND `cook`). Wenn Leerzeichen oder andere Sonderzeichen in Such-Strings sein sollen, muss der komplette String mit EINFACHEN Anführungszeichen umschlossen sein. Beispiel: `-Path '~\Mein Verzeichnis'`
 
 Bei der Suche in Commands kann man mit `Get-Command -name <Input>` und/oder den Optionen -Verb und -Noun gemacht werden. Beispiel mit Command-Alias:`gcm -Verb Set -Noun W*`
 
@@ -26,11 +29,11 @@ Bei der Suche in Commands kann man mit `Get-Command -name <Input>` und/oder den 
 Wenn mehr als eine Version des Aufrufs da ist, unterscheiden sie sich in mindestens einem Parameter - der jeweils nur in einer Version vorhanden ist. Dieser Parameter bestimmt dann, wie die weiteren Parameter ausgewertet werden.
 
 Generelles zur Darstellung:  
-- Parameter haben ein vorangestelltes `-`
+- Parameter haben ein vorangestelltes `-` OHNE Leerzeichen zwischen Minus und Paramter-Namen
 - Spitze Klammern kennzeichnen einen `<Input-Wert>`
 - Parameter/Inputs OHNE eckiger Klammern sind MUSS-Eingaben
-- Eckige Klammern `[ -Parametername]` zeigen optionale Parameter/Inputs
-
+- "Äussere" eckige Klammern `[ -Parametername]` zeigen optionale Parameter/Inputs; eckige Klammern innerhalb eines Inputs kennzeichen ein Array
+Beispiel: `[-Path] <String[]>` bedeutet: Parametername ist optional (in eckigen Klammern), aber das Input ist Pflicht (keine eckigen Klammern) - und es können mehrere Werte (getrennt durch Komma) eingegeben werden - wie hier zwei Dateinamen: `gci -Path .\PS-Filesystem-Operationen.md, .\PS-Generelles.md`
 
 ### Help lokal herunterladen
 Die aktuellsten Help-Files gibt es auf Englisch - daher am besten mit der entsprechenden Version herunterladen:   
