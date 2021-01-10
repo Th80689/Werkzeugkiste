@@ -17,7 +17,30 @@
 ||`Get-Item *`|Zeige alles (normal sichtbare) im aktuellen Verzeichnis|
 |gci, ls|`Get-ChildItem ~`|Zeige alles (normal sichtbare) im HOME-Verzeichnis|
 ||`Get-ChildItem ~\.* -Force`|Zeige alles (auch versteckte Dateien (= `.`)) im HOME-Verzeichnis|
+|gci|`Get-ChildItem -name`|Zeige nur den Namen der Unterelemente|
 |ri|`Remove-Item wc_tag_d_load.log`|Datei löschen|
 ||`Remove-Item testdir -Recurse -Confirm`|Verzeichnis - mit allen Unterelementen nach Bestätigung löschen|
-|-|-|
+|-|-|-|
+### Alle Objekte, die innerhalb der letzten X Tage geändert wurden
+```
+$Zeit=1/2 #Anzahl Tage in die Vergangenheit
+$LastChange=(Get-Date).AddDays(-$Zeit) #Zeitpunkt Jetzt - Zeit
+Get-ChildItem -Path * -Recurse| Where-Object {$_.LastWriteTime -gt $LastChange}
+```
 ## Zugriffsrechte ändern
+```
+$tgt=<object>  
+# IST-Zustand Zugriffsrechte
+$acl=Get-Acl $Tgt
+# Ziel-User
+$tgtUsr=$env:COMPUTERNAME+'\USERS'  
+# Neue Berechtigung als Objekt vorbereiten
+$newAccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($tgtUsr,  
+   "FullControl",   
+   "None",  
+   "None",  
+   "Allow")
+# Neue Berechtigung zu bestehenden Berechtigungs-Set hinzufügen
+$acl.SetAccessRule($newAccessRule)
+$acl | Set-Acl $tgt
+```

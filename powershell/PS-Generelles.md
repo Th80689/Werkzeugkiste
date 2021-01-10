@@ -1,6 +1,5 @@
 # PowerShell - Generelles
 
-
 ## Nützliche Befehle
 Einzelne Befehle, die für die Orientierung in PowerShell nützlich sind:  
 |Befehl|Erläuterungen|
@@ -9,6 +8,15 @@ Einzelne Befehle, die für die Orientierung in PowerShell nützlich sind:
 |`Alias`|Liste aller definierten Alias-Befehle|
 | `Get-Alias -Definition Get-C*`|Alias zu bestimmten Befehlen suchen|
 | `Get-Alias -Name gci*`|Bedeutung Alias suchen|
+|`Get-PSProvider`|Liste der Provider(Adapter), auf die PS zugreifen kann|
+|`Get-PSDrive`|Liste der Provider, auf die PS wie ein Laufwerk zugreifen kann|
+|`(gci env:Path).Value`| Path auslesen|
+|`Set-Item -Path Env:/NewItem -value 1`|Path-Variable setzen|
+|`--%`|Anweisung an Powershell-Parser, NICHTS zu parsen|
+
+Parameter eines cmdlets: `Get-Command get-process | select-object -Expand parameters`  
+Details eines Parameters eines cmdlets: `(Get-Command get-process | select-object -Expand parameters).ErrorAction`
+
 
 ## Help System
 
@@ -34,6 +42,9 @@ Generelles zur Darstellung:
 - Parameter/Inputs OHNE eckiger Klammern sind MUSS-Eingaben
 - "Äussere" eckige Klammern `[ -Parametername]` zeigen optionale Parameter/Inputs; eckige Klammern innerhalb eines Inputs kennzeichen ein Array
 Beispiel: `[-Path] <String[]>` bedeutet: Parametername ist optional (in eckigen Klammern), aber das Input ist Pflicht (keine eckigen Klammern) - und es können mehrere Werte (getrennt durch Komma) eingegeben werden - wie hier zwei Dateinamen: `gci -Path .\PS-Filesystem-Operationen.md, .\PS-Generelles.md`
+- Parameter ohne Wert heißen "Switch" (=Schalter)
+- Parameter und deren Werte und Parameter(/Wert-Kombinationen) müssen durch GENAU EIN Leerzeichen getrennt sein
+- cmdlets bestehen aus einer Verb-Nomen-Kombination; gültige Verben (und Ihre Bedeutung) können über `Get-Verb` über ermittelt werden
 
 ### Help lokal herunterladen
 Die aktuellsten Help-Files gibt es auf Englisch - daher am besten mit der entsprechenden Version herunterladen:   
