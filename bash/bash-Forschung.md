@@ -3,6 +3,7 @@
 Returnwert des letzten Kommandos zurückgeben: `$?`
 ## Links
 Tutorial: <http://www.gnu.org/software/bash/manual/bash.pdf>
+Schnell-Einstieg: <https://linuxconfig.org/bash-scripting-tutorial-for-beginners>
 
 ## Wochenendaufgabe
 - mehrere Muster als Variablen speichern
