@@ -31,8 +31,9 @@ Get-ChildItem -Path * -Recurse| Where-Object {$_.LastWriteTime -gt $LastChange}
 `[system.enum]::getnames([System.Security.AccessControl.FileSystemRights])`
 
 ## Zugriffsrechte ändern
+Einen schnellen Einstieg in Deutsch habe ich hier `<https://blog.netwrix.de/2020/01/31/verwalten-von-dateisystem-acls-mit-powershell-skripts/>` gefunden.
 ```
-# Objekt zur Änderung definieren
+# Objekt zur Änderung definieren (PowerShell5.1)
 $tgt='C:\Users\Thomas\datasciencecoursera\GIT.docx'
 $acl = Get-Acl $tgt
 
@@ -51,6 +52,6 @@ $acl.SetAccessRule($AccessRule)
 # Regel in der acl im Filesystem persistieren
 $acl | Set-Acl $tgt
 
-# Ergebnis anschauen
-$acl| fl
+# Ergebnis kontrollieren
+(Get-Acl $tgt).Access
 ```
