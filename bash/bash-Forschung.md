@@ -1,5 +1,6 @@
 # bash-Forschung
 
+Returnwert des letzten Kommandos zurückgeben: `$?`
 ## Links
 Tutorial: <http://www.gnu.org/software/bash/manual/bash.pdf>
 
@@ -16,9 +17,8 @@ P2='/ps'
 P3='NIX'
 #Array bauen
 
-ps | grep $P1 > test.txt
+ps | grep $P1 
+echo $?
 ps | grep $P2 >> test.txt
 
 less test.txt
-
-grep "Überschrift 1"  ||  "Überschrift 2" md-Markdown-Befehle.md
