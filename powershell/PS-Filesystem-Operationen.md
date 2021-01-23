@@ -27,20 +27,30 @@ $Zeit=1/2 #Anzahl Tage in die Vergangenheit
 $LastChange=(Get-Date).AddDays(-$Zeit) #Zeitpunkt Jetzt - Zeit
 Get-ChildItem -Path * -Recurse| Where-Object {$_.LastWriteTime -gt $LastChange}
 ```
+### mögliche Rechtetypen in ACLs anzeigen
+`[system.enum]::getnames([System.Security.AccessControl.FileSystemRights])`
+
 ## Zugriffsrechte ändern
 ```
-$tgt=<object>  
-# IST-Zustand Zugriffsrechte
-$acl=Get-Acl $Tgt
-# Ziel-User
-$tgtUsr=$env:COMPUTERNAME+'\USERS'  
-# Neue Berechtigung als Objekt vorbereiten
-$newAccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($tgtUsr,  
-   "FullControl",   
-   "None",  
-   "None",  
-   "Allow")
-# Neue Berechtigung zu bestehenden Berechtigungs-Set hinzufügen
-$acl.SetAccessRule($newAccessRule)
+# Objekt zur Änderung definieren
+$tgt='C:\Users\Thomas\datasciencecoursera\GIT.docx'
+$acl = Get-Acl $tgt
+
+# Ergebnis anschauen
+$acl| fl
+
+# Neue Regel für User, Zugriffsstufe, FileSystem-Rechte definieren
+## User definieren
+$tgtUsr=$env:COMPUTERNAME+'\Users'  
+
+$AccessRule = New-Object System.Security.AccessControl.FileSystemAccessRule($tgtUsr,"FullControl","Allow")
+
+# Neue Regel in der AccessControlList im Speicher festlegen
+$acl.SetAccessRule($AccessRule)
+
+# Regel in der acl im Filesystem persistieren
 $acl | Set-Acl $tgt
+
+# Ergebnis anschauen
+$acl| fl
 ```
