@@ -50,3 +50,7 @@ Beispiel: `[-Path] <String[]>` bedeutet: Parametername ist optional (in eckigen 
 Die aktuellsten Help-Files gibt es auf Englisch - daher am besten mit der entsprechenden Version herunterladen:   
 `Update-Help -UICulture en-US`  
 Wenn der Computer kein Internet hat - auf einem anderen mit `Save-Help -UICulture en-US` als File herunterladen, das File auf den isolierten Computer bringen und dort mit `Update-Help -Source <File-Path>` einspielen.
+
+### Aktuellste Powershell-Version per Befehl herunterladen und installieren
+iex "& { $(irm https://aka.ms/install-powershell.ps1) } -UseMSI"
+
