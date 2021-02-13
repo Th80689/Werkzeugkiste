@@ -7,7 +7,9 @@ https://adamtheautomator.com/powershell-get-registry-value/
 
 Mit dem Befehl `Get-PSDrive` sieht man unter den Providern sowohl HKCU (HKEY_CURRENT_USER) als auch HKLM (HKEY_LOCAL_MACHINE).
 
-Get-ChildItem -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\' -Name
+`Get-ChildItem -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\' -Name`
+
+`Get-Childitem -Path HKLM:\ -recurse -ErrorAction SilentlyContinue | Where-Object {$_.Name -like "*autorun*"}`
 
 
 gci -path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall' | Select-Object -First 1 | Where-Object {$_.Property -match "DisplayVersion"}
@@ -40,6 +42,7 @@ IF(!(Test-Path $registryPath))
 $valueNew = "2"
 Set-ItemProperty -Path $registryPath -Name version -Value $valueNew
 
+#
 ```
 
 ## Applikationen deinstallieren

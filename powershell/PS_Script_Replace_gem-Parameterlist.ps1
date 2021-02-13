@@ -28,3 +28,10 @@ foreach($item in $paramsHash.PSBase.Keys)
 
 # Ergebnis kontrollieren
 Compare-Object -ReferenceObject (Get-Content $inputFileTemplate) -DifferenceObject (Get-Content $outFile)
+
+# Mehrzeiler einfügen - klappt das mit dem Zeilenumbruch?
+$multiLiner="Zeile 1
+Zeile 2"
+
+$raw=Get-Content -Path .\$outFile -Raw 
+$raw.Replace(("Value1:1"), $multiLiner) | Out-File -FilePath $outFile -NoNewline
