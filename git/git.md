@@ -39,8 +39,8 @@ Commits zu einem Verzeichnis ``git log <Verzeichnis>/``
 Grafische Übersicht der Commits``gitk``
 
 ### Administration
-Neuen Branch initialisieren ``git branch <branch-name>``  
 Branch abfragen (* markiert den "aktuellen") ``git branch``  
+Neuen Branch initialisieren ``git branch <branch-name>``  
 Branch wechseln ``git switch <Zielbranch>``  
 Branches verschmelzen (im main) ``git merge <branch to merge>``  
 Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``  
