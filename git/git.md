@@ -53,6 +53,7 @@ File verschieben ``git mv <Filename> <Zielpfad und -name>``
 Änderungen in anderen Branches müssen in das Zielrepository gezogen werden. Ein "Push" aus einem Branch ist NICHT möglich.  Daher ist der Flow  
 1. In den Ziel-Branch wechseln ``git checkout <Zielrepository für Merge>``
 2. Änderungen ziehen ``git merge <Quellbranch>``
+### Mergestrategien
 
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
