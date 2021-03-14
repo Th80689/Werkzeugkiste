@@ -1,7 +1,7 @@
 # GIT - Versionsverwaltung
 
 ## Tutorials
-Einstiegstraining: <https://githubtraining.github.io/training-manual/book.pdf>
+Einstiegstraining: <https://githubtraining.github.io/training-manual/book.pdf>  
 Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
 
 
@@ -20,8 +20,7 @@ Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
 2) Repository initialisieren (= Verzeichnis .git anlegen) ``git init``
 3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
 4) Änderungen aus Index zurückziehen ``git restore --staged <file>...`` oder ``git rm``   
-5) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
-5a) Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
+5) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``; Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
 6) gespeicherte Änderungen ohne commit können mit ``git stash`` rückgängig gemacht werden
 
 ### Erforschen und suchen
@@ -34,7 +33,7 @@ Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
 ### Projekthistorie
 Liste aller Commits ``git log``  
 Liste aller Commits inkl. Details und DIFFs ``git log -p``  
-Commits mit Zeit-Einschränkungen ``git log --since '(Menge) '[hour/day/...] ago'``
+Commits mit Zeit-Einschränkungen ``git log --since '(Menge) '[hour/day/...] ago'``  
 Commits zu einem Verzeichnis ``git log <Verzeichnis>/``
 Überblick über Commits ``git log --stat --summary``  
 Grafische Übersicht der Commits``gitk``
@@ -54,7 +53,6 @@ File verschieben ``git mv <Filename> <Zielpfad und -name>``
 Änderungen in anderen Branches müssen in das Zielrepository gezogen werden. Ein "Push" aus einem Branch ist NICHT möglich.  Daher ist der Flow  
 1. In den Ziel-Branch wechseln ``git checkout <Zielrepository für Merge>``
 2. Änderungen ziehen ``git merge <Quellbranch>``
-### Mergestrategien
 
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
@@ -73,16 +71,22 @@ Grafische Sicht (ALLE Änderungen in BEIDEN Repos)``gitk HEAD...FETCH_HEAD``
 
 ### Branching, Pull Requests und Merges
 Server:   
-- in der "Switch branch" Schaltfläche den Namen des neuen Branches "newbranch" angeben  
+- in der "Switch branch" Schaltfläche den Namen des neuen Branches "newbranch" angeben 
+
 Lokal: 
 - neuen Branch anlegen ``git branch "newbranch"``
 - in Branch wechseln ``git checkout "newbranch"``
 - Änderungen im Branch machen
 - einchecken ``git commit -am "Kommentar"``
 - Änderungen auf Branch auf Server laden``git push --set-upstream origin "newbranch"``
+
 Server:
 - mit Schaltfläche "Compare & Pull Request" Merge auf Server beginnen 
 - Änderungen sichten
 - Für Übernahme "Create Pull Request" klicken
 - Merge auf Konflikte prüfen - mit "Merge Pull Request" merge starten und mit "Confirm merge" und ggf. Kommentar bestätigen
 - Branch mit "Delete branch" und ggf. weiterem Kommentar löschen
+
+Lokal:
+- zurück auf ``git checkout main`` gehen und synchronisieren ``git pull``
+- branch löschen ``git branch "newbranch" -d`` 
