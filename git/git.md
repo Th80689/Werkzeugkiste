@@ -21,7 +21,8 @@ Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
 3) Alles (Verzeichnisse und Dateien), was im Ziel-Verzeichnis ist, unter Versionskontrolle (staging area / index) nehmen: ``git add .``
 4) Änderungen aus Index zurückziehen ``git restore --staged <file>...`` oder ``git rm``   
 5) Index mit Kommentar in das Repository überführen: ``git commit -m 'Kommentar'``
-4a) Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
+5a) Schritte 3 und 4 können mit ``git commit -am 'Kommentar'`` abgekürzt werden 
+6) gespeicherte Änderungen ohne commit können mit ``git stash`` rückgängig gemacht werden
 
 ### Erforschen und suchen
 Genereller Status im working directory und in stage; ``git status``  
