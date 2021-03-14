@@ -69,8 +69,15 @@ Grafische Sicht (ALLE Änderungen in BEIDEN Repos)``gitk HEAD...FETCH_HEAD``
 ## Kommunikation mit GITHUB
 ### Repository lokal clonen
 - Lokal in das Verzeichnis wechseln, in dem der Clone als Directory angelegt werden soll
-- ``git clone <Repo URL>|``
+- Repository clonen: ``git clone <Repo URL>``
 
 ### Branching, Pull Requests und Merges
-- in der "Switch branch" Schaltfläche den Namen des neuen Branches angeben
+Server:   
+- in der "Switch branch" Schaltfläche den Namen des neuen Branches "newbranch" angeben  
+Lokal: 
+- neuen Branch anlegen ``git branch "newbranch"``
+- in Branch wechseln ``git checkout "newbranch"``
+- Änderungen im Branch machen
+- einchecken ``git commit -am "Kommentar"``
+- Änderungen auf Branch auf Server laden``git push --set-upstream origin "newbranch"``
 
