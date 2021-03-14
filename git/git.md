@@ -41,13 +41,18 @@ Grafische Übersicht der Commits``gitk``
 ### Administration
 Branch abfragen (* markiert den "aktuellen") ``git branch``  
 Neuen Branch initialisieren ``git branch <branch-name>``  
-Branch wechseln ``git switch <Zielbranch>``  
+Branch wechseln ``git switch <Zielbranch>``  oder ``git checkout <Zielbranch>``
 Branches verschmelzen (im main) ``git merge <branch to merge>``  
 Branch löschen (mit Prüfung) ``git branch -d <Zielbranch>``  
 Branch löschen (OHNE Prüfung) ``git branch -D <Zielbranch>``  
 "Lightweigt Tagging" ``git tag <tag name>``
 Aufräumen (garbage collection) ``git gc``  
 File verschieben ``git mv <Filename> <Zielpfad und -name>``  
+
+### Merge Workflow
+Änderungen in anderen Branches müssen in das Zielrepository gezogen werden. Ein "Push" aus einem Branch ist NICHT möglich.  Daher ist der Flow  
+1. In den Ziel-Branch wechseln ``git checkout <Zielrepository für Merge>``
+2. Änderungen ziehen ``git merge <Quellbranch>``
 
 ### Repo-übergreifende Aktionen
 Aktuelles Remote Repo abfragen ``git remote``  
