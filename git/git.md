@@ -80,4 +80,9 @@ Lokal:
 - Änderungen im Branch machen
 - einchecken ``git commit -am "Kommentar"``
 - Änderungen auf Branch auf Server laden``git push --set-upstream origin "newbranch"``
-
+Server:
+- mit Schaltfläche "Compare & Pull Request" Merge auf Server beginnen 
+- Änderungen sichten
+- Für Übernahme "Create Pull Request" klicken
+- Merge auf Konflikte prüfen - mit "Merge Pull Request" merge starten und mit "Confirm merge" und ggf. Kommentar bestätigen
+- Branch mit "Delete branch" und ggf. weiterem Kommentar löschen
