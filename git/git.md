@@ -66,4 +66,10 @@ Grafische Sicht (nur Änderungen im "anderen" Repo)``gitk HEAD..FETCH_HEAD``
 Grafische Sicht (ALLE Änderungen in BEIDEN Repos)``gitk HEAD...FETCH_HEAD``  
 
 ## Kommunikation mit GITHUB
+### Repository lokal clonen
+- Lokal in das Verzeichnis wechseln, in dem der Clone als Directory angelegt werden soll
+- ``git clone <Repo URL>|``
+
+### Branching, Pull Requests und Merges
+- in der "Switch branch" Schaltfläche den Namen des neuen Branches angeben
 
