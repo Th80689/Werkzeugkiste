@@ -1,5 +1,10 @@
 # GIT - Versionsverwaltung
 
+## Tutorials
+Einstiegstraining: <https://githubtraining.github.io/training-manual/book.pdf>
+Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
+
+
 ## Lokales GIT
 
 ### GIT konfigurieren
