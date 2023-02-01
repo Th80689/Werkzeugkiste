@@ -1,0 +1,3 @@
+ID Wert Kommentar
+1 fruit rhubarb
+2 fruit banana

@@ -13,6 +13,8 @@
   </body>
 </html>
 
+# <canvas>: für Grafiken
+
 # Semantic elements
 <b>bold</b>
 <em>emphasize</em>
@@ -48,8 +50,8 @@ Kommentare: /*<kommentar>*/
 }
 ## Selector-Muster
 Standard-Tag: <htmlSelector>
-class: .<selfGivenNameSelector>
-id: #<selfGivenNameSelector>
+class: .<selfGivenNameSelector>  /* ALLE Elemente auf der Seite */
+id: #<selfGivenNameSelector>  /* UNIQUE auf der Seite */
 
 # JS Basics
 ## Variablen-Deklaration

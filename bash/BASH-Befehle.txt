@@ -1,0 +1,333 @@
+#Linux essentials
+##Variablen
+Auf Variablen greift man mit vorangestellten $ zu 
+
+set VAR=x # deklariert die Variable VAR mit dem Wert x
+set
+- zeigt globale Variablen
+unset
+- löscht den Wert globaler Variablen (diese bleiben aber erhalten
+
+declare - und seine Optionen 
+	-p 	zeigt AKTIVE Variablen
+	-i	definiert Variable as Integer
+    -r	macht Variable READ-ONLY
+	-u	alles UPPERCASE
+	-l  alles lowercase
+
+WICHTIG beim Deklarieren: <VARNAME> muss DIREKT vom = gefolgt werden - genau wie der <value> - Leerzeichen machen Variablen-Definition hinfällig
+VARNAME=value # deklariert LOKALe Variable VARNAME mit Wert value
+VARNAME='' # löscht den Inhalt
+
+## in man suchen
+/<Suchstring>
+
+## in der bash eingebaute Befehle
+echo	Ausgabe mit Zeilenumbruch
+printf	Ausgabe OHNE Zeilenumbruch
+source <filename> 	liest den Text einer Datei und führt den Inhalt als Argumente eines Text-Skriptes aus
+
+##TILDE Expansion
+~ HOME-Directory
+~+ aktuelles WD des Users
+
+##BRACE EXPANSIONS
+{<start>..<end>..<step size>}
+echo {1..100..5} # Zahlen von 1-100 in 5er Schritten
+
+##PARAMETER EXPANSIONS
+echo ${book:6}	Parameterwert ab der 6. Stelle ausgeben
+echo ${book:6:3}	Drei Buchstaben des Parameterwert ab der 6. Stelle ausgeben
+echo ${book:0}	Der erste Buchstabe hat Index 0
+
+## Pattern Substitution mit /(eine Ersetzung) und // (ALLE Vorkommen ersetzen)
+echo ${variableName/<oldWord>/<newWord>}
+
+##Arithmetic Expansion
+Arithmetische Ausdrücke in ZWEI Klammern ((...)) 
+- WICHTIG: Leerzeichen nach/vor den INNEREN Klammern!
+echo "Addition: $(( 4+5 ))"
+echo "Subtraktion: "$(( 5-4 ))"
+echo "Multiplikation: "$(( 4*5 ))"
+echo "Division(nur INTEGER des Ergebnisses): $(( 5/4 ))"
+echo "Modulo(Remainder): $(( 5%4 ))"
+echo "Exponent: $(( 5**3 ))"
+
+## WILD CARD Characters
+* 	:	jedes Zeichen (von 0 bis n Vorkommen)
+? 	:	GENAU ein Zeichen
+[]	: 	RANGE mit -, z.B. [1-4] für 1,2,3,4 oder {A-C] für A,B,C
+!	:	Negation des Ausdrucks, z.B. file[!1-2] findet file3, aber nicht file2
+
+## Named character classes
+Wird durch LC_CTYPE (Übersicht: Befehl "locale") bestimmt
+Muster: [[:<name>:]]
+[[:alnum:]]	:	alphanumerisch
+[[:alpha:]]	:	nur Buchstaben
+[[:digit:]]	:	nur Zahlen
+[[:lower:]]	:	nur kleine Buchstaben
+[[:upper:]]	:	nur GROSSE Buchstaben
+[[:punct:]]	:	Zeichensetzung (! " # $ % &' () * +, –. /: ; = >? @ [] '|)
+[[:space:]]	:	Space-Zeichen
+
+##Command Substitution
+Muster: $(...)
+echo "Computer name is $(hostname)."
+
+##File Globbing
+File - Patterns erkennen und in File Path übersetzen. Globs finden File-Namen, regular expressions finden Text.
+
+## Einzeiler-Beispiel
+- Speicherplatz nach File-Type 
+find . -type f -empty -prune -o -type f -printf "%s\t" -exec file --brief --mime-type '{}' \; | awk 'BEGIN {printf("%12s\t%12s\n","bytes","type")} {type=$2; a[type]+=$1} END {for (i in a) printf("%12u\t%12s\n", a[i], i)|"sort -nr"}'
+
+## Quoatation Rules
+"	Bash versucht Ersetzungen, Expansionen, .. zu machen
+	Beispiel: echo "The (kernel) is $(uname -r)"
+' 	Strong quotation - KEINE Interpretationsversuche
+	Beispiel: echo 'The (kernel) is $(uname -r)'
+	Keine Quotes - jedes Wort wird als Befehl interpretiert
+
+echo; 	erzeugt Leerzeile
+echo -n	unterdrückt Zeilenumbruch 
+	Beispiel: echo -n "Out of the sea, "; echo -n "wish I could be "; echo "part of that world." 
+
+## RANDOM
+RANDOM erzeugt eine Zufallszahl zwischen 0 und 32767
+echo $RANDOM
+BEISPIEL Zahlen zwischen 1 und 20 erzeugen:
+echo $(( 1 + $RANDOM % 20 ))
+
+##Output formatieren
+### echo - Optionen
+
+-e	escape characters nutzen (\t Tab, \n Newline, ...)
+echo -e "Student\t\tArea of Study"; echo -e "Rodney\t\tSystems Administration"; echo -e "Arya\t\tDefense Against White Walkers"
+echo -e "Winter\nIs\nComing"
+-n	KEIN Newline ausgeben
+
+printf	
+Benutzt variablen-typ-spezifische Platzhalter %<Typ-Name>
+%d	Decimal (oder Day bei Zeitformat)
+%f  Float
+%s	String
+%i	Integer
+
+Datumsformat-Bestandteile
+%Y	Year
+%m 	Month
+%d 	Day
+%H 	Hour
+%M  Minute
+%S  Second
+-- zusammensetzen in %(...)T
+printf "%(%Y-%m-%d %H:%M:%S)T\n"
+
+
+echo - Text und Expansionen werden gemischt:
+echo "The answers are: $(( 8 - 5)) and $(( 15 / 3 ))"
+
+printf - Platzhalter im Text, Logik nachgelagert
+printf "The answers are: %d and %d\n" $(( 8 - 5)) $(( 15 / 3 ))
+
+## Tests - oder [...]
+Beispiel 1:  => gibt es das File (0 = ja, 1 = nein)
+ [ -a <filename> ]; echo $?
+Beispiel 2: 0> ist variable.sh ein Verzeichnis?
+ [ -d variable.sh ]; echo $?
+$?	letzte Ausgabe (bzw. letzter Return-Value (0: Erfolg, 1: Misserfolg, ... sonstiger Wert des Aufrufs)
+
+### String-Vergleichs-Operator: 	=
+[ "green" = "blue" ]; echo $?
+
+### Numerische Vergleichs-Operatoren
+gleich	-eq	[ 7 -eq 15 ]; echo $?
+kleiner	-lt	[ 7 -lt 15 ]; echo $?
+größer	-gt	[ 7 -gt 15 ]; echo $?
+
+## Extended Test [[...]]
+### AND &&
+Ist das Homedirectory ein Verzeichnis UND gibt es das File?
+[[ -d ~ && -a ~/workspace/variable.sh ]]; echo $?
+### OR ||
+Ist das Homedirectory ein Verzeichnis ODER gibt es das File?
+[[ -d ~ || -a ~/workspace/excalibur.sh ]]; echo $?
+
+### REGEXP testen ( OPERATOR: =~ )
+Entspricht "caramel" der REGEXP c.*?
+[[ "caramel" =~ c.* ]]; echo $?
+
+Gibt es ein File?
+[ -e systemSummary.txt ]; echo $?
+Wurde File geändert, seit dem es das letzte Mal gelesen wurde?
+[ -N thisisascript.txt ]; echo $?
+Ist das File X neuer als File Y?
+[ newbash -nt variable.sh ]; echo $?
+Kommt String A alphabetisch vor String B?
+[ agglutinogens < agglutination ]; echo $?
+Gibt es das File und ist es NICHT-leer?
+[ -s systemReport.sh ]; echo $?
+Gibt es das File und ist es leer?
+[[ -e systemReport.sh && -z systemReport.sh ]]; echo $?
+
+## Verketten von Tests und Kommandos
+Gib etwas nur dann aus, wenn es ein konkretes File gibt
+[[ -a ~/workspace/variable.sh ]] && echo /workspace/variable.sh does exist.
+
+## Indexed Arrays
+WICHTIGE Besonderheit: in Bash trennen Leerzeichen die Elemente - keine Kommas
+- implizite Definition
+instruments=("piano" "flute" "guitar" "oboe")
+- explizite Definition
+declare -a instruments=("piano" "flute" "guitar" "oboe")
+
+declare -a tempo=("Lento" "Largo" "Adagio" "Andante" "Moderato" "Vivace" "Presto")
+
+### Zugriff auf einzelne Elemente
+echo ${instruments[2]}
+### Range Zugriff
+echo ${instruments[@]:2:4}
+### Element hinzufügen
+instruments[6]="trumpet"
+### Element am Ende hinzufügen
+instruments+=("tuba")
+### ALLE Elemente abrufen
+echo ${instruments[@]} # quoted separately
+echo ${instruments[*]} # as single quote
+### durch alle Elemente gehen
+for i in {0..6}; do echo "$i: ${instruments[$i]}"; done
+
+## Associated Arrays (Bash v4 oder höher)
+declare -A student ## name = index
+student[name]=Rodney
+student["area of study"]="Systems Administration"
+
+oder: Sammel-Definition
+declare -A BPM
+BPM=( [Lento]=40 [Largo]=45 [Adagio]=55 [Andante]=75, [Moderato]=95, [Vivace]=135, [Presto]=175 )
+
+am ENDE hinzufügen
+BPM=({[Grave]=35 ${BPM[@]})
+
+### Ausgabe
+echo ${student[name]} is majoring in ${student["area of study"]}.
+### oder ALLES ausgeben
+echo ${student[@]}
+
+##AWK
+Syntax: awk options 'selection _criteria {action}' input-file > output-file
+Beispiel: nimm die 2. Zeile (NR==2) und die 4. Spalte {print $4}
+availableMemory=$(free -h / | awk 'NR==2 {print $4}')
+
+
+# Kontrollstruktur case $x in   a) .. ;; b) .. ;; *);;  esac und Eingabe mit "read"
+
+#!/bin/bash/env bash
+
+echo -n "Enter the name of a country: "
+read COUNTRY
+
+echo -n "The official language of $COUNTRY is "
+
+case $COUNTRY in
+
+  Lithuania)
+    echo -n "Lithuanian"
+    ;;
+
+  Romania | Moldova)
+    echo -n "Romanian"
+    ;;
+
+  Italy | "San Marino" | Switzerland | "Vatican City")
+    echo -n "Italian"
+    ;;
+
+  *)
+    echo -n "unknown"
+    ;;
+esac
+
+## for Loop
+for i in LIST
+do
+    COMMANDS
+done
+# Beispiel (als Einzeiler): 
+for i in {1..100}; do echo $i; done
+# mit Brace expansion und Array
+declare -a favMusicals=('Hamilton' 'The Lion King' 'Grease' 'West Side Story' 'Rent')
+
+for musical in "${favMusicals[@]}"
+do
+  echo "I love the musical: $musical"
+done
+
+# while loop
+while...
+do
+  ...
+done
+
+## File zeilenweise einlesen und verarbeiten
+
+#!/usr/bin/env bash
+
+while read textline
+do
+    echo "The line I'm reading says: $textline"
+done < /home/codio/workspace/lines.txt
+
+## Functions
+Generelle Form: 
+fn(){
+  ...
+}
+
+https://linuxhint.com/full-guide-to-bash-loops/
+https://linuxize.com/post/bash-functions/
+
+
+## find ## 
+Syntax: find DIRECTORYNAME -name FILENAME
+
+# Look for a file, foundIt.txt in the directory findIt
+find ./findIt -name foundIt.txt
+
+#  look for empty files and directories using the -empty option
+find ./findIt -empty
+
+# Kombi:
+    Search within the directories ./
+    For a file input type -type f
+    By name -name
+    Filenames with any combination of characters *followed by the .txtfile extension
+    Search within these files for lines matching music
+find ./ -type f -name "*.txt" -exec grep 'music'  {} \;
+
+## xargs ##
+Nimmt stdinput und wandelt das in einzelne CommandLine-Befehle um
+Beispiel
+echo "red green yellow" | xargs mkdir
+-> führt zu mkdir red; mkdir green; mkdir yellow
+
+#########################################################
+##  Beispiele für einfache und extended Tests
+#########################################################
+#!/bin/bash
+
+# Declare one array called even containing all of the even numbers 1−10)
+declare -a even=(2 4 6 8 10)
+
+
+# Declare one array called odd containing all of the odd numbers 1−10)
+declare -a odd=(1 3 5 7 9)
+
+# Write a command to test 
+# if the 3rd element of the even array is greater than the 3rd element of the odd array 
+# and print the boolean result of the test
+[ ${even[2]} -gt ${odd[2]} ]; echo $?
+
+# Write a command to test if the 4th element of even plus the 3rd element of odd is greater than 10.
+#Use the extended test AND operator && and the echo command to display This is larger than 10 if this test passes.
+[[ $((${even[4]} + ${odd[3]})) -gt 10 ]] && echo "This is larger than 10"
