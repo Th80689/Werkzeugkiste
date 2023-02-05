@@ -284,6 +284,8 @@ fn(){
   ...
 }
 
+Parameter werden - mit leerzeichen getrennt - hinter die Funktion geschrieben
+Beispiel: fn PARAMETER 
 https://linuxhint.com/full-guide-to-bash-loops/
 https://linuxize.com/post/bash-functions/
 
