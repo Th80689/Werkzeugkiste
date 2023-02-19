@@ -1,4 +1,62 @@
 #Linux essentials
+
+## Shell - Optionen
+shopt # alle Optionen anschauen
+
+shopt -p # alle aktiven Optionen anschauen
+
+## EXTENDED Globbing
+Die Shell-Option extglob muss aktiv sein (prüfen mit `shopt | grep extglob`); Aktivierung erfolgt über
+shopt -s extglob
+### extglob Muster
+<String><extglob-Zeichen>(Muster)
+extglob   Beispiel              Bedeutung
+@()       ls file2d@(.png)      match EXACTLY ONE occurrence (the first)
+|         ls file2d@(.png|.jpg) exclusive OR 
+?         ls file3c?(.txt|.png) 0 oder 1 Vorkommen
+*         ls file3c*(.txt|.png) 0 bis n Vorkommen
++         ls file3c+(.txt|.png) 1 oder mehr Vorkommen
+!         ls file5e!(.txt|.png) negiert das Muster
+Muster negieren:    ls file3c!(+(.txt|.png))
+#*        
+
+Einzeiler: unterschiedliche Extentions anzeigen
+for filename in *; do echo ${filename#*.}; done | sort -u
+
+## Vergleich GLOBs und REXEXP
+||Definition||Extended||Glob||Regular Expression||
+|Match any number of occurrences of any characters|*(pattern)|(pattern)*|
+|Match exactly one occurrences of pattern|@(pattern)|(pattern)|
+|Match one or more occurrences of pattern|+(pattern)|(pattern)+|
+|Match zero or one occurrences of pattern|?(pattern)|(pattern)?|
+|Invert match criteria|!(pattern)|(!pattern)|
+|Match defined number of instances|Impossible|(pattern){5}*|
+
+##BASIC REGULAR EXPRESSIONS
+||Function||Special Character||
+|Match exactly one character|.|
+|Character Escape|\|
+|Character Set|[...]|
+|Reference/repetition operator|*|
+|Reference/repetition operator|\+|
+|Reference/repetition operator|\?|
+|Reference/repetition operator|\{...\}|
+|Pattern Group|\(...\)|
+
+
+##EXTENDED REGULAR EXPRESSIONS
+
+||Function||Special Character||
+|Match exactly one character|.|
+|Character Escape|\|
+|Character Set|[...]|
+|Invert Pattern Match|[^pattern]|
+|Pattern Group|(...)|
+|Reference/repetition operators|{...} + *|
+|anchor beginning of line|^pattern|
+|anchor end of line|pattern$|
+
+
 ##Variablen
 Auf Variablen greift man mit vorangestellten $ zu 
 
@@ -27,6 +85,18 @@ echo	Ausgabe mit Zeilenumbruch
 printf	Ausgabe OHNE Zeilenumbruch
 source <filename> 	liest den Text einer Datei und führt den Inhalt als Argumente eines Text-Skriptes aus
 
+#EXPANSIONS
+
+## Reihenfolge
+Brace Expansion
+Tilde Expansion
+Parameter Expansion
+Variable Expansion
+Arithmetic Expansion | Command Substitution
+Word Splitting
+Filename Expansion
+Quote Removal
+
 ##TILDE Expansion
 ~ HOME-Directory
 ~+ aktuelles WD des Users
@@ -36,14 +106,18 @@ source <filename> 	liest den Text einer Datei und führt den Inhalt als Argument
 echo {1..100..5} # Zahlen von 1-100 in 5er Schritten
 
 ##PARAMETER EXPANSIONS
+echo $USER
 echo ${book:6}	Parameterwert ab der 6. Stelle ausgeben
 echo ${book:6:3}	Drei Buchstaben des Parameterwert ab der 6. Stelle ausgeben
 echo ${book:0}	Der erste Buchstabe hat Index 0
 
+## VARIABLE EXPANSIONS
+$(who | tail -n10 | awk '{print $2}')
+
 ## Pattern Substitution mit /(eine Ersetzung) und // (ALLE Vorkommen ersetzen)
 echo ${variableName/<oldWord>/<newWord>}
 
-##Arithmetic Expansion
+## ARITHMETIC EXPANSIONS
 Arithmetische Ausdrücke in ZWEI Klammern ((...)) 
 - WICHTIG: Leerzeichen nach/vor den INNEREN Klammern!
 echo "Addition: $(( 4+5 ))"
@@ -53,11 +127,20 @@ echo "Division(nur INTEGER des Ergebnisses): $(( 5/4 ))"
 echo "Modulo(Remainder): $(( 5%4 ))"
 echo "Exponent: $(( 5**3 ))"
 
+## Arithmetic Expansion & Command Substitution (left to right)
+echo $(($USERID + 12 ))
+
+## Quote removal
+echo '"$USER" wird zu: '"$USER"
+
+
 ## WILD CARD Characters
 * 	:	jedes Zeichen (von 0 bis n Vorkommen)
 ? 	:	GENAU ein Zeichen
 []	: 	RANGE mit -, z.B. [1-4] für 1,2,3,4 oder {A-C] für A,B,C
 !	:	Negation des Ausdrucks, z.B. file[!1-2] findet file3, aber nicht file2
+
+
 
 ## Named character classes
 Wird durch LC_CTYPE (Übersicht: Befehl "locale") bestimmt
@@ -157,6 +240,21 @@ Ist das Homedirectory ein Verzeichnis ODER gibt es das File?
 Entspricht "caramel" der REGEXP c.*?
 [[ "caramel" =~ c.* ]]; echo $?
 
+WICHTIG: bei REGEXP in bash NICHT " verwenden!
+
+if [[$FILENAME =~ ^Logfile.*.txt.csv$ ]];
+then
+echo "$FILENAME matches our expression"
+fi
+
+Beispiel mit grep: email-Check
+- 1-16 Zeichen (alphanumerisch, Unterstrich, ".")
+- @
+- domain rein alphanumerisch, gefolgt von "." und einer von drei top-Level Domains
+
+#!/bin/bash
+grep -E '(^[A-Za-z0-9_\.]{1,16})@[[:lower:]]+\.(com|org|net)' signups.txt
+
 Gibt es ein File?
 [ -e systemSummary.txt ]; echo $?
 Wurde File geändert, seit dem es das letzte Mal gelesen wurde?
@@ -173,6 +271,8 @@ Gibt es das File und ist es leer?
 ## Verketten von Tests und Kommandos
 Gib etwas nur dann aus, wenn es ein konkretes File gibt
 [[ -a ~/workspace/variable.sh ]] && echo /workspace/variable.sh does exist.
+
+
 
 ## Indexed Arrays
 WICHTIGE Besonderheit: in Bash trennen Leerzeichen die Elemente - keine Kommas
@@ -219,8 +319,25 @@ Syntax: awk options 'selection _criteria {action}' input-file > output-file
 Beispiel: nimm die 2. Zeile (NR==2) und die 4. Spalte {print $4}
 availableMemory=$(free -h / | awk 'NR==2 {print $4}')
 
+# Kontrollstruktur if (Beispiel: 16-stellige Kreditkarte)
+
+#!/bin/bash
+
+while read line
+do
+
+  if [[ $line =~ .*[Dd]iscover.* ]];
+  then
+    if [[ $line =~ [0-9]{16} ]];
+    then
+      echo ${BASH_REMATCH[0]}
+    fi
+  fi
+done < credit.csv
 
 # Kontrollstruktur case $x in   a) .. ;; b) .. ;; *);;  esac und Eingabe mit "read"
+
+Hinweis: case ist schneller as if, weil es jede Variable einmal auswertet, während if JEDEN Test für eine Variable ausführt
 
 #!/bin/bash/env bash
 
@@ -305,7 +422,7 @@ find ./findIt -empty
     By name -name
     Filenames with any combination of characters *followed by the .txtfile extension
     Search within these files for lines matching music
-find ./ -type f -name "*.txt" -exec grep 'music'  {} \;
+find ./ -type f -name "*.txt" -ex ec grep 'music'  {} \;
 
 ## xargs ##
 Nimmt stdinput und wandelt das in einzelne CommandLine-Befehle um

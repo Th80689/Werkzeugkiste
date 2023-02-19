@@ -5,6 +5,9 @@
 ## VARIABLES ##
 ###############
 
+
+# YOUR CODE HERE
+
 #Declare 4 arrays, each holding 5 articles of clothing
  
 tops=("T-shirt" "blouse" "polo" "sweatshirt" "hoodie")
@@ -13,17 +16,16 @@ shoes=("sneakers" "loafers" "hiking boots" "boots" "sandals")
 accessories=("leather belt" "tie" "handkerchief" "cap" "socks")
 days=("Monday" "Tuesday" "Wednesday" "Thursday" "Friday")
 
-
 #########################
 ## FUNCTION DEFINITION ##
 #########################
 
-# YOUR CODE HERE[]
+
+# YOUR CODE HERE
 
 # define ID
  id () {
   ID=$(($RANDOM % 5))
-  return ID
 }
 selectWardrobe () {
   echo "Now selecting weekly wardrobe"
@@ -42,10 +44,8 @@ selectWardrobe () {
     id
     ACC2=${accessories[$ID]}
 
-    echo -n "On $day, you shoud wear: "
-    echo "$TOP, $BOTTOM, and $SHOE"
-    id
-    echo -n "Pair with: $ACC1 and $ACC2"
+    echo "On $day, you should wear: $TOP, $BOTTOM, and $SHOE"
+    echo "Pair with: $ACC1 and $ACC2"
     echo ""
   done
 }
@@ -65,16 +65,16 @@ outfitSelection () {
   echo "Enjoy $ARG1 weeks of outfit selections"
 }
 
+
 #######################
 ## CALLING FUNCTIONS ##
 #######################
 
-
 # YOUR CODE HERE
 # selectWardrobe
-outfitSelection 4 >> monthlyOutfits.txt
+outfitSelection 4 > monthlyOutfit.txt
 
 while read textline
 do
     echo $textline
-done < monthlyOutfits.txt
+done < monthlyOutfit.txt
