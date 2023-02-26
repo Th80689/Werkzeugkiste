@@ -31,7 +31,8 @@ Im Repo suchen ``git grep "<-Such-Ausdruck>" [Version]``
 Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
 
 ### Projekthistorie
-Liste aller Commits ``git log``  
+Liste aller Commits ``git log``
+Liste aller Commits - nur Kommentare ``git log --oneline``
 Liste aller Commits inkl. Details und DIFFs ``git log -p``  
 Commits mit Zeit-Einschränkungen ``git log --since '(Menge) '[hour/day/...] ago'``  
 Commits zu einem Verzeichnis ``git log <Verzeichnis>/``
