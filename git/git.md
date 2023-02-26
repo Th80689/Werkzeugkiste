@@ -24,8 +24,9 @@ Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
 6) gespeicherte Änderungen ohne commit können mit ``git stash`` rückgängig gemacht werden
 
 ### Erforschen und suchen
-Genereller Status im working directory und in stage; ``git status``  
+Genereller Status im working directory und in stage: ``git status``  
 Änderungen, die noch nicht in der Staging-Area sind: ``git diff``   
+Unterschiede zwischen BRANCH1 und BRANCH2 getrennt durch '..': ``git diff BRANCH1..BRANCH2``  
 Änderungen, die gestaged, aber noch nicht im Repository sind: ``git diff   --cached``  
 Im Repo suchen ``git grep "<-Such-Ausdruck>" [Version]``  
 Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
