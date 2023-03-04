@@ -60,6 +60,7 @@ File verschieben ``git mv <Filename> <Zielpfad und -name>``
 Aktuelles Remote Repo abfragen ``git remote``  
 Aktuelles "origin" Repo abfragen ``git config --get remote.origin.url``  
 Remote-Repo definieren ``git remote add <Kurzname Repo> <Quelle>``  
+Remote-Repo abfragen ``git remote get-url origin``
 Repository clonen ``git clone <Quelle> <Zielverzeichnis>``  
 Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``  
 Vorschau auf Änderungen ``git fetch <Pfad Quell-Repository> <branch>`` + ``git log -p HEAD..FETCH_HEAD`` (nur Änderungen im "anderen" Repo)  
