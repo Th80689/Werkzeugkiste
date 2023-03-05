@@ -24,14 +24,16 @@ Git Workflow interaktiv: <https://guides.github.com/introduction/flow/>
 6) gespeicherte Änderungen ohne commit können mit ``git stash`` rückgängig gemacht werden
 
 ### Erforschen und suchen
-Genereller Status im working directory und in stage; ``git status``  
+Genereller Status im working directory und in stage: ``git status``  
 Änderungen, die noch nicht in der Staging-Area sind: ``git diff``   
+Unterschiede zwischen BRANCH1 und BRANCH2 getrennt durch '..': ``git diff BRANCH1..BRANCH2``  
 Änderungen, die gestaged, aber noch nicht im Repository sind: ``git diff   --cached``  
 Im Repo suchen ``git grep "<-Such-Ausdruck>" [Version]``  
 Grafisch Änderungen seit Zeitpunkt suchen``gitk --since="1 day ago"``
 
 ### Projekthistorie
-Liste aller Commits ``git log``  
+Liste aller Commits ``git log``
+Liste aller Commits - nur Kommentare ``git log --oneline``
 Liste aller Commits inkl. Details und DIFFs ``git log -p``  
 Commits mit Zeit-Einschränkungen ``git log --since '(Menge) '[hour/day/...] ago'``  
 Commits zu einem Verzeichnis ``git log <Verzeichnis>/``
@@ -58,6 +60,7 @@ File verschieben ``git mv <Filename> <Zielpfad und -name>``
 Aktuelles Remote Repo abfragen ``git remote``  
 Aktuelles "origin" Repo abfragen ``git config --get remote.origin.url``  
 Remote-Repo definieren ``git remote add <Kurzname Repo> <Quelle>``  
+Remote-Repo abfragen ``git remote get-url origin``
 Repository clonen ``git clone <Quelle> <Zielverzeichnis>``  
 Änderungen ziehen UND mergen (aus Verzeichnis Ziel-Repository) ``git pull <Quelle> <Zielbranch>``  
 Vorschau auf Änderungen ``git fetch <Pfad Quell-Repository> <branch>`` + ``git log -p HEAD..FETCH_HEAD`` (nur Änderungen im "anderen" Repo)  
