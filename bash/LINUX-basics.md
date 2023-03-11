@@ -47,11 +47,17 @@ Szenario: "You are running out of space and need to delete some files. List all 
 |`ssh-copy-id`|Public key auf Zielmaschine kopieren ` ssh-copy-id -i <key file>.pub <user>@<host`|
 |`ssh`|ssh Verbindung aufbauen `ssh <user>@<host`|
 |`curl`|Daten von Servern holen (`curl <URL> --output <file name>`) oder schicken - wie hier an das http-Feld profile `curl -F profile=@portrait.jpg https://example.com/upload.cgi`|
-|``||
-|``||
+|`wget`|non-interactive File-Download - z.B. als output.txt mit Progress-Bar in MB Schritten `wget -O output.txt <URL> --progress=dot:mega`|
+|`rsync`|Files über das Netzwerk anhand Zeitstempeln und Größen synchronisieren|
+|`netcat` oder `nc`|File-Transfer im Intranet; File senden `nc 127.0.0.1 8080 < file.txt`, File empfangen `nc -l 8080 > file.txt`|
+|`scp`|SecureCopy per ssh, hier von lokal versenden: `scp <payload> <user>@<host>:<destination path>`|
 
-## Backup etc.
-|command|Beschreibung|
-|---|---|
-|``||
-|``||
+## Firewall und co
+Status Firewall anschauen: `sudo firewall-cmd --state`
+`sudo systemctl stop firewalld` 
+`sudo systemctl start firewalld`
+Alle ACLs sehen: `sudo firewall-cmd --list-all`
+Alle Zonen sehen: `sudo firewall-cmd --list-all-zones`
+
+`iptables` Paket Filter: `sudo iptables -L -n`
+
