@@ -39,4 +39,19 @@ Szenario: "You are running out of space and need to delete some files. List all 
 |`netstat`|Netzwerk-Statistik; im Default zeigt es offene Sockets|
 |`traceroute`|Verfolgt den Netzwerktraffic über Hops zum Ziel|
 |`mtr <hostname> -r -c 5`|Kombi aus `traceroute` und `ping`, dauert lange, bis es Output gibt|
+
+## Datentransfer von Rechner zu Rechner
+|command|Beschreibung|
+|---|---|
+|`ssh-keygen`|Public-Private Key Paar erzeugen `ssh-keygen -f <Filename> -C <Kommentar am Ende von *.pub>`|
+|`ssh-copy-id`|Public key auf Zielmaschine kopieren ` ssh-copy-id -i <key file>.pub <user>@<host`|
+|`ssh`|ssh Verbindung aufbauen `ssh <user>@<host`|
+|`curl`|Daten von Servern holen (`curl <URL> --output <file name>`) oder schicken - wie hier an das http-Feld profile `curl -F profile=@portrait.jpg https://example.com/upload.cgi`|
+|``||
+|``||
+
+## Backup etc.
+|command|Beschreibung|
+|---|---|
+|``||
 |``||
