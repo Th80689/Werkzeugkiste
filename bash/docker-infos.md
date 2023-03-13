@@ -14,4 +14,6 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 5. Funktion checken: `sudo docker run hello-world`
 ## Mit Images arbeiten
 1. Auf der Maschine vorhanden Images anschauen: `sudo docker images`
-2. Image holen - hier CentOS: `sudo docker pull centos`
+2. Image holen:`docker pull [image name]:[tag name]` - hier CentOS latest: `sudo docker pull centos`
+3. Images starten: `sudo docker run -d - t --name <namecontainer> <image>` (d: detached, t: starte Prozess, der den Container am Leben erhält)
+4. Liste der Container anzeigen: `sudo docker container ls` (ohne Option: nur die laufenden, mit -a ALLE)
