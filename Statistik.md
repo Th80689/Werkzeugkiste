@@ -76,4 +76,4 @@ Pearson Correlation Coefficient
 - nur für lineare Beziehungen geeignet
 - beschreibt die Beziehung von X zu Y in Werten von -1 (extreme negative) über 0 (KEINE) bis 1 (extreme positive) 
 
-"correlation DOES NOT equal causation"
+"correlation DOES NOT equal causation" 
