@@ -48,11 +48,14 @@ Mit ```date_trunc('field',<Zeit-Wert>)``` kann man auf einen bestimmten Zeitwert
 Mit ```to_char('field',<Zeit-Wert>)``` bekommt man die textuelle Beschreibung der Zeit-Einheit (z.B. bei DOW den Wochentag).
 
 ## Sonstiges
+
+Datentyp ermitteln: TYPEOF(<Spalte>)
+
 COALESCE(x,x,x) -- NULL-Werte wie DECODE behandeln
 
 NTILE(<Anzahl pages>) -- paging
 
- 
+MEDIAN berechnen:  PERCENTILE_CONT(0.5)
 
 ----Pivoting ----
 
