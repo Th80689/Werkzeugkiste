@@ -10,12 +10,6 @@ https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-cast/
 ## Expression-Vergleich:
 ```<attribut>~E'^\\d+$'```
 
--- convert values between data types
-/*
-select column_name, data_type, is_nullable, numeric_precision, numeric_scale from information_schema.columns
-where table_name = 'products'
-*/
-
 ---- POSTGREsql ----
 ## Temporäre Tabellen
 Für die Anlage von temporären Tabellen (bleiben nur über die Dauer einer Session erhalten) gibt es zwei Syntax-Varianten.
