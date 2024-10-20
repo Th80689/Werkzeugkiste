@@ -2,7 +2,19 @@
 
 ## CAST
 Typenumwandlung geht über ```CAST(<Ausgangs-Attribut> AS <NEUER_TYP>)``` oder über die Syntax ```<Ausgangs-Attribut>::<NEUER_TYP>```. Beispiel: ```zahl::INTEGER```.
- 
+
+Bei der Daten-Aufbereitung hilft ```split_part(<string>,<delimiter>, <field_number>)``` 
+
+https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-cast/
+
+## Expression-Vergleich:
+```<attribut>~E'^\\d+$'```
+
+-- convert values between data types
+/*
+select column_name, data_type, is_nullable, numeric_precision, numeric_scale from information_schema.columns
+where table_name = 'products'
+*/
 
 ---- POSTGREsql ----
 ## Temporäre Tabellen
@@ -49,7 +61,7 @@ Mit ```to_char('field',<Zeit-Wert>)``` bekommt man die textuelle Beschreibung de
 
 ## Sonstiges
 
-Datentyp ermitteln: TYPEOF(<Spalte>)
+Datentyp ermitteln: pg_typeof(<Spalte>)
 
 COALESCE(x,x,x) -- NULL-Werte wie DECODE behandeln
 
