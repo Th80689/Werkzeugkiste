@@ -111,3 +111,40 @@ ORDER BY country ASC, medal ASC;
 ---- Windows
 ...  ROWS BETWEEN [n | UNBOUNDED] PRECEDING  AND  [CURRENT ROW | n | UNBOUNDED] FOLLOWING
 
+## Meta-Informationen
+### Tabellen erkunden
+```select table_schema, table_name 
+from information_schema.tables```
+|Objekt-Typen|
+|-|
+|tables|
+|table_constraints|
+|columns|
+
+## Typ-Änderung mit USING
+```ALTER TABLE test ALTER COLUMN x TYPE INTEGER 
+USING ... Beispiele   
+- ROUND(average_grade)   
+- SUBSTRING(x FROM 1 FOR x);```
+
+```ALTER TABLE test 
+ALTER COLUMN x TYPE INTEGER 
+[SET|DROP] NOT NULL;```
+
+## Unique constraints
+```CREATE TABLE x (column_name NOT NULL);```
+```ALTER TABLE x ADD CONSTRAINT some_name UNIQUE(column_name);```
+
+### Regular primary
+```CREATE TABLE x (a integer PRIMARY KEY, b integer, c integer);```
+### Primary nachträglich hinzufügen
+```ALTER TABLE x ADD CONSTRAINT constraint_name PRIMARY KEY (a));```
+### Composite primary
+```CREATE TABLE x (a integer, b integer, c integer, PRIMARY KEY (a,c))```
+
+### Surrogate key Konstrukt mit Datentyp "serial" (Integer aufsteigend)
+```ALTER TABLE x ADD COLUMN id serial PRIMARY KEYs;```
+### Foreign Key
+```CREATE TABLE x (a integer, b integer, c integer REFERENCES table_y (y_key) [ON DELETE [CASCADE|NO ACTION|RESTRICT|SET NULL|SET DEFAULT])```
+
+```ALTER TABLE x ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b```
