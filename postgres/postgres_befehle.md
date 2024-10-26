@@ -1,5 +1,82 @@
 # Übersicht über nützliche PostgreSQL-Befehle
 
+## Datenbank anlegen
+```CREATE DATABASE <db_name>;```
+### Schemas 
+Default-Schema ist immer ```public```.
+Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeichen b) Startet mit Buchstabe oder "_", c) darf nicht mit 'pq_' beginnen. Der Zugriff auf das Schema kann mit ```GRANT USAGE ON SCHEMA <schema_name> TO <user_name>``` gegeben werden.
+
+## CREATE Tables
+
+### Datentypen
+
+|Bereich|Typ|Details|
+|-|-|-|
+|Zahlen|SMALLINT|-32768 bis 32767|
+||INTEGER|-2147483648 bis 2147483647|
+||BIGINT|-9223372036954775808 bis 9223372036954775807|
+||SERIAL|auto-incrementing, 1 bis 2147483647|
+||BIGSERIAL|auto-incrementing, 1 bis 9223372036954775807|
+||DECIMAL(p,s)|precision: Anzahl der Ziffern VOR dem Komma, scale: Davon Nachkomma-Stellen; max. 131072 Ziffern VOR dem Komma, max. 16383 NACH dem Komma|
+||NUMERIC(p,s)||
+||REAL|6 Ziffern precision|
+||DOUBLE PRECISION|15 Ziffern precision|
+|Text|TEXT|unbegrenzt|
+||VARCHAR|variable Länge mit optionalem MAX (n) Zeichen|
+||CHAR|genau n Stellen, mit Leerzeichen rechts aufgefüllt|
+|Boolean|true oder false||
+|Zeit|TIMESTAMP|YYYY-MM-DD hh24:mi:ss|
+||DATE|YYYY-MM-DD|
+||TIME|hh24:mi:ss|
+
+## Normalformen
+|NF|Bedingungen|Erläuterungen|
+|-|-|-|
+|1. NF|Tabellen-Werte sind atomar|1 Attribut = EIN Datenobjekt|
+|2. NF|1. NF + alle Nicht-Schlüssel-Attribute hängen vom Primary Key ab||
+|3. NF|1. + 2. NF + keine transitiven Abhängigkeiten|alle Nicht-Schlüssel-Attribute hängen AUSSCHLIESSLICH vom Primary Key ab und haben untereinander keine Abhängigkeiten|
+
+```ALTER TABLE test 
+ALTER COLUMN x TYPE INTEGER 
+[SET|DROP] NOT NULL;```
+
+## Unique constraints
+```CREATE TABLE x (column_name NOT NULL);```
+```ALTER TABLE x ADD CONSTRAINT some_name UNIQUE(column_name);```
+
+### Regular primary
+```CREATE TABLE x (a integer PRIMARY KEY, b integer, c integer);```
+### Primary nachträglich hinzufügen
+```ALTER TABLE x ADD CONSTRAINT constraint_name PRIMARY KEY (a));```
+### Composite primary
+```CREATE TABLE x (a integer, b integer, c integer, PRIMARY KEY (a,c))```
+
+### Surrogate key Konstrukt mit Datentyp "serial" (Integer aufsteigend)
+```ALTER TABLE x ADD COLUMN id serial PRIMARY KEYs;```
+### Foreign Key
+```CREATE TABLE x (a integer, b integer, c integer REFERENCES table_y (y_key) [ON DELETE [CASCADE|NO ACTION|RESTRICT|SET NULL|SET DEFAULT])```
+
+```ALTER TABLE x ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b```
+
+## Typ-Änderung mit USING
+```ALTER TABLE test ALTER COLUMN x TYPE INTEGER USING <expression>```  
+### Beispiele für Expressions
+```ROUND(average_grade)```     
+```SUBSTRING(x FROM 1 FOR x)```
+
+## Indexes
+```CREATE INDEX [CONCURRENTLY] <index_name> ON <table_name>(<column(s)>)```.
+CONCURRENTLY: Daten können geladen werden, auch wenn die Tabelle gerade geladen wird.
+
+## User-Verwaltung und PRIVILEGEs
+Jede Postgres-Datenbank hat den Superuser ```postgres```, der u.a. Datenbanken anlegen (CREATE db) und Löschen (DROP db) kann.
+Ein neuer User wird mit ```CREATE USER <user_name>``` angelegt, der dann ein eigenes Schema erhält. Danach hat der User aber noch kein Passwort. ```CREATE USER <user_name> WITH PASSWORD '<secret>'``` behoben werden. Der User kann das wieder ändern mit ```ALTER USER <user_name> WITH PASSWORD '<new_secret>'```.  
+Usern und Rollen können Detail-Rechte (privileges) wie SELECT, INSERT, UPDATE, DELETE mit der Syntax ```GRANT <privilege> ON <object> TO <grantee = user/role>``` zugewiesen werden.
+DDLs darf immer nur der OWNER durchführen. Diese Eigentümerschaft kann aber auch mit ```ALTER TABLE <table_name> OWNER TO <new owner>``` geändert werden. Das kann auch auf Schema-Ebene mit ```GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA <schema_name> TO <user_name>``` geschehen.  
+Neben Usern können auch Gruppen angelegt werden ```CREATE GROUP <group_name>```. Diese können dann über ```GRANT USAGE ON SCHEMA <schema_name> TO <group_name>``` und ```GRANT INSERT, UPDATE, SELECT, DELETE ON ALL TABLES IN SCHEMA <schema_name> TO <group_name>``` mit allen Rechten versehen werden. Danach können dann alle Nutzer, die der neuen Gruppe mit ```ALTER GROUP <group_name> ADD USER <user_name>``` zugewiesen werden über diese Gruppenrechte zugreifen. Erhöhte Stufe ist: ```GRANT ALL PRIVILEGES ON <schema_name>.* TO <user_name>```.
+Das Gegenstück zum ```GRANT``` ist ```REVOKE ALL PRIVILEGES FROM <user_name/role>``` - bzw. bei einer Gruppe ```REVOKE <group_name> FROM <user_name>```.
+
+
 ## CAST
 Typenumwandlung geht über ```CAST(<Ausgangs-Attribut> AS <NEUER_TYP>)``` oder über die Syntax ```<Ausgangs-Attribut>::<NEUER_TYP>```. Beispiel: ```zahl::INTEGER```.
 
@@ -14,6 +91,10 @@ https://www.postgresqltutorial.com/postgresql-tutorial/postgresql-cast/
 ## Temporäre Tabellen
 Für die Anlage von temporären Tabellen (bleiben nur über die Dauer einer Session erhalten) gibt es zwei Syntax-Varianten.
 ```CREATE TEMP TABLE tab_name AS SELECT ...``` (empfohlen von PostgreSQL) oder ```SELECT ... INTO TEMP TABLE tab_name FROM ...```. Diese temporären Tabellen können mit ```DROP TABLE tab_name``` einfach gelöscht werden. Um Fehlermeldung bei Nicht-Vorhandensein zu vermeiden kann man das Kommando auch mit ```DROP TABLE IF EXISTS tab_name ``` absichern.
+
+Mit ```ANALYZE <table_name>``` kann man für folgende Abfragen die Performanz verbessern. Die Datenbank speichert die Statistiken in ```pg_statistics```.
+
+Mit ```EXPLAIN``` vor der Query kann man den Execution Plan anschauen. Mit der Option ```EXPLAIN ANALYZE``` gibt es mehr Infos - u.a. Planning Time und Execution Time. 
 
 ## Binning
 Mit ```GENERATE_SERIES(<from>,<to>,<step - Einheit>)``` erzeugt man Serien. Beispiel: 
@@ -107,6 +188,7 @@ ORDER BY country ASC, medal ASC;
 
 ## Meta-Informationen
 ### Tabellen erkunden
+Strukturelle Infos gibt es per 
 ```select table_schema, table_name 
 from information_schema.tables```
 |Objekt-Typen|
@@ -115,30 +197,7 @@ from information_schema.tables```
 |table_constraints|
 |columns|
 
-## Typ-Änderung mit USING
-```ALTER TABLE test ALTER COLUMN x TYPE INTEGER 
-USING ... Beispiele   
-- ROUND(average_grade)   
-- SUBSTRING(x FROM 1 FOR x);```
-
-```ALTER TABLE test 
-ALTER COLUMN x TYPE INTEGER 
-[SET|DROP] NOT NULL;```
-
-## Unique constraints
-```CREATE TABLE x (column_name NOT NULL);```
-```ALTER TABLE x ADD CONSTRAINT some_name UNIQUE(column_name);```
-
-### Regular primary
-```CREATE TABLE x (a integer PRIMARY KEY, b integer, c integer);```
-### Primary nachträglich hinzufügen
-```ALTER TABLE x ADD CONSTRAINT constraint_name PRIMARY KEY (a));```
-### Composite primary
-```CREATE TABLE x (a integer, b integer, c integer, PRIMARY KEY (a,c))```
-
-### Surrogate key Konstrukt mit Datentyp "serial" (Integer aufsteigend)
-```ALTER TABLE x ADD COLUMN id serial PRIMARY KEYs;```
-### Foreign Key
-```CREATE TABLE x (a integer, b integer, c integer REFERENCES table_y (y_key) [ON DELETE [CASCADE|NO ACTION|RESTRICT|SET NULL|SET DEFAULT])```
-
-```ALTER TABLE x ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b```
+Anstatt über das Schema kann man auch über ```pg_<Objekt>```-Views gehen - z.B.:
+|Objekte|
+|-|
+|pg_indexes|
