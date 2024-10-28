@@ -125,7 +125,7 @@ RUN useradd -m repl
 USER repl
 ``` 
 ### Daten zwischen Container und Host austauschen
-Mit einem definierten ```bind-mount``` kann ein Container auf Daten im File-System des Hosts lesend und/oder schreibend zugreifen => Daten können den Conatiner-Tod überleben. Der Host kann die Daten aber erst lesen, wenn der Container nicht mehr läuft.
+Mit einem definierten ```bind-mount``` kann ein Container auf Daten im File-System des Hosts lesend und/oder schreibend zugreifen => Daten können den Container-Tod überleben. Der Host kann die Daten aber erst lesen, wenn der Container nicht mehr läuft.
 
 Es kann mit ```run -v <source>:<destination>``` im Dockerfile definiert werden. Beispiel: ```docker run -v ~/html:/var/www/html \nginx <IMAGE_NAME>```.
 
