@@ -134,6 +134,38 @@ Beispiel 1: ```new_nums=[num + 1 for num in nums] # nums ist eine Liste mit Zahl
 
 Beispiel 2: ```pairs_2=[(num1, num2) for num1 in range(0,2) for num2 in range(6,8)] # ergibt 4 Tupel```
 
+Beispiel 3: if in Bedingung ```[num**2 for num in range(10) if num % 2 == 0]```
+
+Beispiel 4: If/else im Output ```[member if len(member) >= 7 else '' for member in fellowship]````
+
+In "allgemeiner Form" also: [output expression + conditional on output for iterator variable in iterable if conditional on iterable] 
+
+Beispiel 5: Negative Zahlen von 0 bis 8 als Dictionary ```neg_dict={num: -num for num in range(9)}```
+
+## Generator objects
+Syntax: statt [] wie bei List comprehension werden () verwendet. Das Ergebnis wird NICHT als Liste im Arbeitsspeicher gehalten - sondern dient nur zur Iteration. Das kann helfen, wenn GROSSE Listen verarbeitet werden müssen und Arbeitsspeicher knapp wird. Beispiel: ()
+
+## Generator function
+file: sequence.py
+def num_sequence(n):
+    """Generate values from 0 to n."""
+    i = 0
+    while i < n:
+        yield i
+        i += 1
+
+## Batch-Verarbeitung: 10 Datensätze pro Batch
+'# Import the pandas package
+import pandas as pd
+
+'# Initialize reader object: df_reader
+df_reader = pd.read_csv('ind_pop.csv', chunksize=10)
+
+'# Print two chunks
+print(next(df_reader))
+print(next(df_reader))
+
+
 ## Module 
 Module sind "Standard"-Python-Skripte mit Funktionen und Attributen, die mit der Standard-Installation bereitstehen - und die man bei Bedarf importieren kann. Sie können mit folgenden Varianten ganz oder teilweise geladen werden:
 - ```import <module_name>```  
