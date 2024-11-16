@@ -1,5 +1,7 @@
 # Übersicht über nützliche PostgreSQL-Befehle
 
+Andere Beispiele für den Einstieg: 
+- https://neon.tech/postgresql/tutorial
 ## Datenbank anlegen
 ```CREATE DATABASE <db_name>;```
 ### Schemas 
