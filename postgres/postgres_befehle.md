@@ -29,19 +29,11 @@ Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeich
 ||DATE|YYYY-MM-DD|
 ||TIME|hh24:mi:ss|
 
-## Normalformen
-|NF|Bedingungen|Erläuterungen|
-|-|-|-|
-|1. NF|Tabellen-Werte sind atomar|1 Attribut = EIN Datenobjekt|
-|2. NF|1. NF + alle Nicht-Schlüssel-Attribute hängen vom Primary Key ab||
-|3. NF|1. + 2. NF + keine transitiven Abhängigkeiten|alle Nicht-Schlüssel-Attribute hängen AUSSCHLIESSLICH vom Primary Key ab und haben untereinander keine Abhängigkeiten|
-
-```ALTER TABLE test 
-ALTER COLUMN x TYPE INTEGER 
-[SET|DROP] NOT NULL;```
+Tabelle anlegen:  
+```ALTER TABLE test ALTER COLUMN x TYPE INTEGER [SET|DROP] NOT NULL```  
 
 ## Unique constraints
-```CREATE TABLE x (column_name NOT NULL);```
+```CREATE TABLE x (column_name NOT NULL);```  
 ```ALTER TABLE x ADD CONSTRAINT some_name UNIQUE(column_name);```
 
 ### Regular primary
@@ -75,6 +67,14 @@ Usern und Rollen können Detail-Rechte (privileges) wie SELECT, INSERT, UPDATE, 
 DDLs darf immer nur der OWNER durchführen. Diese Eigentümerschaft kann aber auch mit ```ALTER TABLE <table_name> OWNER TO <new owner>``` geändert werden. Das kann auch auf Schema-Ebene mit ```GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA <schema_name> TO <user_name>``` geschehen.  
 Neben Usern können auch Gruppen angelegt werden ```CREATE GROUP <group_name>```. Diese können dann über ```GRANT USAGE ON SCHEMA <schema_name> TO <group_name>``` und ```GRANT INSERT, UPDATE, SELECT, DELETE ON ALL TABLES IN SCHEMA <schema_name> TO <group_name>``` mit allen Rechten versehen werden. Danach können dann alle Nutzer, die der neuen Gruppe mit ```ALTER GROUP <group_name> ADD USER <user_name>``` zugewiesen werden über diese Gruppenrechte zugreifen. Erhöhte Stufe ist: ```GRANT ALL PRIVILEGES ON <schema_name>.* TO <user_name>```.
 Das Gegenstück zum ```GRANT``` ist ```REVOKE ALL PRIVILEGES FROM <user_name/role>``` - bzw. bei einer Gruppe ```REVOKE <group_name> FROM <user_name>```.
+
+## Normalformen
+
+|NF|Bedingungen|Erläuterungen|
+|-|-|-|
+|1. NF|Tabellen-Werte sind atomar|1 Attribut = EIN Datenobjekt|
+|2. NF|1. NF + alle Nicht-Schlüssel-Attribute hängen vom Primary Key ab||
+|3. NF|1. + 2. NF + keine transitiven Abhängigkeiten|alle Nicht-Schlüssel-Attribute hängen AUSSCHLIESSLICH vom Primary Key ab und haben untereinander keine Abhängigkeiten|
 
 
 ## CAST
@@ -148,7 +148,7 @@ MEDIAN berechnen:  PERCENTILE_CONT(0.5)
 
 CREATE EXTENSION IF NOT EXISTS tablefunc;
 
-SELECT * FROM CROSSTAB($$
+```SELECT * FROM CROSSTAB($$
   SELECT
     Country, Year, COUNT(1) :: INTEGER AS awards
   FROM Summer_Medals
@@ -160,7 +160,7 @@ SELECT * FROM CROSSTAB($$
   ORDER BY country ASC, year ASC
 $$) AS ct (Country VARCHAR, "2008" INTEGER, "2012" INTEGER)
 ORDER BY country ASC;
-
+```
 -- ROLLUP: GROUP BY subclause with extra rows for group-level aggregations
 -- hierarchical, deaggregating from the leftmost provided column to the right-most
 
@@ -187,10 +187,10 @@ ORDER BY country ASC, medal ASC;
 ...  ROWS BETWEEN [n | UNBOUNDED] PRECEDING  AND  [CURRENT ROW | n | UNBOUNDED] FOLLOWING
 
 ## Meta-Informationen
+
 ### Tabellen erkunden
 Strukturelle Infos gibt es per 
-```select table_schema, table_name 
-from information_schema.tables```
+```select table_schema, table_name from information_schema.tables```
 |Objekt-Typen|
 |-|
 |tables|
