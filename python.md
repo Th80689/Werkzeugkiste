@@ -13,7 +13,8 @@ Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstri
 |Arithmetic|+|Addition|Summe|
 |Arithmetic|-|Subtraktion||
 |Arithmetic|*|Multiplikation|Produkt|
-|Arithmetic|/|Division||
+|Arithmetic|/|Division|Quotient mit Bruchteilen|
+|Arithmetic|//|Floor Division|Quotient mit gerundeter Ganzzahl|
 |Arithmetic|**|Exponential||
 |Arithmetic|%|Modulo|Rest nach Division|
 |Vergleiche|==|Gleichheit|True/False|
@@ -25,6 +26,7 @@ Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstri
 |logisch|[not]in||True/False|
 |logisch|and||True/False|
 |logisch|or||True/False|
+|truthy/falsy|bool()|True (wenn etwas NICHT leer/0 ist, False in anderen Fällen|
 
 ## Datentypen
 Python ermittelt Datentypen anhand der Eingabe. Sie müssen nicht vorab definiert werden.Datentypen kann man mit ```type(<input>)``` abfragen. Ergebnis ist die Klasse, der Python sie zugeordnet hat; Beispiel ```<class 'int'>.
@@ -41,10 +43,25 @@ Multi-Zeilen-Eingabe beginnt und endet im drei doppelten Anführungszeichen ```"
 
 |Methode|Input|Ergebnis|Kommentar|
 |-|-|-|-|
-|x.replace(s1,s2)|'Alles A'|input.replace('A','B')|'Blles B'|
-|x.lower()|'Aber Hallo'|input.lower()|'aber hallo'|
-|x.upper()|'Aber Hallo'|input.upper()|'ABER HALLO'|
-|||||
+|"".replace(s1,s2)|'Alles A'|input.replace('A','B')|'Blles B'|
+|"".lower()|'Aber Hallo'|input.lower()|'aber hallo'|
+|"".upper()|'Aber Hallo'|input.upper()|'ABER HALLO'|
+|"".startswith('x')|"Aber".startswith("A")|True|Case-sensitive|
+|"".endswith()|"Aber".endswith("A")|False|Case-sensitive|
+|in|"lang" in "Ein langes Leben"|True||
+|"".join(iterable)|', '|', '.join(["1","2"])|"1, 2"|
+
+### String-Ausgaben
+### f-Strings (formatierter Ausgabe-String):  
+Mit ```f""``` kann man Variablen mit anderen Python-Konstanten zu einem String-Objekt kombinieren und "leserlich" ausgeben.
+Beispiel:
+```
+  cookie_name="Brownie"
+  cookie_price=4.22
+
+  print(f"Jeder {cookie_name} kostet {cookie_price}.")
+```  
+Mit f-Strings kann man auch FLOAT lesbar ausgeben: ```print(f"{0.0001:f})"``` kommt dann 0.0001 anstatt des Standards 1e-04. Float wird im Standard auf 6 Nachkommastellen gerundet. Will man mehr haben, ```print(f"{0.0000001:.7f})"```, muss man das mitgeben.
 
 ## Lists
 Lists werden mit eckigen Klammern definiert - die einzelnen Elemente durch Komma getrennt. Die Elemente sind gem. Eingabe geordnet. Anhand ihrer Position (=Index) kann man auf sie zugreifen. WICHTIG: 1. Position ist die 0 (Zero-based indexing). Das letzte Element kann man mit dem Index ```list[-1]``` erreichen. Subsetting: die Elemente e1 bis en können mit ```list[<e1>:<e(n+1>)]``` ermittelt werden (n+1, weil das n+1-Element NICHT mit ausgegeben wird). Vom ersten bis n-ten Element: ```list[:(n+1)]```, ab dem n-ten bis zum Ende: ```list[n+1:]```. Mit doppeltem Doppelpunkt kann jedes n-te Element extrahieren - hier: jedes zweite ```list[::2]``` oder hier: jedes Dritte, starten an Position 2 ```list[1::3]```.  
@@ -52,13 +69,24 @@ Lists werden mit eckigen Klammern definiert - die einzelnen Elemente durch Komma
 list.append(<val>)
 
 ## Dictionaries / Maps
-Ein Dictionary ist eine Sammlung von Key-Value-Paaren. Es wird mit geschweiften Klammern, Doppelpunkten und Kommas definiert. Beispiel: ```d={"Key1":"Wert 1", "Key2": Wert 2"}```. Auf die Werte kann man mit dem Key dann wieder zugreifen: z.B. mit ```d["Key1"]``` bekommt man ```"Wert 1"```. Alle Werte (ohne Keys) bekommt man mit ```d.values()```, die Schlüssel mit ```d.keys()```. Mit ```d.items()``` bekommt man das komplette Dictionary in der Form ```dict_items([('Key1','Wert1'),()'Key2','Wert2')])```. Neue Werte kann man mit ```d["Key3"]="Wert3"``` hinzufügen - bzw. einen bestehendes Wertepaar zum Key aktualisieren.
+Ein Dictionary ist eine Sammlung von Key-Value-Paaren, die verändert werden kann (mutable). Man kann es mit ```dict()``` oder dem Shortcut ```{}``` initialisieren. Es wird mit geschweiften Klammern, Doppelpunkten und Kommas definiert. Beispiel: ```d={"Key1":"Wert 1", "Key2": Wert 2"}```. Auf die Werte kann man mit dem Key dann wieder zugreifen: z.B. mit ```d["Key1"]``` bekommt man ```"Wert 1"```. Alle Werte (ohne Keys) bekommt man mit ```d.values()```, die Schlüssel mit ```d.keys()```. Besser ist es aber mit ```.get("key"[,"Fehlermeldung])```: hier gibt es bei fehlendem Key ein "None" bzw. die definierte Fehlermeldung statt einem Runtime-Error. Eine alternativer effizienter - Weg ist der ```in``` Operator. Mit ```'key' in dict``` erhält man eine Boolean Antwort, ob der Key da ist oder nicht.    
+Mit ```d.items()``` bekommt man das komplette Dictionary als Liste von Tupeln in der Form ```dict_items([('Key1','Wert1'),('Key2','Wert2')])```. Wenn ein Dictionary als Wert eine Liste enthält, kann man mit mit diesem Beispiel
+```
+for field, value in d["key"][0].items():  
+    print(field, value)
+```  
+alle Werte einer Liste extrahieren.  
+Neue Werte kann man mit ```d["Key3"]="Wert3"``` hinzufügen - bzw. den Wert eines bestehendes Tupels anhand des Keys aktualisieren. Für größere Mengen kann man die dict-Methode ```.update()``` nutzen. Tupel löschen kann man mit der ```del x["key"]``` Funktion - wenn der Key fehlt, wirft das aber einen Fehler. Besser ist die ```x.pop(key)``` Methode.
+
 ### Sets
 Sets enthalten
 - können nur EINDEUTIGE Werte enthalten
 - die Werte sind UNVERÄNDERBAR (ganze Elemente können nur hinzugefügt oder gelöscht werden)
 Sie werden wie Dictionaries auch mit geschweiften Klammern gebildet - aber OHNE Doppelpunkt. Beispiel: ```s={"Wert1", "Wert2"}```. Die Eingabe-Reihenfolge ist aber NICHT zwangsweise die Position im Set. Alternativ kann eine Liste in ein Set umgewandelt werden: ```a_set=set(list)```. Duplikate werden dabei ohne Fehlermeldung gelöscht.   
-Sets haben keinen Index und ein Subset kann nicht mit ```[]``` gemacht werden. Sie können mit der Methode ```sorted(set)``` geordnet werden. Dies wandelt das Set in eine Liste um.
+Sets haben keinen Index und ein Subset kann nicht mit ```[]``` gemacht werden. Sie können mit der Methode ```sorted(set)``` geordnet werden. Dies wandelt das Set in eine Liste um.   
+Mit ```s.add(x)``` wird ein einzelner Wert hinzugefügt, mit ```s.update(<list>)``` können mehrere Elemente auf einmal integriert werden. Mit ```s.discard(<val>)``` können Werte sicher entfernt werden. Mit ```s.pop()``` wird "zufällig" ein Wert aus dem Set entfernt. Sets können mit den Methoden ```s.union(s2)``` (or), ```s.intersection(s2)``` (and) mengenmäßig verarbeitet werden. Mit ```s.difference(s2)``` bekommt man alle Datensätze in s, die nicht in s2 waren. Die Anzahl der Datensätze in einem Set kann mit ```len(set)``` abgefragt werden.
+### Counter (package: collections)
+Sonderform von Dictionaries. Nach ```from collections import Counter``` kann man mit ```Counter(<dict>)``` ein Aggregat erzeugen, in dem das Vorkommen jedes Schlüssels gezählt wird. Mit ```.most_common(x)``` erhält man die Keys absteigend sortiert nach Anzahl von Vorkommen. Mit x kann man das leicht auf die Top x beschränken.
 ### Tuples
 Tupel werden mit der Syntax ```t=("Wert1","Wert2", ...)``` gebildet - oder mit der Tupel-Funktion aus einer anderen Datenstruktur erzeugt ```t=tuple(list)```.
 Tuples sind unveränderbar (immutable)
@@ -217,6 +245,20 @@ URL-Aufrufe erzeugen
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
+|df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
+
+|df.head()|erste Zeilen anzeigen||
+|df.info()||Zeigt Spalten-Namen an|
+|df.shape|(Anzahl Zeilen, Anzahl Spalten|Struktur |
+|df.describe()|Tabelle|Zusammenfassungen/Statistiken|
+|df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
+|df.columns|Liste|Liste aller Spalten-Namen|
+|df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
+|df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
+|df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
+|df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
+
+
 
 ## Eigene Funktionen erstellen
 ### Definition einer Funktion
