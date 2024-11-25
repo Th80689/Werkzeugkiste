@@ -257,7 +257,15 @@ URL-Aufrufe erzeugen
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
-
+|df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
+|df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
+|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg([min, max, sum])|Aggregate||
+|df.pivot_table(values='Aggregat-Wert', index='Gruppierung')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
+|df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
+|df.reset_index()|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
+|df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
+|df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
+|df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 
 
 ## Eigene Funktionen erstellen
