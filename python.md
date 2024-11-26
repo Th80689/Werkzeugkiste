@@ -246,7 +246,6 @@ URL-Aufrufe erzeugen
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
-
 |df.head()|erste Zeilen anzeigen||
 |df.info()||Zeigt Spalten-Namen an|
 |df.shape|(Anzahl Zeilen, Anzahl Spalten|Struktur |
