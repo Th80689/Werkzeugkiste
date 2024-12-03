@@ -3,6 +3,7 @@
 Kommentare werden mit dem # eingeführt: ```# Kommentar```.  
 Ausgaben: ```print(<input>)```     
 Infos: ```help(<function>)```  
+Zeilen-Umbrüche: Backslash ```\```(Shift+option+7) 
 ## Variablen-Konventionen
 MUSS: EIN Wort - keine Leerzeichen.   
 Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstrich ODER ```CamelCase```: keine Leerzeichen, Beginn eines Wortes wird durch Großbuchstaben gekennzeichnet
@@ -238,10 +239,16 @@ URL-Aufrufe erzeugen
 
 ### Package pandas
 ```import pandas as pd```. Wichtigste Klasse, die bereitgestellt wird: ```pandas.core.frame.DataFrame``` - weiter nur noch DataFrame (oder df) genannt.
+
+Erzeugen: mit pd.DataFrame(<list>, <dict>)
+1. List of dicts: l = [{"key1":"val1", "key2":"val2"},{"key1":"val1a", "key2":"val2a"} ]
+2. Dicts of lists d={"key1":["val1","val1a"], key2:["val2","val2a"]}
+
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |pd.DataFrame([dict|list|array])|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
 |pd.read_csv(<path/filename>[, chunksize=i])|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
@@ -258,13 +265,27 @@ URL-Aufrufe erzeugen
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
-|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg([min, max, sum])|Aggregate||
-|df.pivot_table(values='Aggregat-Wert', index='Gruppierung')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
+|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg([min, max, sum, {'col_name':'count'}])|Aggregate||
+|df.pivot_table(values='Aggregat-Wert', index='Gruppierung', columns='Spalten')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
 |df.reset_index()|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
 |df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
+|df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
+
+## pandas: Merge Data
+|Join-Typ|pandas-Befehl|
+|INNER JOIN|df1.merge(df2, on=['col1','col2'], suffixes=('_for_df1','_for_df2'))|
+
+
+## Missing values finden
+df.isna() : pro Wert ausgeben
+df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
+df.isna().sum(): Anzahl der fehlenden Werte
+
+df.dropna(): Zeilen, die mindestens ein na haben löschen
+df.fillna(0): füllt leere Werte mit 0
 
 
 ## Eigene Funktionen erstellen
@@ -310,3 +331,18 @@ capitalize=map(lambda x: x.capitalize(), names) #erzeugt ein map-Objekt
 list(capitalize)
 ```
 
+# matplotlib
+import matplotlib as plt
+## Histogramm
+df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots 
+## Barplot
+df.plot(kind="bar", title="A Title")
+## Lineplot
+df.plot(x="col1", y="col2", kind="line", rot=45)  (rot: Rotation 45% für x-Beschriftung)
+## Scatterplot
+df.plot(x="col1", y="col2", kind="scatter")
+
+
+plt.legend(["val1", "val2"])
+-- DANACH: immer 
+plt.show()
