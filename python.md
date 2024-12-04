@@ -277,7 +277,9 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 ## pandas: Merge Data
 |Join-Typ|pandas-Befehl|
 |INNER JOIN|df1.merge(df2, on=['col1','col2'], suffixes=('_for_df1','_for_df2'))|
-
+|LEFT JOIN|df1.merge(df2, on=['col1','col2'], how='left')|
+|RIGHT JOIN (unterschiedliche Spaltennamen|df1.merge(df2, how='right', left_on='col1', right_on='col2'])|
+|OUTER JOIN (unterschiedliche Spaltennamen|df1.merge(df2, how='outer', left_on='col1', right_on='col2'], suffixes=('_for_df1','_for_df2'))|
 
 ## Missing values finden
 df.isna() : pro Wert ausgeben
