@@ -247,7 +247,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |pd.DataFrame([dict|list|array])|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|pd.read_csv(<path/filename>[, chunksize=i])|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|pd.read_csv(<path/filename>[, chunksize=i], index_col=['coli])|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
@@ -275,11 +275,37 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
 
 ## pandas: Merge Data
+### Methode merge()
 |Join-Typ|pandas-Befehl|
 |INNER JOIN|df1.merge(df2, on=['col1','col2'], suffixes=('_for_df1','_for_df2'))|
 |LEFT JOIN|df1.merge(df2, on=['col1','col2'], how='left')|
 |RIGHT JOIN (unterschiedliche Spaltennamen|df1.merge(df2, how='right', left_on='col1', right_on='col2'])|
 |OUTER JOIN (unterschiedliche Spaltennamen|df1.merge(df2, how='outer', left_on='col1', right_on='col2'], suffixes=('_for_df1','_for_df2'))|
+|JOIN auf Index|df1.merge(df2, left_on="col1", left_index =True, right_on="col2", right_index=True|
+Hinweis: mit der Option ```indicator=True``` erhält man die Spalte ```_merge```, die die Quelle des Datensatzes zeigt (left_only, both, right_only)
+
+Merge - weitere Optionen
+|Option|Auswirkung|mögliche Parameter|
+|suffixes|Namenssuffix für namensgleiche Spalten|kommagetrennte Strings|
+|indicator|ergänzt Ergebnis-df mit Spalte '_merge' mit Herkunft Datensatz|'both','left_only','right_only'|
+|validate|Prüft Relation und wirft ggf. 'MergeError'|'one_to_one', 'one_to_many','many_to_one','many_to_many'|
+### Methode merged_ordered()
+Die Methode eignet sich besonders für Time-Series Merges, da das Ergebnis nach dem on-Kriterium sortiert wird.
+Unterschiede zu merge():
+- Aufruf: wird ```pd.merge_ordered(df1, df2, how='inner|left|right|outer' on='<col1>')
+- Default JOIN Typ: 'outer'
+- Optionen zum Umgang mit Missing Values: ```fill_method``` mit den Parameter ```ffill``` (Forward fill: NaN-Wert wird durch letzten bekannten Vorgänger-Wert ersetzt). 
+
+## pandas: Filter Joins
+SEMI JOIN: Filter-Vektor: Nur col's von LINKS, die in RECHTS sind, keine Duplikate ```df['col1'].isin(df2['col1'])```   
+ANTI JOIN: Nur col's von LINKS, die NICHT in RECHTS sind
+1. df mit _merge erstellen: ```base=df['col1'].merge(df2, on='col1', how='left', indicator=True)```
+2. Filter-Vektor erstellen: ```f=base.loc[base['_merge'] == 'left_only', 'col1']]```
+3. Filter anwenden: ```base[base['col1'].isin(f)]```
+
+## pandas: Concatenation
+Basis: ```pd.concat([df1, df2, ...])```. Option  ```ignore_index=True``` verwirft die Indize der Ursprungs-DFs. Mit ```keys=['label_df1','label_df2',...]``` können Labels im Index ergänzt werden. Mit ```join='inner'``` werden nur Spalten genommen, die in ALLEN Tabellen vorhanden sind. Ohne diese Option werden Spalten, die in einigen DFs fehlen mit NaN gefüllt.
+Die Option ```verify_integrity=True``` verhindert die Entstehung von Duplikaten im Index und wirft einen 'Value Error'.
 
 ## Missing values finden
 df.isna() : pro Wert ausgeben
