@@ -259,16 +259,17 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.describe()|Tabelle|Zusammenfassungen/Statistiken|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
 |df.columns|Liste|Liste aller Spalten-Namen|
+|df.rename(columns = {'col_old':'col_new','col2_old':'col2_new'}, inplace = True)|Spalte umbenennen|
 |df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
-|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg([min, max, sum, {'col_name':'count'}])|Aggregate||
+|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg(['min', 'max', 'sum', {'col_name':'count'}])|Aggregate||
 |df.pivot_table(values='Aggregat-Wert', index='Gruppierung', columns='Spalten')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
-|df.reset_index()|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
+|df.reset_index(inplace=True)|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
 |df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
@@ -296,6 +297,9 @@ Unterschiede zu merge():
 - Default JOIN Typ: 'outer'
 - Optionen zum Umgang mit Missing Values: ```fill_method``` mit den Parameter ```ffill``` (Forward fill: NaN-Wert wird durch letzten bekannten Vorgänger-Wert ersetzt). 
 
+### Methode merge_asof()
+wie merge_ordered() left join, ABER: geht auf den nächsten Schlüsselwert (kleiner), nicht zwingend auf ein konkretes Match. Voraussetzung: Spalten müssen SORTIERT sein.
+```pd.merge_asof(df1, df2, on='col', suffixes=('_x_','_y'), direction='forward|nearest|backward')```
 ## pandas: Filter Joins
 SEMI JOIN: Filter-Vektor: Nur col's von LINKS, die in RECHTS sind, keine Duplikate ```df['col1'].isin(df2['col1'])```   
 ANTI JOIN: Nur col's von LINKS, die NICHT in RECHTS sind
@@ -306,8 +310,12 @@ ANTI JOIN: Nur col's von LINKS, die NICHT in RECHTS sind
 ## pandas: Concatenation
 Basis: ```pd.concat([df1, df2, ...])```. Option  ```ignore_index=True``` verwirft die Indize der Ursprungs-DFs. Mit ```keys=['label_df1','label_df2',...]``` können Labels im Index ergänzt werden. Mit ```join='inner'``` werden nur Spalten genommen, die in ALLEN Tabellen vorhanden sind. Ohne diese Option werden Spalten, die in einigen DFs fehlen mit NaN gefüllt.
 Die Option ```verify_integrity=True``` verhindert die Entstehung von Duplikaten im Index und wirft einen 'Value Error'.
-
-## Missing values finden
+## pandas: .query()
+Mit ```df.query('query String')``` kann man "SQL-ähnliche Abfragen gegen einen DataFrame schiessen.
+## pandas: .melt()
+Umwandeln (unpivot) von "wide" auf "long"-Format.
+df.melt(id_vars='col', var_name='date', value_name='close')
+## pandas: Missing values finden
 df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
 df.isna().sum(): Anzahl der fehlenden Werte
