@@ -261,6 +261,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.columns|Liste|Liste aller Spalten-Namen|
 |df.rename(columns = {'col_old':'col_new','col2_old':'col2_new'}, inplace = True)|Spalte umbenennen|
 |df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
+|df.size|Integer|Anzahl Einträge; Alternativ: df.shape[0]|
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
@@ -370,7 +371,8 @@ list(capitalize)
 # matplotlib
 import matplotlib as plt
 ## Histogramm
-df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots 
+df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots   
+danach immer: ```plot.show()```
 ## Barplot
 df.plot(kind="bar", title="A Title")
 ## Lineplot
@@ -382,3 +384,29 @@ df.plot(x="col1", y="col2", kind="scatter")
 plt.legend(["val1", "val2"])
 -- DANACH: immer 
 plt.show()
+
+# Statistik in python
+```import numpy as np```
+```import statistics``` 
+## Measures of center
+Durchschnitt: ```np.mean()```
+Median (50% der Stichprobe ist geringer): ```np.median()```
+Mode(der am häufigsten vorkommende Wert): ```statistics.mode()```
+## Measures of spread
+Varianz: ```np.var(df["col1"], ddof=1)``` (ddof:1 - bei Stichprobe; bei Gesamt-Population: WEGLASSEN)  
+Standard-Abweichung (standard deviation(SD)): ```np.std(df["col1"], dd0f=1 )```  (ddof:1 - bei Stichprobe; bei Gesamt-Population: WEGLASSEN)  
+Quantile: 25% Quantile ```np.quantile(df['col1'], 0.25])```
+Quartiles: ```np.quantile(df['col1'],[0, 0.25,0.5,0.75,1])``` oder ```np.quantile(df['col1'],np.linspace(0,1,5))```
+Interquartile Range (IQR): Entfernung zwischen 25% und 75% Percentile. ```from scipy.stats import iqr
+iqr(df['col1'])```   
+Standard-Outlier: kleiner as 1.5 * IQR - 25 Quantil ODER größer als 1.5 * IQR + 75 Quantil  
+Alle auf einmal: ```df['col1'].describe()``` 
+## Stichproben
+### Sampling
+```np.sample(<no of samples>, replace=True|False)```. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen.
+### Uniforme Distribution
+```from scipy.stats import uniform```  
+Wahrscheinlichkeit, dass man bis zum Zielwert kommt: ```uniform.cdf(7,0,12)```(<Zielwert>, <Untere Grenze>, <Obere Grenze>). Mit ```uniform.rvs(0, 5, size=10)``` bekommt man ein Sample von 10 aus dem Intervall 0 bis 5 aus der uniformen Verteilung.
+### binomial Verteilung
+```from scipy.stats import binom```   
+Mit binom.rvs(#Würfe, Wahrscheinlichkeit Erfolg, size=# Versuche) erzeugt man ein Sample-Array für 8 Würfe einer Münze mit 50% Wahrscheinlichkeit für "Kopf"  ```binom.rvs(1, 0.5, size=8)```.  
