@@ -188,7 +188,7 @@ def num_sequence(n):
 import pandas as pd
 
 '# Initialize reader object: df_reader
-df_reader = pd.read_csv('ind_pop.csv', chunksize=10)
+df_reader = pd.read_csv('ind_pop.csv', chunksize=10, parse_dates=["<Liste mit Datumsspalten>"], nrows=<Anzahl zu ladende Zeilen>)
 
 '# Print two chunks
 print(next(df_reader))
@@ -253,9 +253,15 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
+|pd.to_datetime(df["char_time_col"])|<value>|Spaltenwert in Zeit umwandeln|
+|df["new_col"]=pd.to_datetime(df[["year","month","day"]])||Mehrere Spalten zu einem Datum zusammenfassen|
+|df["date_col"].dt.month/day/year|Integer|Wert Datumsbestandteil auslesen|
+|df["attrib"].astype(int|str|float|dict|list|bool)|<value>|Spaltenwert als Integer|... behandeln|
 |df.head()|erste Zeilen anzeigen||
-|df.info()||Zeigt Spalten-Namen an|
-|df.shape|(Anzahl Zeilen, Anzahl Spalten|Struktur |
+|df.info()||Zeigt Spalten-Namen samt Anzahl NOT NULL Werte und Datentype an|
+|len(df)|Integer|Anzahl Zeilen|
+|df.shape|Tupel (Anzahl Zeilen, Anzahl Spalten)|Struktur |
+|df.dtypes||Zeigt NUR die Datentypen aller Attribute an|
 |df.describe()|Tabelle|Zusammenfassungen/Statistiken|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
 |df.columns|Liste|Liste aller Spalten-Namen|
@@ -265,14 +271,27 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
+|~|Negation|df[Mit ~"Col1"].isin(["Val1"]) sucht man alle Felder, die NICHT den Suchkriterien entsprechen|
+|df.select_dtypes('number|object').head()|Tabelle|Nur die ersten 5 Zeilen von Spalten eines definierten Typs ausgeben|
+|df["col"].nunique()|Liste|Anzahl der UNIQUE-Werte eines Attributes|
+|df["col"].str.contains("<searchstring>|<searchstring2>")|Boolean Series|als Filter|
+|df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
-|df.groupby('Gruppierungsspalte')['<Messspalte>'].agg(['min', 'max', 'sum', {'col_name':'count'}])|Aggregate||
+|df.agg(["mean","std"])|MEHRERE Aggregat-Funktionen auf ALLE numerischen Spalten anwenden||
+|df.agg({"col1": ["mean","std"],"col2":["median"]})|BENANNTE Aggregate auf mehrere Spalten||
+|df.groupby('Gruppierungsspalte')['<Messspalte>'].sum/min/max/var/std/count()|Aggregate||
+|df.groupby('Gruppierungsspalte').agg(new_col_name=("<Messspalte", "<Agg-Funktion>"), new_col2_name=("<Messspalte", "<Agg-Funktion2>"))|mehrere neue Spalten mit neuen Namen||
 |df.pivot_table(values='Aggregat-Wert', index='Gruppierung', columns='Spalten')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
+|pd.crosstab(df['col_index'],df['col2'])|Tabelle|Zählt Kombinationen in Tabelle für jede Ausprägung der beiden Spalten|
+|pd.crosstab(df['col_index'],df['col2'],values=df['col_x]', aggfunc('function(e.g. mean)'))|Tabelle|Berechnet Wert für jede Kombination der Ausprägung der beiden Spalten|
+
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
 |df.reset_index(inplace=True)|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
 |df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
+|series.at[x]|Scalar|Wert an Position x|
+|df.at[index[x],"col"]|Scalar|Wert in Zeile index[x], Spalte "col"|
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
 
@@ -319,25 +338,64 @@ df.melt(id_vars='col', var_name='date', value_name='close')
 ## pandas: Missing values finden
 df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
-df.isna().sum(): Anzahl der fehlenden Werte
+df.isna().sum(): Anzahl der fehlenden Werte  
 
-df.dropna(): Zeilen, die mindestens ein na haben löschen
-df.fillna(0): füllt leere Werte mit 0
+### pandas: Schwellwert (mehr als 5% n/a Werte pro Spalte => verwerfen )
+1. ```threshold = len(df) * 0.05```  
+2. ```cols_to_drop=df.columns[df.isna().sum() <= threshold>]```
+3. ```df.dropna(subset = cols_to_drop, inplace=True)```   
+Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere den df"   
 
+### Methoden, um fehlende Werte zu befüllen:
+1. ```df.fillna(0)```: füllt leere Werte mit 0
+2. Pauschal mit mode() befüllen: ```cols_with_missing_values = df.columns[df.isna().sum()>0] \ for col in cols_with_missing_values[:-1]: \   df[col].fillna(df[col].mode()[0]) ```
+3. Pro Untergruppe berechnen: ```df_dict= df.groupby("group_col")["value_col"].median().to_dict()\ df["value_col"]=df["value_col"].fillna(df["group_col"].map(df_dict))```
+4. ```df.fillna(method="ffill")```: füllt leere Werte mit Wert des Vorgängers
+### df - unterschiedliche (kategorische) Werte je Spalte analysieren
+1. ```non_numeric = df.select_dtypes("object")```  
+2. ```for col in non_numeric.columns \    print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())```
+
+### Series - Daten umwandeln
+df["col"].str.replace("<orig>","<new">)  
+df["col"].str.split('@', expand = True)
+df["col"].astype('float'|'int'|'category'...)   
+df["new_col"]=df.groupby("group_col")["agg_col"].transform(lambda x: x.std())
+
+### Eigene Kategorien vergeben - anhand Zeichen
+1. Liste mit eigenen Kategorien erzeugen: ```categories=['A','B',C']
+2. Kategorien definieren
+2.1 A = "<str1>|<str2>"
+2.2 B = "<str3>|<str4>"
+2.3 C = "<str5>|<str6>"
+3. Bedingungen zusammenfassen ```conditions=[(df.["col"].str.contains(A)),(df.["col"].str.contains(B)),(df.["col"].str.contains(C))]````
+4. Neue Spalte befüllen: ```df["new_col"] = np.select(conditions, categories, default="Other")```  
+
+### Eigene Kategorien aus numerischen Variablen erstellen - über Binning
+1. Bins (hier: Quantile) bestimmen
+1.1 twenty_fifth = df["num_col"].quantile(0.25)
+1.2 fifties = df["num_col"].median()
+1.3 seventy_fifth = df["num_col"].quantile(0.75)
+1.4 maximum = df["num_col"].max()
+2. Liste mit Labels erstellen: ```labels = ["A","B","C","D"]```
+3. Liste mit Bins erstellen: ```bins = [0, twenty_fifth, fifties, seventy_fifth, maximum]```
+4. Kategorie-Spalte erstellen (mit ```pd.cut```):   
+```df["new_cat_col"] = pd.cut(df["num_col"],\
+                                labels = labels,\
+                                bins = bins)```   
 
 ## Eigene Funktionen erstellen
 ### Definition einer Funktion
 Eine Funktions-Definition hat folgende Struktur:
 ```
 # Definitionskopf
-def <Funktionsname>([Argument[, ...]]):
+```def <Funktionsname>([Argument[, ...]]):
     # eingerückte Anweisungen
     ... 
     # Ausgabe (optional)
     return <output>
 ```
 Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden
-"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur behandelt. Für keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
+"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
 
 ### Docstrings
 Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils zwei Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n).
@@ -369,7 +427,7 @@ list(capitalize)
 ```
 
 # matplotlib
-import matplotlib as plt
+import matplotlib.pyplot as plt
 ## Histogramm
 df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots   
 danach immer: ```plot.show()```
@@ -385,6 +443,24 @@ plt.legend(["val1", "val2"])
 -- DANACH: immer 
 plt.show()
 
+# Plotten mit seaborn
+Geht NUR mit matplotlib!! Danach: ```import seaborn as sns```. Beispiel für Histogramm: 
+## Histplot: Anzahl von Vorkommen von (x)
+sns.histplot(data=df, x='<col>',binwidth=1)
+### Alternative: Countplot 
+sns.countplot(data=df, x="col")
+## Boxplot: Spread von (y) je (x)
+sns.boxplot(data=df, x='<col1>',y='<col2>')
+## Barplot: Durchschnitt (y) pro Kategorie (x) + 95% Konfidenz-Intervall für den Durchschnitt 
+sns.barplot(data=df, x='<col1>',y='<col2>')
+## Heatmap: (lineare) Korrelationen sichtbar machen
+sns.heatmap(df.corr(), annot=True)  
+Greift NUR numerische Werte auf!
+## Pairplot: Paarweise Korrelationen von Spalten
+sns.pairplot(data=df, vars=["<optionale Liste der Spalten"])
+## KDE (kernel density estimation):
+sns.kdeplot(data=df, x="col", hue="col1", cut=0)
+
 # Statistik in python
 ```import numpy as np```
 ```import statistics``` 
@@ -395,7 +471,7 @@ Mode(der am häufigsten vorkommende Wert): ```statistics.mode()```
 ## Measures of spread
 Varianz: ```np.var(df["col1"], ddof=1)``` (ddof:1 - bei Stichprobe; bei Gesamt-Population: WEGLASSEN)  
 Standard-Abweichung (standard deviation(SD)): ```np.std(df["col1"], dd0f=1 )```  (ddof:1 - bei Stichprobe; bei Gesamt-Population: WEGLASSEN)  
-Quantile: 25% Quantile ```np.quantile(df['col1'], 0.25])```
+Quantile: 25% Quantile ```np.quantile(df['col1'], 0.25])``` oder ```df["col1"].quantile(0.25)```  
 Quartiles: ```np.quantile(df['col1'],[0, 0.25,0.5,0.75,1])``` oder ```np.quantile(df['col1'],np.linspace(0,1,5))```
 Interquartile Range (IQR): Entfernung zwischen 25% und 75% Percentile. ```from scipy.stats import iqr
 iqr(df['col1'])```   
@@ -403,10 +479,79 @@ Standard-Outlier: kleiner as 1.5 * IQR - 25 Quantil ODER größer als 1.5 * IQR 
 Alle auf einmal: ```df['col1'].describe()``` 
 ## Stichproben
 ### Sampling
-```np.sample(<no of samples>, replace=True|False)```. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen.
+```df['col'].sample(<no of samples>, replace=True|False)```. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen.
 ### Uniforme Distribution
 ```from scipy.stats import uniform```  
 Wahrscheinlichkeit, dass man bis zum Zielwert kommt: ```uniform.cdf(7,0,12)```(<Zielwert>, <Untere Grenze>, <Obere Grenze>). Mit ```uniform.rvs(0, 5, size=10)``` bekommt man ein Sample von 10 aus dem Intervall 0 bis 5 aus der uniformen Verteilung.
 ### binomial Verteilung
 ```from scipy.stats import binom```   
 Mit binom.rvs(#Würfe, Wahrscheinlichkeit Erfolg, size=# Versuche) erzeugt man ein Sample-Array für 8 Würfe einer Münze mit 50% Wahrscheinlichkeit für "Kopf"  ```binom.rvs(1, 0.5, size=8)```.  
+Mit ```binom.pmf(7,10,0.5)``` bekommt man die Wahrscheinlichkeit, 7* Erfolg bei 10 Versuchen bei einer Wahrscheinlichkeit von 50% zu erhalten. ```binom.cdf(7,10,0.5)``` gibt die Wahrscheinlichkeit, bei 10 Würfen und einer Wahrscheinlichkeit von 50% mindestens 7* Erfolg zu haben.
+### Normalverteilung
+```from scipy.stats import norm```  
+Wieviel Prozent liegen unter dem Zielwert? ```norm.cdf(Zielwert, Durchschnitt, Standard-Abweichung)```  
+Bei welchem Wert liegen 90% unter dem Zielwert? ```norm.ppf(Prozent(Dezimalschreibweise), Durchschnitt, Standard-Abweichung)```  
+Zufallszahlen mit der Normalverteilung generieren ```norm.rvs(Durchschnitt, Standard-Abweichung, size=10)``` size: Sample-Größe  
+
+### Poissonverteilung
+Beschreibt die Wahrscheinlichkeit einer bestimmten Anzahl von Ereignissen innerhalb einer definierten Zeit-Periode.
+```from scipy.stats import poisson```  
+Was ist die Wahrscheinlichkeit von x Ereignissen innerhalb einer Zeitperiode bei Erwartungswert LAMBDA für die Zeitperiode? ```poisson.pmf(x,LAMBDA)```. Was ist die Wahrscheinlichkeit, dass x oder weniger Ereignisse in einer Periode auftreten? ```poisson.cdf(x,LAMBDA)```. Samples können mit ```poisson.rvs(LAMBDA, size=y)``` erzeugt werden.
+### Exponentionalverteilung
+```from scipy.stats import expon```   
+Wie lange dauert es (beliebige Zeiteinheit) zwischen zwei Ereignissen? Wie hoch ist die Wahrscheinlichkeit bei  (Erwartungswert (LAMBDA) Wartezeit: 2 min), dass man EINE Minute wartet? Scale ist immer 1/LAMBDA ```expon.cdf(1, scale=2)```.  
+
+### Korrelation
+Die Pearsson Produkt-Moment-Korrelation: ```df['col1'].corr(df['col2'])``` ist NUR für lineare Beziehungen geeignet. Ggf. hilft es, die LOG-Werte zu vergleichen. Zur Umwandlung kann man ```np.log(df['col'])``` verwenden.
+
+### Gold Standard bei Experimenten
+1. Zufällige Zuweisung zu Treatment/Control Group (macht Gruppen "vergleichbar")
+2. Placebo statt Treatment nehmen
+3. Double Blind Versuch (auch der Versuchsleiter weiß nicht, ob der Proband Placebo oder Treatment bekommt)
+
+# OpenAI und Python
+## completion request
+from openai import OpenAI
+client = OpenAI(api_key="ENTER YOUR KEY HERE")
+response = client.chat.completions.create(
+    model = "gpt-4o-mini",
+    messages = [{"role":"user", "content":"<Frage>"}]
+)
+print(response) => ChatCompletion-Objekt  
+print(response.choices[]) => Choice-Objekt   
+print(response.choices[].message) => ChatCompletionMessage-Objekt  
+print(response.choices[0].message.content) => die "reine" Antwort as String.
+## moderation request
+response = client.moderations.create(
+    model = "text-moderation-latest",
+    input = "I could kill for hamburgers"
+)
+print(response.model_dump)  
+print(response.results[0].category_scores)
+## speech to text (whisper)
+audio_file = open("meeting_recording_xxx.mp3", "rb")
+
+response = client.audio.transcriptions.create(model="whisper-1", file = audio_file)
+
+print(response.text)
+## translate speech (whisper) - to english only
+audio_file = open("non_english.mp3", "rb")
+
+prompt = "The transcript is about AI trends and ChatGPT"
+
+response = client.audio.translations.create(model="whisper-1", file = audio_file, prompt=prompt)
+
+print(response.text)
+
+## model chaining (Beispiel: Meeting Teilnehmer extrahieren)
+audio_file = open("meeting.mp3", "rb")
+audio_response = client.audio.transcriptions.create(model="whisper-1", file = audio_file)
+
+transcript=audio_response.text
+prompt = "Extract the attendee names from the start of this meeting transcript: " + transcript
+
+response = client.chat.completions.create(
+    model = "gpt-4o-mini",
+    messages = [{"role":"user", "content": prompt}]
+)
+print(response.choices[0].message.content)
