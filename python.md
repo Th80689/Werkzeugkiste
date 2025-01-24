@@ -175,16 +175,16 @@ Beispiel 5: Negative Zahlen von 0 bis 8 als Dictionary ```neg_dict={num: -num fo
 Syntax: statt [] wie bei List comprehension werden () verwendet. Das Ergebnis wird NICHT als Liste im Arbeitsspeicher gehalten - sondern dient nur zur Iteration. Das kann helfen, wenn GROSSE Listen verarbeitet werden müssen und Arbeitsspeicher knapp wird. Beispiel: ()
 
 ## Generator function
-file: sequence.py
+```file: sequence.py
 def num_sequence(n):
     """Generate values from 0 to n."""
     i = 0
     while i < n:
         yield i
         i += 1
-
+```
 ## Batch-Verarbeitung: 10 Datensätze pro Batch
-'# Import the pandas package
+```'# Import the pandas package
 import pandas as pd
 
 '# Initialize reader object: df_reader
@@ -193,7 +193,7 @@ df_reader = pd.read_csv('ind_pop.csv', chunksize=10, parse_dates=["<Liste mit Da
 '# Print two chunks
 print(next(df_reader))
 print(next(df_reader))
-
+```
 
 ## Module 
 Module sind "Standard"-Python-Skripte mit Funktionen und Attributen, die mit der Standard-Installation bereitstehen - und die man bei Bedarf importieren kann. Sie können mit folgenden Varianten ganz oder teilweise geladen werden:
@@ -212,20 +212,20 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 |subprocess|Terminal-Kommandos absetzen|
 
 ### os - nützliche Beispiele
-|Funktion/Konstanten|Output/Klasse|Beschreibung|
+```|Funktion/Konstanten|Output/Klasse|Beschreibung|
 |os.getcwd()|str|Kompletter Pfad des aktuellen Verzeichnisses|
 |os.chdir("target")|n.a.|Arbeitsverzeichnis wechseln|
 |os.environ|dict|Informationen zur Umgebung|
-
+```
 ### string - nützliche Beispiele
 |Funktion/Konstanten|Output/Klasse|Beschreibung|
 ||||
 ||||
 
 ### datetime - nützliche Beispiele
-|Funktion/Konstanten|Output/Klasse|Beschreibung|
+```|Funktion/Konstanten|Output/Klasse|Beschreibung|
 |date(yyyy,m,d)|datetime.date|Datum aus Integer-Werten erzeugen|
-
+```
 ## Packages
 Packages sind eine Sammlung von MEHREREN Modulen - auch Library oder Bibliothek genannt. Sie müssen erst aus dem PyPI (Python Package Index) über ein Terminal heruntergeladen werden, bevor sie importiert werden können.  
 ```python3 -m pip install <package name>```. Danach kann es Python mit ```import <package name> as <alias>``` verfügbar gemacht werden.
@@ -235,19 +235,22 @@ Arbeiten mit Zahlen
 ### Package requests
 URL-Aufrufe erzeugen
 
-|requests.get(url="https://app.database.com")|Responsecodes erhalten|
+|Befehl|Ergebnis|
+|-|-|
+|```requests.get(url="https://app.database.com")```|Responsecodes erhalten|
+
 
 ### Package pandas
 ```import pandas as pd```. Wichtigste Klasse, die bereitgestellt wird: ```pandas.core.frame.DataFrame``` - weiter nur noch DataFrame (oder df) genannt.
 
 Erzeugen: mit pd.DataFrame(<list>, <dict>)
-1. List of dicts: l = [{"key1":"val1", "key2":"val2"},{"key1":"val1a", "key2":"val2a"} ]
-2. Dicts of lists d={"key1":["val1","val1a"], key2:["val2","val2a"]}
+1. List of dicts: ```l = [{"key1":"val1", "key2":"val2"},{"key1":"val1a", "key2":"val2a"} ]```
+2. Dicts of lists ```d={"key1":["val1","val1a"], key2:["val2","val2a"]}```
 
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
-|pd.DataFrame([dict|list|array])|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|pd.read_csv(<path/filename>[, chunksize=i], index_col=['coli])|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
+|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['coli])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
@@ -276,16 +279,13 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["col"].nunique()|Liste|Anzahl der UNIQUE-Werte eines Attributes|
 |df["col"].str.contains("<searchstring>|<searchstring2>")|Boolean Series|als Filter|
 |df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
+|df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
 |df.agg(["mean","std"])|MEHRERE Aggregat-Funktionen auf ALLE numerischen Spalten anwenden||
 |df.agg({"col1": ["mean","std"],"col2":["median"]})|BENANNTE Aggregate auf mehrere Spalten||
 |df.groupby('Gruppierungsspalte')['<Messspalte>'].sum/min/max/var/std/count()|Aggregate||
 |df.groupby('Gruppierungsspalte').agg(new_col_name=("<Messspalte", "<Agg-Funktion>"), new_col2_name=("<Messspalte", "<Agg-Funktion2>"))|mehrere neue Spalten mit neuen Namen||
-|df.pivot_table(values='Aggregat-Wert', index='Gruppierung', columns='Spalten')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Durchschnitte bei Spalten und Zeilen|
-|pd.crosstab(df['col_index'],df['col2'])|Tabelle|Zählt Kombinationen in Tabelle für jede Ausprägung der beiden Spalten|
-|pd.crosstab(df['col_index'],df['col2'],values=df['col_x]', aggfunc('function(e.g. mean)'))|Tabelle|Berechnet Wert für jede Kombination der Ausprägung der beiden Spalten|
-
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
 |df.reset_index(inplace=True)|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
@@ -295,6 +295,21 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
 
+## Reshaping: LONG vs. WIDE - pivot und melt
+LONG: Pro Zeile EIN Feature, EINE Beobachtung auf MEHRERE Zeilen verteilt   
+WIDE: EINE Beobachtung pro Zeile (mit MEHREREN Features)
+LONG to WIDE: pivot  
+WIDE to LONG: melt  
+
+|Pandas Befehl|Ergebnis|Erläuterung|
+|-|-|-|
+|df.pivot(index="<col als Zeilenindex>", columns="<col(s) für neue Spalten>", values="<col(s) in neuen Feldern>")|neuer Df|Voraussetzungen: index/col - Paar ist UNIQUE, keine Aggregate möglich|
+|df.pivot_table(index='Gruppierung', columns='Spalten', values='Wert(zum aggregieren)')|Tabelle|Optionen: aggfunc=[np.func], columns = <weiterer Agg-Level>, fill_value = 0 (0 statt NaN bei leeren Werten), margins=True (Aggregate gem. Definition für ALLE Spalten und Zeilen hinzufügen|
+|df.transpose()|DataFrame|Spalten in Zeilen und Zeilen in Spalten umwandeln|
+|pd.crosstab(df['col_index'],df['col2'])|Tabelle|Zählt Kombinationen in Tabelle für jede Ausprägung der beiden Spalten|
+|pd.crosstab(df['col_index'],df['col2'],values=df['col_x]', aggfunc('function(e.g. mean)'))|Tabelle|Berechnet Wert für jede Kombination der Ausprägung der beiden Spalten|
+|df.melt(id_vars='<col(s) Identifier>', value_vars='feature(s)',var_name='neuer feature-name', value_name='neuer value-name')|Df|Umwandeln (unpivot) von "wide" auf "long"-Format.|
+|pd.wide_to_long(df, stubnames = ["prefix1","prefix2"], i="Index1 Ziel-Spalte",j="Index2 Ziel-Spalte")||Optionen: sep="_" (wenn die Zahl nicht direkt folgt), suffix='\w+' (wenn Suffix keine Zahl ist|
 ## pandas: Merge Data
 ### Methode merge()
 |Join-Typ|pandas-Befehl|
@@ -332,9 +347,6 @@ Basis: ```pd.concat([df1, df2, ...])```. Option  ```ignore_index=True``` verwirf
 Die Option ```verify_integrity=True``` verhindert die Entstehung von Duplikaten im Index und wirft einen 'Value Error'.
 ## pandas: .query()
 Mit ```df.query('query String')``` kann man "SQL-ähnliche Abfragen gegen einen DataFrame schiessen.
-## pandas: .melt()
-Umwandeln (unpivot) von "wide" auf "long"-Format.
-df.melt(id_vars='col', var_name='date', value_name='close')
 ## pandas: Missing values finden
 df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
@@ -345,6 +357,9 @@ df.isna().sum(): Anzahl der fehlenden Werte
 2. ```cols_to_drop=df.columns[df.isna().sum() <= threshold>]```
 3. ```df.dropna(subset = cols_to_drop, inplace=True)```   
 Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere den df"   
+### pandas: stack, unstack, explode
+1. wide to long: ```df.stack(level=<Index-Spalte>)```
+2. list-like Spalten (mehrere Werte in einer Zelle) auf mehrere Zeilen aufspalten: ```df['column to expand'].explode()``` oder gleich auf den df anwenden: ```df.explode('column to expand')```
 
 ### Methoden, um fehlende Werte zu befüllen:
 1. ```df.fillna(0)```: füllt leere Werte mit 0
@@ -360,6 +375,7 @@ df["col"].str.replace("<orig>","<new">)
 df["col"].str.split('@', expand = True)
 df["col"].astype('float'|'int'|'category'...)   
 df["new_col"]=df.groupby("group_col")["agg_col"].transform(lambda x: x.std())
+df["col"].str.cat(df["col2"].str, sep=" ")
 
 ### Eigene Kategorien vergeben - anhand Zeichen
 1. Liste mit eigenen Kategorien erzeugen: ```categories=['A','B',C']
