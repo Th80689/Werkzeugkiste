@@ -15,7 +15,7 @@ Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstri
 |Arithmetic|-|Subtraktion||
 |Arithmetic|*|Multiplikation|Produkt|
 |Arithmetic|/|Division|Quotient mit Bruchteilen|
-|Arithmetic|//|Floor Division|Quotient mit gerundeter Ganzzahl|
+|Arithmetic|//|Floor/Integer Division|Quotient mit gerundeter Ganzzahl|
 |Arithmetic|**|Exponential||
 |Arithmetic|%|Modulo|Rest nach Division|
 |Vergleiche|==|Gleichheit|True/False|
@@ -278,6 +278,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.select_dtypes('number|object').head()|Tabelle|Nur die ersten 5 Zeilen von Spalten eines definierten Typs ausgeben|
 |df["col"].nunique()|Liste|Anzahl der UNIQUE-Werte eines Attributes|
 |df["col"].str.contains("<searchstring>|<searchstring2>")|Boolean Series|als Filter|
+|df["col"].isin(['x','y','z'])|auf bestimmte String-Werte filtern|
 |df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
 |df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
@@ -352,13 +353,17 @@ df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
 df.isna().sum(): Anzahl der fehlenden Werte  
 
+## pandas und JSON
+Mit dem Package ```from pandas import json_normalize``` kann man
+nested json in einen Dataframe umwandeln: ```json_normalize(df)```. Bei komplexeren Strukturen kann ein Unterziel angeben, um nur Unter-Strukturen zu bekommen: ```json_normalize(df, record_path='<key>')```. Optional können noch zusätzliche Über-Attribute übernommen werdne ```json_normalize(df, record_path='<key>', meta=['val1','val2'])``` 
+
 ### pandas: Schwellwert (mehr als 5% n/a Werte pro Spalte => verwerfen )
 1. ```threshold = len(df) * 0.05```  
 2. ```cols_to_drop=df.columns[df.isna().sum() <= threshold>]```
 3. ```df.dropna(subset = cols_to_drop, inplace=True)```   
 Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere den df"   
 ### pandas: stack, unstack, explode
-1. wide to long: ```df.stack(level=<Index-Spalte>)```
+1. Multi-Index Df umwandeln: wide to long: ```df.stack(level=<Index-Spalte>)``` bzw. long to wide mit ```df.unstack()```
 2. list-like Spalten (mehrere Werte in einer Zelle) auf mehrere Zeilen aufspalten: ```df['column to expand'].explode()``` oder gleich auf den df anwenden: ```df.explode('column to expand')```
 
 ### Methoden, um fehlende Werte zu befüllen:
@@ -395,9 +400,15 @@ df["col"].str.cat(df["col2"].str, sep=" ")
 2. Liste mit Labels erstellen: ```labels = ["A","B","C","D"]```
 3. Liste mit Bins erstellen: ```bins = [0, twenty_fifth, fifties, seventy_fifth, maximum]```
 4. Kategorie-Spalte erstellen (mit ```pd.cut```):   
-```df["new_cat_col"] = pd.cut(df["num_col"],\
+``` 
+df["new_cat_col"] = pd.cut(df["num_col"],\
                                 labels = labels,\
-                                bins = bins)```   
+                                bins = bins)
+```  
+## Mit JSON arbeiten
+Voraussetzung: Modul mit ```import json``` laden.   
+Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSON-String in Python dict umwandeln) und das Ergebnis in ein Series-Objekt umwandeln (jeden Key in eine eigene Spalte umwandeln): ```books=collection['books'].apply(json.loads).apply(pd.series)```. Danach kann man die Spalte mit den nested data löschen ```collection = collection.drop(columns='books')``` und dann die verbleibenden Spalten mit den aufgespaltenen nested data zusammenführen: ```pd.concat([collections, books], axis=1)```.   
+Anderer Ansatz: Nested column in eine List umwandeln ```books = collection['books'].apply(json_loads).to_list```. Dann das JSON Objekt in einen String umwandeln: ```books_dump=json.dumps(books)``` und den JSON-String dann in eine Dataframe einlesen: ```new_books = pd.read_json(books_dump)```. Im Anschluss wieder die "Meta-Spalten" (als DataFrame!) mit dem neuen Dataframe zusammenbringen ```pd.concat([collection['writers'], new_books], axis=1)```.
 
 ## Eigene Funktionen erstellen
 ### Definition einer Funktion
@@ -444,8 +455,10 @@ list(capitalize)
 
 # matplotlib
 import matplotlib.pyplot as plt
-## Histogramm
-df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots   
+## Histogramme
+Für DataFrames: df["col"].hist(bins=i, alpha=1)   alpha: durchsichtig - bei übereinandergelegten Plots   
+```df["col"].hist(bins=np.arange(59,93,2), alpha=1)``` erzeugt bins in Zweier-Schritten von 59 bis 93(exklusiv)  
+Für Numpy-Arrays: ```plt.hist(np.array, bins=np.arange(<min>, <max(exklusiv)>, <binwidth>))
 danach immer: ```plot.show()```
 ## Barplot
 df.plot(kind="bar", title="A Title")
@@ -495,7 +508,19 @@ Standard-Outlier: kleiner as 1.5 * IQR - 25 Quantil ODER größer als 1.5 * IQR 
 Alle auf einmal: ```df['col1'].describe()``` 
 ## Stichproben
 ### Sampling
-```df['col'].sample(<no of samples>, replace=True|False)```. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen.
+Sample ```df['col'].sample(<Anzahl>, replace=True|False)```. Alternative für Anzahl; Für <Anzahl>: ```df['col'].sample(frac=0.1)``` mit Anteil "frac" der Population. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen (oder Sample mit Parameter , random_state=<Seed integer>) aufrufen.  
+Alternative Zufalls-Erzeuger 
+|Normalverteilung)|```random.normal(loc=2, scale=1.5, size= 100)```| mit loc = mean und scale = Standard-Abweichung|
+|Gleichverteillung|random.uniform(low=i, high=i,size=x)|mit Ober- und Untergrenze und Größe|  
+
+Vorgehen für systematisches Sampling (jede x-tes Vorkommen testen): 
+``` 
+sample_size = i
+population_size = p
+interval=population_size//sample_size
+df.iloc[::interval] # Jeden Sample aus den konkreten Index im Interval-Arrays holen 
+```
+
 ### Uniforme Distribution
 ```from scipy.stats import uniform```  
 Wahrscheinlichkeit, dass man bis zum Zielwert kommt: ```uniform.cdf(7,0,12)```(<Zielwert>, <Untere Grenze>, <Obere Grenze>). Mit ```uniform.rvs(0, 5, size=10)``` bekommt man ein Sample von 10 aus dem Intervall 0 bis 5 aus der uniformen Verteilung.
