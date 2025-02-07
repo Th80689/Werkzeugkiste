@@ -52,6 +52,9 @@ Tabelle anlegen:
 
 ```ALTER TABLE x ADD CONSTRAINT a_fkey FOREIGN KEY (b_id) REFERENCES b```
 
+### Check Constraints
+```ALTER TABLE x ADD CHECK (<col> > 0);```
+
 ## Typ-Änderung mit USING
 ```ALTER TABLE test ALTER COLUMN x TYPE INTEGER USING <expression>```  
 ### Beispiele für Expressions
@@ -120,6 +123,8 @@ Diskrete Perzentil-Werte bekommt man mit  ```percentile_disc(<percentile>) WITHI
 Groß/Klein kann man bei Vergleichen mit ``` ILIKE '%asc%'``` ignorieren.
 Mit ```trim('<input>','<Liste zu eliminierender Zeichen>')``` kann man Text bereinigen.
 
+Mit ```initcap()``` wird der erste Buchstabe GROSS, der Rest klein normiert.
+
 Mit ```left(<input>,n)``` bzw. ```right(<input>,n)``` bekommt man die linken oder rechten n Zeichen eines Strings. Mit ```substring(<input> FROM start FOR length)``` bekommt man Teilstrings. In Kurzfrom ```substr(<input>, start,length)```. Teilen kann man Text mit ```split_part(<input>,delimiter [,part to return])```. ```select split_part('a,bc,d',',',2)``` würde also ```bc``` (den zweiten Teil) ausgeben. Zusammenfügen geht mit ```SELECT concat('a','bc','de');``` ergibt also ```abcde```. Das gleiche geht aber auch mit Pipe: ```SELECT 'a'||'bc'||'de';```. Der einzige Unterschied: ```concat``` überspringt NULL Werte und zieht die vorhandenen Werte zusammen. Bei || ist NULL "ansteckend" - die Rückgabe ist dann komplett NULL.
 
 ## Zeit-Elemente extrahieren
@@ -135,6 +140,7 @@ Es gibt zwei Grund-Möglichkeiten: ```date_part('field', <Zeit-Wert>)``` und ```
 
 Mit ```date_trunc('field',<Zeit-Wert>)``` kann man auf einen bestimmten Zeitwert reduzieren. Beispiel: beim Datum 31.3.2024 13:00 CET ergibt ```SELECT date_trunc('month', now())``` '2024-03-01 00:00:00+01'.  
 Mit ```to_char('field',<Zeit-Wert>)``` bekommt man die textuelle Beschreibung der Zeit-Einheit (z.B. bei DOW den Wochentag).
+Tipp: Mit ```SELECT to_char( now(), 'Month')``` bekommt man den Monatsnamen - nicht die Zahl. 
 
 ## Sonstiges
 
