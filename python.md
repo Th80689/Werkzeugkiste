@@ -513,12 +513,28 @@ Alternative Zufalls-Erzeuger
 |Normalverteilung)|```random.normal(loc=2, scale=1.5, size= 100)```| mit loc = mean und scale = Standard-Abweichung|
 |Gleichverteillung|random.uniform(low=i, high=i,size=x)|mit Ober- und Untergrenze und Größe|  
 
+Durchschnitt eines zufälligen Wurfs von 4 Würfeln: ```np.random.choice(list(range(1,7)), size=4, replace=True).mean()```.  
+
+
 Vorgehen für systematisches Sampling (jede x-tes Vorkommen testen): 
 ``` 
 sample_size = i
 population_size = p
 interval=population_size//sample_size
 df.iloc[::interval] # Jeden Sample aus den konkreten Index im Interval-Arrays holen 
+```
+
+### Bootstrapping
+Ein Sample (mit Replacement) in der Größe des Original-Samples erstellen, um sich durch Kombination mehrerer Bootstrap-Samples der realen Population zu nähern. Bootstrap verbessert nicht den Durchschnitt eines Samples, gibt aber eine bessere Annäherung an die Standard-Abweichung der Population.
+
+Code: ```
+import numpy as np
+mean_x=[]
+for i in range(x):
+    mean_x.append(
+        np.mean(orig_sample.sample(frac=1, replace=True)['attrib'])   
+    )   
+bootstrap_distn=mean_x   
 ```
 
 ### Uniforme Distribution
