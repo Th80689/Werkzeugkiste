@@ -229,8 +229,82 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 ## Packages
 Packages sind eine Sammlung von MEHREREN Modulen - auch Library oder Bibliothek genannt. Sie müssen erst aus dem PyPI (Python Package Index) über ein Terminal heruntergeladen werden, bevor sie importiert werden können.  
 ```python3 -m pip install <package name>```. Danach kann es Python mit ```import <package name> as <alias>``` verfügbar gemacht werden.
+
 ### Package NumPy
-Arbeiten mit Zahlen
+Numpy eignet sich besonders zum Arbeiten mit Zahlen. Das Package muss mit ```import numpy as np``` geladen werden.
+
+Datentypen in Numpy sind
+- np.bool_ (Wahrheitswerte True oder False)
+- pn.int8 (2 hoch 8: -256 bis 255)
+- pn.int16 (2 hoch 16)
+- np.int32 (2 hoch 32: 4.294.967.296 Zahlen von -2.147.483.648 bis 2.147.483.647)
+- np.int64 (2 hoch 64: )
+- np.float32
+- np.float64 (2 hoch 64: )
+- <U12 Unicode Elemente mit max 12 Zeichen
+Der Datentyp in einem Array wird aus dem "höchstwertigen" Typ bei Erstellung des Arrays abgeleitet (type coercion). 
+
+|Funktion|Zweck|
+|-|-|
+|np.array([<list>], dtype=np.<Datentyp>)|Liste in 1-dimensionales Numpy-Array umwandeln|
+|np.array([[<list>],[<list>]])|List of lists in 2-dimensionales Numpy-Array umwandeln|
+|np.array(<2D List 1>,<2D List 2>,<2D List 1>)|aus 3 2-dimensionalen Arrays eine 3D Array erstellen|
+|np.zeros((<r>, <c>))|Array mit Nullen mit r Zeilen und c Spalten aufbauen|
+|np.random.random((r,c))|Array aus Zufallszahlen (0-1) mir r Zeilen und c Spalten aufbauen|
+|np.arange(s,e)|Liste mit einer (ganzzahligen) Zahlenfolge von Start s bis Ende e|
+|np.sort(array, axis=a)|sortiert (optional nach Axen (axis a): Default ist die höchste Dimension. Bei 2D Arrays haben die Zeilen 0 und Spalten 1|
+|np.vectorize(<function>)|verwandelt eine Python Funktion in eine Vektor-Funktion, die auf np-Array-Elemente angewendet werden kann (Beispiele: vf=np.vectorize(len) oder (str.upper))|
+|np.flip(array, axis=(0,1,...)|alle Elemente eines Arrays (optional: nur bestimmte Achsen) umdrehen (erhält dabei den Shape)|
+|np.transpose(array, (Tuple mit ALLEN Spalten, geänderte Reihenfolge))|wandelt Spalten in Zeilen und Zeilen in Spalten um - ändert aber nicht die Sortierung der Elemente - der shape wird verändert|
+|np.split(array, <Anzahl Zeilen in Ziel-Liste>, axis=i)|axis=0 sind Zeilen|
+|np.stack(array1, array2, array3, axis=2|drei GLEICHDIMENSTIONALE Array zusammenfügen.|
+
+#### Daten laden/sichern
+Numpy hat kann mit *.txt, *.csv, *.pkl Formate umgehen - aber am effizientesten ist das eigene *.npy Format.
+
+Daten einlesen (Modus Read Binary = "rb"):   
+  with open("<path+file_name>", "rb") as f:
+    array = np.load(f)
+  
+  plt.imshow(array) // als Bild-Ausgabe vorsehen
+  plt.show() 
+
+Daten einlesen (Modus Write Binary = "wb"):   
+  with open("<path+file_name>", "wb") as f:
+    array = np.save(f, <Source>)
+
+ 
+
+
+|Array-Attribut|Ergebnis|
+|-|-|
+|array.shape Dimensionen| Tupel der Dimensionen (Zeilen, Spalten, ...)|
+|array.dtype|Zahlentyp im Array, z.B. dtype('float64')|
+
+|Array-Methoden|Ergebnis|
+|-|-|
+|array.flatten()|Array in 1D Liste umformen|
+|array.reshape((<tuple>))|Array in Zieldimensionen gem. <tuple> umformen|
+|array.astype('dtype')|Datentyp im Array ändern (Type conversion)|
+|array.sum(axis=0)|axis Parameter: ohne = über alles, mit axis-Parameter 0 je Spalte, mit 1 je Zeile|
+|array.min(axis=0, keepdims=True)|siehe .sum + optional keepdims: erhält die anderen Dimensionen für leichteren Merge |
+|array.max()|siehe .min()|
+|array.mean()|siehe .min()|
+
+#### Slicing
+Elemente ermitteln (Slicing) wird mit eckigen Klammern und - für jede Dimension - start(inklusiv), stop(exklusiv(optional), stepsize(optional, default: 1)) gemacht ```array[start:stop:stepsize, start:stop:stepsize, ...]```.   
+#### Filtern mit Masken (Fancy Indexing)
+Gibt Arrays mit allen Elementen zurück:  
+one_to_five = arange(1:6)  
+mask = one_to_five % 2 == 0 # boolean mask  
+one_to_five[mask] # mask anwenden  
+gibt nur die Elemente zurück, die der Bedingung entsprechen.   
+#### np.where()
+Ergibt ein Array aus Indizes (= Tuple aus Arrays). Man kann damit aber auch Einzelwerte verändern. Beispiel: mit ```np.where(sudoku == 0,"", sudoku)``` werden alle Elemente im Array sudoku, die den Wert 0 haben, gelöscht.
+#### Zusammenfügen
+Beim Zusammenfügen müssen die Dimensionen passen (beim Hinzufügen von Spalten muss die Anzahl der Zeilen im ersten Array mit denen der Zeilen im zweiten Array übereinstimmen). ```np.concatenate(array1, array2)``` an der ersten Achse (=Zeilen) hinzufügen. Wenn Spalten hinzugefügt werden sollen: ```np.concatenate((array1, array2), axis=1)```
+#### In Arrays löschen
+Mit ```np.delete(array, 1, axis=0)``` kann man die 2. Zeile eines Arrays löschen. Mit ```np.delete(array, 1, axis=1)``` kann man die 2. Spalte löschen.
 
 ### Package requests
 URL-Aufrufe erzeugen

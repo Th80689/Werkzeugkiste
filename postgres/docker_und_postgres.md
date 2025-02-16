@@ -8,3 +8,11 @@ Container im Hintergrund starten:
 
 Container mit interaktivem Terminal und psql starten: 
 ```docker run --name psql_playground -it postgres psql -U postgres```
+
+Auf dem Rechner: unter \users\DockerTests
+
+# für Postgres
+mkdir pg
+docker pull postgres:latest
+
+docker run --name pg-playground -e POSTGRES_PASSWORD=mypppw -d postgres
