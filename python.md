@@ -490,13 +490,15 @@ Eine Funktions-Definition hat folgende Struktur:
 ```
 # Definitionskopf
 ```def <Funktionsname>([Argument[, ...]]):
+    """Docstring - Documentation"""
     # eingerückte Anweisungen
     ... 
     # Ausgabe (optional)
     return <output>
 ```
-Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden
-"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
+Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden.  
+Wenn einem Argument-Namen mit dem = ein Wert zugeordnet wird, ist das der Default-Wert.  
+"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur (= Tupel) behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
 
 ### Docstrings
 Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils zwei Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n).
@@ -504,7 +506,7 @@ Das erfolgt entweder als Einzeiler
 - Text mit jeweils DREI doppelten Anführungszeichen eingerahmt) oder 
 - als zugewiesenen Wert des Attribut <function>.__doc__   
 oder als Mehrzeiler machen. Dabei gilt:
-- Der ganze Block mit """ eingerahmt
+- Der ganze Block mit 2x drei doppelten Anführungszeichen (""") eingerahmt
 - Zusammenfassung erste Zeile
 - leere Zeile
 - "Args" ohne Einrückung
