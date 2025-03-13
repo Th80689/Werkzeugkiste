@@ -131,7 +131,7 @@ while <Bedingung is True>:
 ### try - except
 Innerhalb einer Funktion kann man das gewünschte Verhalten mit den akzeptierten Inputs in einen ```try``` Block aufnehmen und danach einen ```except```Block anschließen, der bei Fehlern im ersten Block ausgeführt wird.
 ### raise
-Nach einem ```else``` kann man auch ein eingerücktes ```raise <Error Type>"spezifische Fehlermeldung"``` integrieren.
+Nach einem ```else``` kann man auch ein eingerücktes ```raise <Error Type> ("spezifische Fehlermeldung")``` integrieren.
 
 |try - except|raise|
 |-|-|
@@ -259,8 +259,24 @@ Der Datentyp in einem Array wird aus dem "höchstwertigen" Typ bei Erstellung de
 |np.split(array, <Anzahl Zeilen in Ziel-Liste>, axis=i)|axis=0 sind Zeilen|
 |np.stack(array1, array2, array3, axis=2|drei GLEICHDIMENSTIONALE Array zusammenfügen.|
 
-#### Daten laden/sichern
+## Daten laden/sichern
+
+### python - Standard
+filename="file.txt"
+file = open(filename, mode="r") # 'r' is to read
+text = file.read()
+file.close()
+
+KURZFORM mit Kontext-Manager "with":
+```with open(filename, mode="r") as file:```   
+```   print(file.read())```
+```print(file.read()) # EINE Zeile anzeigen```   
+
+### Daten laden mit Numpy
 Numpy hat kann mit *.txt, *.csv, *.pkl Formate umgehen - aber am effizientesten ist das eigene *.npy Format.
+
+```np.loadtext(filename, delimiter = ",", skiprows=0 use_cols=[0,2], dtype=str)```
+
 
 Daten einlesen (Modus Read Binary = "rb"):   
   with open("<path+file_name>", "rb") as f:
@@ -269,13 +285,44 @@ Daten einlesen (Modus Read Binary = "rb"):
   plt.imshow(array) // als Bild-Ausgabe vorsehen
   plt.show() 
 
-Daten einlesen (Modus Write Binary = "wb"):   
+Daten schreiben (Modus Write Binary = "wb"):   
   with open("<path+file_name>", "wb") as f:
     array = np.save(f, <Source>)
 
- 
+### Daten laden mit Pandas
+
+```df=pd.read_csv(file,nrows=i, header=None, sep="\t", comment="#", na_values=["Nothing"])```. Optional kann das auch in ein Numpy-Array umgewandelt werden: ```df.to_numpy(df)```.
+
+Pickled Files: Python data-File, in binär-Form
+```import pickle```   
+```with open("file.pkl","rb") as file:  ```
+```    data=pickle.load(file)```
+
+Excel mit Pandas   
+Laden: ```data = pd.ExcelFile("File.xlsx")```, dann die Reiter mit ```data.sheet_names``` anschauen
+Daten aus Reitern einlesen mit ```data.parse("Name Reiter")``` oder ```data.parse(Index Reiter)```  
+
+## Python mit SQL-Datenbanken koppeln
+```from sqlalchemy import create_engine```  
+```engine = create_engine('sqlite:///Northwind.sqlite'```  
+```table_names = engine.table_names()```  
+```print(table_names)```  
+### sqlalchemy - ohne Kontext-Manager
+```con = engine.connect()``` 
+```rs = con.execute('SELECT * FROM Orders')```  
+```df = pd.DataFrame(rs.fetchall())```  
+```df.columns = rs.keys()```  
+```con.close()```  
+### sqlalchemy - mit Kontext-Manager
+```with engine.connect() as con:``` 
+```    rs = con.execute('SELECT OrderID, OrderDate FROM Orders')```  
+```    df = pd.DataFrame(rs.fetchmany(size=5))```  
+```    df.columns = rs.keys()```  
+### sqlalchemy + pandas
+```df = pd.read_sql_query('SELECT * FROM Orders', engine)``` 
 
 
+## Arrays
 |Array-Attribut|Ergebnis|
 |-|-|
 |array.shape Dimensionen| Tupel der Dimensionen (Zeilen, Spalten, ...)|
@@ -324,9 +371,10 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['coli])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>)```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
+|df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
@@ -339,8 +387,9 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |len(df)|Integer|Anzahl Zeilen|
 |df.shape|Tupel (Anzahl Zeilen, Anzahl Spalten)|Struktur |
 |df.dtypes||Zeigt NUR die Datentypen aller Attribute an|
-|df.describe()|Tabelle|Zusammenfassungen/Statistiken|
+|df.describe()|Tabelle/Spalte|Zusammenfassungen/Statistiken|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
+|df["attrib"].nbytes||Speicherbedarf Spalte|
 |df.columns|Liste|Liste aller Spalten-Namen|
 |df.rename(columns = {'col_old':'col_new','col2_old':'col2_new'}, inplace = True)|Spalte umbenennen|
 |df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
@@ -385,6 +434,7 @@ WIDE to LONG: melt
 |pd.crosstab(df['col_index'],df['col2'],values=df['col_x]', aggfunc('function(e.g. mean)'))|Tabelle|Berechnet Wert für jede Kombination der Ausprägung der beiden Spalten|
 |df.melt(id_vars='<col(s) Identifier>', value_vars='feature(s)',var_name='neuer feature-name', value_name='neuer value-name')|Df|Umwandeln (unpivot) von "wide" auf "long"-Format.|
 |pd.wide_to_long(df, stubnames = ["prefix1","prefix2"], i="Index1 Ziel-Spalte",j="Index2 Ziel-Spalte")||Optionen: sep="_" (wenn die Zahl nicht direkt folgt), suffix='\w+' (wenn Suffix keine Zahl ist|
+
 ## pandas: Merge Data
 ### Methode merge()
 |Join-Typ|pandas-Befehl|
@@ -447,7 +497,8 @@ Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere de
 4. ```df.fillna(method="ffill")```: füllt leere Werte mit Wert des Vorgängers
 ### df - unterschiedliche (kategorische) Werte je Spalte analysieren
 1. ```non_numeric = df.select_dtypes("object")```  
-2. ```for col in non_numeric.columns \    print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())```
+2. ```for col in non_numeric.columns \    print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())```  
+Man kann diese Zeichen von dtype="O" (für Objekt) mit .astype("category") in dtype"category" umwandeln. Mit pd.Categorical(<Series>, categories=["A","B","C"], ordered=True) kann man ordinale (geordnete) Kategorien vergeben.
 
 ### Series - Daten umwandeln
 df["col"].str.replace("<orig>","<new">)  
@@ -479,6 +530,40 @@ df["new_cat_col"] = pd.cut(df["num_col"],\
                                 labels = labels,\
                                 bins = bins)
 ```  
+
+### Arbeiten mit Kategorien
+Kategorie-Series haben ```cat``` Eigenschaften.
+Mit ```Series.cat.categories``` werden die definierten Kategorien angezeigt. 
+
+Series.cat.set_categories Accessor - Parameter:
+- ```new_categories```: Liste neuer Kategorien
+- ```inplace```: Boolean - soll das Update ggf. bestehende Serie überschreiben oder nicht
+- ```ordered```: Boolean - sind die Kategorien sortiert - beginnen mit der kleinsten in der Liste
+Weitere Accessors: 
+- add_categories(): neue Kategorien definieren (über ```series.cat.categories``` einsehbar) (noch keine Vergabe) ```series.cat.add_categories(<Liste mit neuen Kategorien>]```
+- remove_categories(): Kategorien löschen ```series.cat.remove_categories(removals=["<zu löschende Kategorie>"]```
+- rename_categories(new_categories=<dict>)
+- reorder_categories(new_categories=<dict>, ordered=True/False) ```series.cat.reorder_categories(removals=[new_categories=<dict>, ordered=True, inplace=True]```  
+
+Codes für Kategorien anlegen: ```df["Kategorie"]=df["Kategorie_Code"].astype("category").cat.codes```. Info: Alphabetische Kategorien werden aufsteigend sortiert - A bekommt 1, ...
+Danach kann man ein "Code Book" anlegen:  
+1. ```codes=df["Kategorie_Code"].astype("category").cat.codes```
+2. ```categories=df["Kategorie_Code"]```
+3. ```name_map= dict(zip(codes, categories))```
+
+Verteilung in einer Serie anschauen: ```series.value_counts(dropna=False)```
+
+Updates in Series: Beispiel "maybe" => "no"
+```dogs.loc[dogs["likes_children"] == "maybe", "likes_children"] = "no"```   
+```dogs["get_along_cats"] = dogs["get_along_cats"].str.strip()```   
+```replace_map={"Noo":"No"}```  
+```dogs["get_along_cats"].replace(replace_map, inplace=True)```
+
+### one-hot-encoding
+Eine Kategorie-Spalte mit X Werten in X Spalten mit Werten 0/1 und Spaltennamen "Kategorie-Spalte + "_<Kategorie x>" umwandeln. Wichtig: Bei get_dummies bleiben numerische Spalten unverändert. Die Original-Spalte wird gelöscht.
+```df_one_hot = pd.get_dummies(df[["cols to encode","col2"]])```   
+Wenn nur eine Spalte geändert werden soll, ist die Syntax:
+```df_one_hot = pd.get_dummies(df, columns=["col to encode"], prefix="")```   
 ## Mit JSON arbeiten
 Voraussetzung: Modul mit ```import json``` laden.   
 Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSON-String in Python dict umwandeln) und das Ergebnis in ein Series-Objekt umwandeln (jeden Key in eine eigene Spalte umwandeln): ```books=collection['books'].apply(json.loads).apply(pd.series)```. Danach kann man die Spalte mit den nested data löschen ```collection = collection.drop(columns='books')``` und dann die verbleibenden Spalten mit den aufgespaltenen nested data zusammenführen: ```pd.concat([collections, books], axis=1)```.   
@@ -492,9 +577,11 @@ Eine Funktions-Definition hat folgende Struktur:
 ```def <Funktionsname>([Argument[, ...]]):
     """Docstring - Documentation"""
     # eingerückte Anweisungen
-    ... 
+       try:  
     # Ausgabe (optional)
-    return <output>
+           return <output>
+       except TypeError:
+           print("spezifische Fehlermeldung")
 ```
 Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden.  
 Wenn einem Argument-Namen mit dem = ein Wert zugeordnet wird, ist das der Default-Wert.  
@@ -517,17 +604,26 @@ oder als Mehrzeiler machen. Dabei gilt:
 ## Lambda Funktionen
 Mit  ```lambda argument(s): expression``` kann man einfache oder auch "anonyme" Funktionen erstellen, die weder eine "def"-Zeile noch eine "Return"-Anweisung benötigen.
 ### mit einem Argument (Einzelwert): 
-```(lambda x: x*1.2)(25)``` 
+```(lambda x: x*1.2, 25)``` 
 ### mit einem Argument (Liste): 
-```(lambda x: sum(x) / len(x))[3,6,9]``` 
+```(lambda x: sum(x) / len(x),[3,6,9])``` 
 ### mit zwei Argumenten: 
-```(lambda x,y: x**y)[2,3]```
+```(lambda x,y: x**y, [2,3])```
 ### mit Iterables
 ```
 names=["Thomas","Sabine", "Maya", "Finja"]
 capitalize=map(lambda x: x.capitalize(), names) #erzeugt ein map-Objekt
 list(capitalize)
 ```
+
+### Beispiel: auf DataFrame-Spalte filtern und als Liste "result" ausgeben
+result = filter(lambda x: x[0:2]=="RT" , tweets_df['text'])
+
+### mit reduce (auf EINEN Rückgabewert verdichten)
+from functools import reduce  
+liste = ['a', 'e', 'i', 'o', 'u']
+result = reduce(lambda item1,item2: item1+item2, liste)
+
 
 # matplotlib
 import matplotlib.pyplot as plt
@@ -552,7 +648,7 @@ plt.show()
 Geht NUR mit matplotlib!! Danach: ```import seaborn as sns```. Beispiel für Histogramm: 
 ## Histplot: Anzahl von Vorkommen von (x)
 sns.histplot(data=df, x='<col>',binwidth=1)
-### Alternative: Countplot 
+## Alternative: Countplot 
 sns.countplot(data=df, x="col")
 ## Boxplot: Spread von (y) je (x)
 sns.boxplot(data=df, x='<col1>',y='<col2>')
@@ -565,6 +661,20 @@ Greift NUR numerische Werte auf!
 sns.pairplot(data=df, vars=["<optionale Liste der Spalten"])
 ## KDE (kernel density estimation):
 sns.kdeplot(data=df, x="col", hue="col1", cut=0)
+## catplots
+sns.catplot(x="col", hue="col1", data=df, kind="box")
+sns.catplot(x="col", y="col1", data=df, kind="bar")
+sns.catplot(x="col", y="col1", data=df, kind="point", hue="col2", dodge=True/False, join=True/False)
+sns.catplot(x="col", kind="count", col="facet split variable", col_wrap=<Anz. Plots pro Reihe>, palette=sns.color_palette("Set1"), data=df, hue="col1") http://seaborn.pydata.org/tutorial/color_palettes.html
+
+sns.set(font_scale=0.1)
+sns.set_style("whitegrid")
+
+### Seaborn Plots anpassen mit matplotlib-Funktionen
+Zuerst als ax-Objekt sichern - dann auf ax matplotlib-Funktionen anwenden
+- Titel: ```ax.fig.suptitle("Mein Titel")```
+- Achsen-Beschriftungen: ```ax.set_axis_labels("x-Achsen-Label","y-Achsen-Label")```
+- Titel-Höhe: ```plt.subplots_adjust(top=0.9)```  
 
 # Statistik in python
 ```import numpy as np```
