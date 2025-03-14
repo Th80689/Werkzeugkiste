@@ -212,20 +212,22 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 |subprocess|Terminal-Kommandos absetzen|
 
 ### os - nützliche Beispiele
-```|Funktion/Konstanten|Output/Klasse|Beschreibung|
-|os.getcwd()|str|Kompletter Pfad des aktuellen Verzeichnisses|
-|os.chdir("target")|n.a.|Arbeitsverzeichnis wechseln|
-|os.environ|dict|Informationen zur Umgebung|
-```
+|Funktion/Konstanten|Output/Klasse|Beschreibung|
+|-|-|-|
+|```os.getcwd()```|str|Kompletter Pfad des aktuellen Verzeichnisses|
+|```os.chdir("target")```|n.a.|Arbeitsverzeichnis wechseln|
+|```os.environ```|dict|Informationen zur Umgebung|
+
 ### string - nützliche Beispiele
 |Funktion/Konstanten|Output/Klasse|Beschreibung|
-||||
+|-|-|-|
 ||||
 
 ### datetime - nützliche Beispiele
-```|Funktion/Konstanten|Output/Klasse|Beschreibung|
-|date(yyyy,m,d)|datetime.date|Datum aus Integer-Werten erzeugen|
-```
+|Funktion/Konstanten|Output/Klasse|Beschreibung|
+|-|-|-|
+|```date(yyyy,m,d)```|datetime.date|Datum aus Integer-Werten erzeugen|
+
 ## Packages
 Packages sind eine Sammlung von MEHREREN Modulen - auch Library oder Bibliothek genannt. Sie müssen erst aus dem PyPI (Python Package Index) über ein Terminal heruntergeladen werden, bevor sie importiert werden können.  
 ```python3 -m pip install <package name>```. Danach kann es Python mit ```import <package name> as <alias>``` verfügbar gemacht werden.
@@ -624,6 +626,8 @@ from functools import reduce
 liste = ['a', 'e', 'i', 'o', 'u']
 result = reduce(lambda item1,item2: item1+item2, liste)
 
+### Testing mit assert
+Erfolgreiche Tests wie ```assert 1+1 == 2 ``` geben keine Rückmeldung. Gescheiterte Tests wie ```assert 1+1 == 3``` ergeben "AssertionError".
 
 # matplotlib
 import matplotlib.pyplot as plt
@@ -713,15 +717,14 @@ df.iloc[::interval] # Jeden Sample aus den konkreten Index im Interval-Arrays ho
 ### Bootstrapping
 Ein Sample (mit Replacement) in der Größe des Original-Samples erstellen, um sich durch Kombination mehrerer Bootstrap-Samples der realen Population zu nähern. Bootstrap verbessert nicht den Durchschnitt eines Samples, gibt aber eine bessere Annäherung an die Standard-Abweichung der Population.
 
-Code: ```
-import numpy as np
-mean_x=[]
-for i in range(x):
-    mean_x.append(
-        np.mean(orig_sample.sample(frac=1, replace=True)['attrib'])   
-    )   
-bootstrap_distn=mean_x   
-```
+Code:
+    import numpy as np
+    mean_x=[]
+    for i in range(x):
+        mean_x.append(
+            np.mean(orig_sample.sample(frac=1, replace=True)['attrib'])   
+        )   
+    bootstrap_distn=mean_x   
 
 ### Uniforme Distribution
 ```from scipy.stats import uniform```  
