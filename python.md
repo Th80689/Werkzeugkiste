@@ -355,6 +355,10 @@ Beim Zusammenfügen müssen die Dimensionen passen (beim Hinzufügen von Spalten
 #### In Arrays löschen
 Mit ```np.delete(array, 1, axis=0)``` kann man die 2. Zeile eines Arrays löschen. Mit ```np.delete(array, 1, axis=1)``` kann man die 2. Spalte löschen.
 
+### Package datetime
+import datetime as dt
+today_date = dt.date.today()
+
 ### Package requests
 URL-Aufrufe erzeugen
 
@@ -377,6 +381,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
+|df.duplicated(subset = column_names, keep = False)|Zeilen in df|subset: Liste mit zu prüfenden Spalten, keep: "first" = erstes Vorkommen, "last" = letztes Vorkommen, "False" = ALLE erhalten|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
@@ -406,6 +411,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["col"].isin(['x','y','z'])|auf bestimmte String-Werte filtern|
 |df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
 |df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame|
+|df.drop(df[df['col']> 4].index, inplace = True)|alle Datensätze gem. Bedingung löschen|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
 |df.agg(["mean","std"])|MEHRERE Aggregat-Funktionen auf ALLE numerischen Spalten anwenden||
@@ -420,6 +426,9 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.at[index[x],"col"]|Scalar|Wert in Zeile index[x], Spalte "col"|
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
+
+## set Operationen
+```diff = set(df1['col']).difference(df2['col'])``` findet in df1 Kategorien in col, die nicht in den Werten von df2 sind. Solche Inkonsistenzen kann man mit ```df['col'].isin(diff)``` finden - und bereinigen. Oder per Negation per Tilde nur saubere Datensätze ausgeben ```df['col'].isin(~diff)```.
 
 ## Reshaping: LONG vs. WIDE - pivot und melt
 LONG: Pro Zeile EIN Feature, EINE Beobachtung auf MEHRERE Zeilen verteilt   
@@ -498,9 +507,25 @@ Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere de
 3. Pro Untergruppe berechnen: ```df_dict= df.groupby("group_col")["value_col"].median().to_dict()\ df["value_col"]=df["value_col"].fillna(df["group_col"].map(df_dict))```
 4. ```df.fillna(method="ffill")```: füllt leere Werte mit Wert des Vorgängers
 ### df - unterschiedliche (kategorische) Werte je Spalte analysieren
-1. ```non_numeric = df.select_dtypes("object")```  
-2. ```for col in non_numeric.columns \    print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())```  
+```
+    non_numeric = df.select_dtypes("object")```  
+    for col in non_numeric.columns \    
+        print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())
+```  
 Man kann diese Zeichen von dtype="O" (für Objekt) mit .astype("category") in dtype"category" umwandeln. Mit pd.Categorical(<Series>, categories=["A","B","C"], ordered=True) kann man ordinale (geordnete) Kategorien vergeben.
+
+```
+# Gleichmäßige Gruppen mit qcut nach Distribution
+    group_names = ["Kategorie 1", "Kategorie 2", "Kategorie 3"]
+    pd["new_col"]=pd.qcut(df['col'], q = 3, labels = group_names) 
+```
+```
+# Gruppen mit cut nach ranges
+    ranges = [0, 100,200, np.inf]
+    group_names = ["0 - 100", "101 - 200", "201+"]
+    pd["new_col"]=pd.cut(df['col'], bins = ranges, labels = group_names)    
+```
+
 
 ### Series - Daten umwandeln
 df["col"].str.replace("<orig>","<new">)  
@@ -532,7 +557,12 @@ df["new_cat_col"] = pd.cut(df["num_col"],\
                                 labels = labels,\
                                 bins = bins)
 ```  
-
+### Kategorien über ```mapping``` zusammenfassen
+```
+   # creating mapping dictionary and replace
+   mapping = {'Microsoft':'DesktopOS', 'MacOS':'DesktopOS', 'IOS':'MobileOS', 'Android':'MobileOS'}
+   devices['operation_system'] = devices['operating_system'].replace(mapping)
+```
 ### Arbeiten mit Kategorien
 Kategorie-Series haben ```cat``` Eigenschaften.
 Mit ```Series.cat.categories``` werden die definierten Kategorien angezeigt. 
