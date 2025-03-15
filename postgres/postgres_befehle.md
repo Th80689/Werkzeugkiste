@@ -73,6 +73,10 @@ DDLs darf immer nur der OWNER durchführen. Diese Eigentümerschaft kann aber au
 Neben Usern können auch Gruppen angelegt werden ```CREATE GROUP <group_name>```. Diese können dann über ```GRANT USAGE ON SCHEMA <schema_name> TO <group_name>``` und ```GRANT INSERT, UPDATE, SELECT, DELETE ON ALL TABLES IN SCHEMA <schema_name> TO <group_name>``` mit allen Rechten versehen werden. Danach können dann alle Nutzer, die der neuen Gruppe mit ```ALTER GROUP <group_name> ADD USER <user_name>``` zugewiesen werden über diese Gruppenrechte zugreifen. Erhöhte Stufe ist: ```GRANT ALL PRIVILEGES ON <schema_name>.* TO <user_name>```.
 Das Gegenstück zum ```GRANT``` ist ```REVOKE ALL PRIVILEGES FROM <user_name/role>``` - bzw. bei einer Gruppe ```REVOKE <group_name> FROM <user_name>```.
 
+## Arrays abfragen
+
+select array_col[x] ... x-tes Element aus Array abfragen (erstes Element: 1)
+... where any(array_col) =  alle Element aus Array abfragen
 ## Normalformen
 
 |NF|Bedingungen|Erläuterungen|
