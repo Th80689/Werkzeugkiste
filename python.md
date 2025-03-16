@@ -385,7 +385,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
-|pd.to_datetime(df["char_time_col"])|<value>|Spaltenwert in Zeit umwandeln|
+|pd.to_datetime(df["char_time_col"], infer_datetime_format=True,errors = 'coerce')|<value>|Spaltenwert in Zeit umwandeln; errors 'coerce' erzeugt NA, wenn das Format nicht erkannt wird|
 |df["new_col"]=pd.to_datetime(df[["year","month","day"]])||Mehrere Spalten zu einem Datum zusammenfassen|
 |df["date_col"].dt.month/day/year|Integer|Wert Datumsbestandteil auslesen|
 |df["attrib"].astype(int|str|float|dict|list|bool)|<value>|Spaltenwert als Integer|... behandeln|
@@ -421,6 +421,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
 |df.reset_index(inplace=True)|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
+|df.loc[df['colname'] == 'x'] = 'Y'||Updates von Spaltenwerten, auf die 'x' zutrifft|
 |df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
 |series.at[x]|Scalar|Wert an Position x|
 |df.at[index[x],"col"]|Scalar|Wert in Zeile index[x], Spalte "col"|
@@ -486,7 +487,7 @@ Mit ```df.query('query String')``` kann man "SQL-ähnliche Abfragen gegen einen 
 ## pandas: Missing values finden
 df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
-df.isna().sum(): Anzahl der fehlenden Werte  
+df.isna().sum(axis = 0): Anzahl der fehlenden Werte (Spalte (default): axis = 0, für Zeile: axis =1) 
 
 ## pandas und JSON
 Mit dem Package ```from pandas import json_normalize``` kann man
@@ -501,7 +502,17 @@ Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere de
 1. Multi-Index Df umwandeln: wide to long: ```df.stack(level=<Index-Spalte>)``` bzw. long to wide mit ```df.unstack()```
 2. list-like Spalten (mehrere Werte in einer Zelle) auf mehrere Zeilen aufspalten: ```df['column to expand'].explode()``` oder gleich auf den df anwenden: ```df.explode('column to expand')```
 
-### Methoden, um fehlende Werte zu befüllen:
+### Umgang mit fehlenden Werten
+#### Übersicht
+Statistische Übersicht: ```df.isna().sum()```
+Grafische Übersicht
+   import missingno as msno
+   import matplotlib.pyplot as plt
+   msno.matrix(df)
+   plt.show()
+
+#### NA´s Befüllen
+
 1. ```df.fillna(0)```: füllt leere Werte mit 0
 2. Pauschal mit mode() befüllen: ```cols_with_missing_values = df.columns[df.isna().sum()>0] \ for col in cols_with_missing_values[:-1]: \   df[col].fillna(df[col].mode()[0]) ```
 3. Pro Untergruppe berechnen: ```df_dict= df.groupby("group_col")["value_col"].median().to_dict()\ df["value_col"]=df["value_col"].fillna(df["group_col"].map(df_dict))```
@@ -596,6 +607,11 @@ Eine Kategorie-Spalte mit X Werten in X Spalten mit Werten 0/1 und Spaltennamen 
 ```df_one_hot = pd.get_dummies(df[["cols to encode","col2"]])```   
 Wenn nur eine Spalte geändert werden soll, ist die Syntax:
 ```df_one_hot = pd.get_dummies(df, columns=["col to encode"], prefix="")```   
+## String-Vergleiche 
+  from thefuzz import fuzz
+  fuzz.WRatio('str1','str2')
+Die WRatio gibt die Ähnlichkeit an (von 0 überhaupt nicht ähnlich bis 100 identisch).
+
 ## Mit JSON arbeiten
 Voraussetzung: Modul mit ```import json``` laden.   
 Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSON-String in Python dict umwandeln) und das Ergebnis in ein Series-Objekt umwandeln (jeden Key in eine eigene Spalte umwandeln): ```books=collection['books'].apply(json.loads).apply(pd.series)```. Danach kann man die Spalte mit den nested data löschen ```collection = collection.drop(columns='books')``` und dann die verbleibenden Spalten mit den aufgespaltenen nested data zusammenführen: ```pd.concat([collections, books], axis=1)```.   
