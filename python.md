@@ -302,7 +302,7 @@ Pickled Files: Python data-File, in binär-Form
 
 Excel mit Pandas   
 Laden: ```data = pd.ExcelFile("File.xlsx")```, dann die Reiter mit ```data.sheet_names``` anschauen
-Daten aus Reitern einlesen mit ```data.parse("Name Reiter")``` oder ```data.parse(Index Reiter)```  
+Daten aus Reitern einlesen mit ```data.parse("Name Reiter")``` oder ```data.parse(Index Reiter, parse_cols[index (0-based)], skiprows="0",names=['col_name'], comment="#")```  
 
 ## Python mit SQL-Datenbanken koppeln
 ```from sqlalchemy import create_engine```  
@@ -358,6 +358,50 @@ Mit ```np.delete(array, 1, axis=0)``` kann man die 2. Zeile eines Arrays lösche
 ### Package datetime
 import datetime as dt
 today_date = dt.date.today()
+
+oder: 
+    from datetime import datetime
+    two_dates = [date(2016,10,23),date(2017,6,14)]
+    print(two_dates[0].weekday) # Wochentage von 0 Montag bis 6 Sonntag
+
+Ausgabe formatieren: ```dt.strftime("%Y-%m-%d %H:%M:%S"))``` 
+Datumsteile ändern: ```dt.replace(year=2000)```
+ISO8601-Format: ```dt.isoformat()``` ergibt YYYY-MM-DDTHH:MM:SS
+
+Zeit parsen mit ```dt = datetime.strptime("12/30/2003 15:19","%m/%d/%Y %h:%M")```  
+
+|Format-String|Ergebnis|
+|-|-|
+|%Y|4-stelliges Jahr|
+|%m|2-stelliger Monat|
+|%d|2-stelliger Tag|
+|%H|2-stellige Stunde (0-23)|
+|%M|2-stellige Minute|
+|%S|2-stellige Sekunde|
+|%B|Monatsname|
+
+Unix-Timestamp (Anzahl Sekunden seit 1.1.1970) lesen: ```datetime.fromtimestamp(ts)``` 
+
+    from datetime import timedelta #Zeitdifferenzen
+    delta1 = timedelta(days=1, seconds=1)
+
+#### UTC
+
+    from datetime import datetime, timedelta, timezone
+    # US Eastern Standard timezone
+    ET = timezone(timedelta(hours=-5))
+    # Timezone-aware datetime
+    dt = datetime(2017,12,30,15,9,3, tzinfo=ET)
+    # Indian Standard time
+    IST = timezone(timedelta(hours=5, minutes=30))
+
+```print(dt)``` ergäbe dann ```2017-12-30 15:09:03-05:00```. ```print(dt.astimezone(IST))``` wäre dann 10 Stunden später ```2017-12-31 01:39:03-05:00```. Mit ```dt.replace(tzinfo=timezone.utc)``` wird der UTC-Offset gelöscht: dt würde zu ```2017-12-30 15:09:03+00:00```. Mit ```dt.astimezone(timezone.utc)``` wird der Offset gelöscht, aber die Zeit geändert ```2017-12-30 20:09:03+00:00```.
+#### Timezone Datenbank
+    # Imports
+    from datetime import datetime
+    from dateutils import tz
+    # Eastern time
+    et = tz.gettz('America/New York')
 
 ### Package requests
 URL-Aufrufe erzeugen
