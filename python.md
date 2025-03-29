@@ -396,12 +396,16 @@ Unix-Timestamp (Anzahl Sekunden seit 1.1.1970) lesen: ```datetime.fromtimestamp(
     IST = timezone(timedelta(hours=5, minutes=30))
 
 ```print(dt)``` ergäbe dann ```2017-12-30 15:09:03-05:00```. ```print(dt.astimezone(IST))``` wäre dann 10 Stunden später ```2017-12-31 01:39:03-05:00```. Mit ```dt.replace(tzinfo=timezone.utc)``` wird der UTC-Offset gelöscht: dt würde zu ```2017-12-30 15:09:03+00:00```. Mit ```dt.astimezone(timezone.utc)``` wird der Offset gelöscht, aber die Zeit geändert ```2017-12-30 20:09:03+00:00```.
+
+
 #### Timezone Datenbank
     # Imports
     from datetime import datetime
     from dateutils import tz
     # Eastern time
     et = tz.gettz('America/New York')
+
+Zeit-Angaben mit Zeitangaben anreichern: ```rides[start_dt].dt.tz_localize('America/New_York', ambiguous='NaT')```. Die Zeitzone ändern geht mit ```rides[start_dt].dt.tz_convert('Europe/London', ambiguous='NaT')``` 
 
 ### Package requests
 URL-Aufrufe erzeugen
@@ -421,7 +425,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>)```|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
@@ -446,6 +450,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
 |df.size|Integer|Anzahl Einträge; Alternativ: df.shape[0]|
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
+|dr.resample('D', on='Start date')['Duration in Sec'].mean().plot()|Plot|Entwicklung durchschnittliche Dauer pro Tag|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
 |~|Negation|df[Mit ~"Col1"].isin(["Val1"]) sucht man alle Felder, die NICHT den Suchkriterien entsprechen|
@@ -564,7 +569,7 @@ Grafische Übersicht
 ### df - unterschiedliche (kategorische) Werte je Spalte analysieren
 ```
     non_numeric = df.select_dtypes("object")```  
-    for col in non_numeric.columns \    
+    for col in non_numeric.columns:     
         print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())
 ```  
 Man kann diese Zeichen von dtype="O" (für Objekt) mit .astype("category") in dtype"category" umwandeln. Mit pd.Categorical(<Series>, categories=["A","B","C"], ordered=True) kann man ordinale (geordnete) Kategorien vergeben.
@@ -627,10 +632,10 @@ Series.cat.set_categories Accessor - Parameter:
 - ```inplace```: Boolean - soll das Update ggf. bestehende Serie überschreiben oder nicht
 - ```ordered```: Boolean - sind die Kategorien sortiert - beginnen mit der kleinsten in der Liste
 Weitere Accessors: 
-- add_categories(): neue Kategorien definieren (über ```series.cat.categories``` einsehbar) (noch keine Vergabe) ```series.cat.add_categories(<Liste mit neuen Kategorien>]```
+- add_categories(): neue Kategorien definieren (über ```series.cat.categories``` einsehbar) (noch keine Vergabe) ```Series.cat.add_categories(<Liste mit neuen Kategorien>)```
 - remove_categories(): Kategorien löschen ```series.cat.remove_categories(removals=["<zu löschende Kategorie>"]```
 - rename_categories(new_categories=<dict>)
-- reorder_categories(new_categories=<dict>, ordered=True/False) ```series.cat.reorder_categories(removals=[new_categories=<dict>, ordered=True, inplace=True]```  
+- reorder_categories(new_categories=<dict>, ordered=True/False) ```Series.cat.reorder_categories(removals=[new_categories=<dict>, ordered=True, inplace=True]```  
 
 Codes für Kategorien anlegen: ```df["Kategorie"]=df["Kategorie_Code"].astype("category").cat.codes```. Info: Alphabetische Kategorien werden aufsteigend sortiert - A bekommt 1, ...
 Danach kann man ein "Code Book" anlegen:  
@@ -680,7 +685,7 @@ Wenn einem Argument-Namen mit dem = ein Wert zugeordnet wird, ist das der Defaul
 "Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur (= Tupel) behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
 
 ### Docstrings
-Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils zwei Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n).
+Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils ZWEI Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n). Alternative mit dem ```inspect``` Package: ```inspect.getdoc(function)```.  
 Das erfolgt entweder als Einzeiler 
 - Text mit jeweils DREI doppelten Anführungszeichen eingerahmt) oder 
 - als zugewiesenen Wert des Attribut <function>.__doc__   
