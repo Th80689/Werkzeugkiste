@@ -667,22 +667,64 @@ Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSO
 Anderer Ansatz: Nested column in eine List umwandeln ```books = collection['books'].apply(json_loads).to_list```. Dann das JSON Objekt in einen String umwandeln: ```books_dump=json.dumps(books)``` und den JSON-String dann in eine Dataframe einlesen: ```new_books = pd.read_json(books_dump)```. Im Anschluss wieder die "Meta-Spalten" (als DataFrame!) mit dem neuen Dataframe zusammenbringen ```pd.concat([collection['writers'], new_books], axis=1)```.
 
 ## Eigene Funktionen erstellen
+Ratschläge: DRY (don't repeat yourself) and "Do ONE thing" (einfacher verständlich, besser testbar, leichter zu debuggen)
 ### Definition einer Funktion
 Eine Funktions-Definition hat folgende Struktur:
-```
-# Definitionskopf
-```def <Funktionsname>([Argument[, ...]]):
+    # Definitionskopf
+    def <Funktionsname>([Argument[, ...]]):
     """Docstring - Documentation"""
     # eingerückte Anweisungen
        try:  
+       # Code 
     # Ausgabe (optional)
-           return <output>
+        return <output>
        except TypeError:
-           print("spezifische Fehlermeldung")
-```
-Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden.  
+         print("spezifische Fehlermeldung")
+    # Code, der IMMER ausgeführt werden muss
+       finally:
+           print("Das wird IMMER ausgeführt")
+
+Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden. Wenn der Default LEER ist, gilt ```paramer=None```.  
 Wenn einem Argument-Namen mit dem = ein Wert zugeordnet wird, ist das der Default-Wert.  
 "Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur (= Tupel) behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
+### Scope
+Such-Reihenfolge des Python-Interpreters:
+1) local
+2) non-local
+3) global
+4) built-in
+### Closures
+Funktion speichern Kontext-Informationen wie Variablen in "Closures" (nonlocal Variable, die an eine Funktion angehängt wird). Ob und wieviele es gibt, kann mit ```len(func.__closure__)``` abgefragt werden. Was darin steckt, wird über```func.__closure__.cell_contents``` ermittelt.
+### Decorators (Wrapper-Funktion)
+Mit einem Decorator kann man Funktionen "uminterpretieren/ergänzen". Beispiel:
+
+    from functools import wraps
+    
+    def print_before_and_after(func):
+      # dekorieren, damit Metadaten nicht verloren gehen
+      @wraps(func)
+      def wrapper(*args):
+        print('Before {}'.format(func.__name__))
+        # Call the function being decorated with *args
+        func(*args)
+        print('After {}'.format(func.__name__))
+      # Return the nested function
+      return wrapper
+
+    @print_before_and_after
+    def multiply(a, b):
+      print(a * b)
+
+    multiply(5, 10)
+    
+    # ergibt als Output:
+    Before multiply
+    50
+    After multiply
+
+    # Metadaten abfragen
+    print(multiply.__docstring__)
+    # 
 
 ### Docstrings
 Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils ZWEI Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n). Alternative mit dem ```inspect``` Package: ```inspect.getdoc(function)```.  
@@ -691,12 +733,47 @@ Das erfolgt entweder als Einzeiler
 - als zugewiesenen Wert des Attribut <function>.__doc__   
 oder als Mehrzeiler machen. Dabei gilt:
 - Der ganze Block mit 2x drei doppelten Anführungszeichen (""") eingerahmt
-- Zusammenfassung erste Zeile
+- Zusammenfassung: erste Zeile
 - leere Zeile
 - "Args" ohne Einrückung
 -   eingerückt: für jedes Argument (und dessen akzeptierten Datentypen) eine eigene Zeile
 - "Returns" ohne Einrückung
--   eingerückt: für jede Return-Option Erläuterungen
+-   eingerückt: für jede Return-Option Erläuterungen - Datentyp + Beschreibung
+## Context Manager
+Ein Kontext-Manager
+1. setzt den Kontext für folgenden Code
+2. führt Code aus
+3. entfernt den Kontext.
+
+Beispiel mit optionalem ```as```: Objekt, das der Kontext-Manager zur weiteren Verwendung erstellt
+    with open('file.txt) as file
+Struktur eines Kontext-Managers:
+
+    @contextlib.contextmanager
+    def my_context():
+        # Code zum Aufsetzen des Kontext
+        yield
+        # Code zum Entfernen des Kontext
+        @contextlib.contextmanager
+
+Beispiel: timer()
+    # Add a decorator that will make timer() a context manager
+    @contextlib.contextmanager
+    def timer():
+      """Time the execution of a context block.
+
+      Yields:
+        None
+      """
+      start = time.time()
+      # Send control back to the context block
+      yield
+      end = time.time()
+      print('Elapsed: {:.2f}s'.format(end - start))
+    
+    with timer():
+      print('This should take approximately 0.25 seconds')
+      time.sleep(0.25)
 
 ## Lambda Funktionen
 Mit  ```lambda argument(s): expression``` kann man einfache oder auch "anonyme" Funktionen erstellen, die weder eine "def"-Zeile noch eine "Return"-Anweisung benötigen.
@@ -791,6 +868,13 @@ Interquartile Range (IQR): Entfernung zwischen 25% und 75% Percentile. ```from s
 iqr(df['col1'])```   
 Standard-Outlier: kleiner as 1.5 * IQR - 25 Quantil ODER größer als 1.5 * IQR + 75 Quantil  
 Alle auf einmal: ```df['col1'].describe()``` 
+## Outliers
+Zur Beschreibung von Outliern/Ausreißern kann man folgende Maße nehmen:
+### Leverage
+Gibt an, wie "extrem" die Werte explanatorischen/unabhängigen Variable sind. Bei der Modell-Erstellung kann man den Wert für Leverate aus der Zusammenfassung ```z = model.get_influence().summary_frame()``` über den Wert ```z["hat_diag"]``` herausziehen. 
+### Influence
+Gibt für jeden Messpunkt an, wie sehr sich das Vorhersage-Modell ändern würde, wenn man ihn bei der Modell-Erstellung weglassen würde. Der Wert für Influence wird als Cooks Distanz bezeichnet ```z["cooks_d"]```
+
 ## Stichproben
 ### Sampling
 Sample ```df['col'].sample(<Anzahl>, replace=True|False)```. Alternative für Anzahl; Für <Anzahl>: ```df['col'].sample(frac=0.1)``` mit Anteil "frac" der Population. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen (oder Sample mit Parameter , random_state=<Seed integer>) aufrufen.  
@@ -849,6 +933,109 @@ Die Pearsson Produkt-Moment-Korrelation: ```df['col1'].corr(df['col2'])``` ist N
 1. Zufällige Zuweisung zu Treatment/Control Group (macht Gruppen "vergleichbar")
 2. Placebo statt Treatment nehmen
 3. Double Blind Versuch (auch der Versuchsleiter weiß nicht, ob der Proband Placebo oder Treatment bekommt)
+
+## Regressionsmodelle
+### Lineare Regression und Vorhersagen
+    # ols = ordinary least squares
+    from statsmodels.formula.api import ols
+    import numpy as np
+
+    model = ols("y ~x",  # Formel
+                data = dataset
+            ).fit()
+
+    print(model.params)  # ergibt intercept und Steigung
+
+    # Vorhersagen vorbereiten
+    explanatory_data = pd.DataFrame({'x': np.arange(0, 11)})
+    prediction = model.predict(explanatory_data)
+    
+    # Dataframe mit Vorhersagen erzeugen
+    predictions = explanatory_data.assign(prediction = model.predict(explanatory_data))
+### Logistische Regression
+Logistische Regression muss angewendet werden, wenn die Reponse-Variable logisch ist (0 oder 1).
+
+    from statsmodels.formula.api import logit
+    import numpy as np
+
+    model = logit("y ~x",  # Formel
+                data = dataset
+            ).fit()
+### Confusion matrix, accuracy, sensitivity, specificity
+
+TN = True Negative ```conf_matrix[0,0]```  
+TP = True Positive ```conf_matrix[1,1]```  
+FN = False Negative ```conf_matrix[1,0]```   Type I Error (reject a true null hypothesis)   
+TN = False Negative ```conf_matrix[0,1]```   Type II Error (failing to reject a false null hypothesis)     
+
+Accuracy: Anteil der korrekten Vorhersagen (TN + TP) / (TN+FN+TP+FP)
+Sensitivity: Anteil der richtig erkannten Trues (TP) / (TP + FN)
+Specificity: Anteil der richtig erkannten Falses (TN) / (FP +  TN) 
+
+Alpha: beschreibt die Wahrscheinlichkeit eines Type I Errors
+
+# Machine learning
+
+## Supervised Learning
+Voraussetzung: Numpy-Arrays - OHNE NA-Werte
+
+### Linear Regression
+    # X: Features/independent variables    
+    # y: Target/Predictor/dependent variable 
+    # Import the module
+    from sklearn.linear_model import LinearRegression
+
+    reg = LinearRegression() # instantiate the model
+    reg.fit(X, y)
+    predictions = reg.predict(X)
+
+### Categorical data: Beispiel KNN (k-nearest neighbors)
+    
+    # X: Features/independent variables    
+    # y: Target/Predictor/dependent variable 
+    
+    # Import the module
+    from sklearn.model_selection import train_test_split
+
+    # Split into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    knn = KNeighborsClassifier(n_neighbors=5)
+
+    # Fit the classifier to the training data
+    knn.fit(X_train, y_train)
+
+    # Print the accuracy
+    print(knn.score(X_test, y_test))
+
+## Workflow Bewertung Klassifikationsmodelle
+    import matplotlib.pyplot from numpy
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.model_selection import cross_val_score, KFold, train_test_split
+    from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.tree import DecisionTreeClassifier
+
+    X = music.drop("genre", axis=1).values # Attribute/Predictors/Features
+    y = music["genre"].values # Target
+    X_train, y_train, X_test, y_test = train_test_split(X, y, random_state = 42)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    # dictionary mit zu testenden Models erstellen
+    models = {"Logistic Regression":LogisticRegression(), "KNN": KNeighborsClassifier(), "Decision Tree": DecisionTreeClassifier()}
+    results = [] # leere Liste
+    for model in models.values():
+        kf = KFold(n_splits=6, random_state = 42, shuffle=True)
+        cv_results = cross_val_score(model, X_train_scaled, y_train, cv=kf)
+        results.append(cv_results)
+    plt.boxplot(results, labels=models.keys())
+    plt.show()
+
+    # Test-Set Performance 
+    for name, model in models.item()
+        model.fit(X_train_scaled, y_train)
+        test_score = model.score(X_test_scaled, y_test)
+        print("{} Test Set Accuracy: {}".format(name, test_score))
 
 # OpenAI und Python
 ## completion request
