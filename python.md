@@ -442,7 +442,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |len(df)|Integer|Anzahl Zeilen|
 |df.shape|Tupel (Anzahl Zeilen, Anzahl Spalten)|Struktur |
 |df.dtypes||Zeigt NUR die Datentypen aller Attribute an|
-|df.describe()|Tabelle/Spalte|Zusammenfassungen/Statistiken|
+|df.describe(include='all')|Tabelle/Spalte|Zusammenfassungen/Statistiken; default NUR numerisch, dann mit include='all' angepasst werden|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
 |df["attrib"].nbytes||Speicherbedarf Spalte|
 |df.columns|Liste|Liste aller Spalten-Namen|
