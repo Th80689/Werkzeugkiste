@@ -8,6 +8,18 @@ Zeilen-Umbrüche: Backslash ```\```(Shift+option+7)
 MUSS: EIN Wort - keine Leerzeichen.   
 Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstrich ODER ```CamelCase```: keine Leerzeichen, Beginn eines Wortes wird durch Großbuchstaben gekennzeichnet
 
+## pycodestyle - prüfen auf PEP8 - Styleguide - Compliance
+    # Import needed package
+    import pycodestyle
+    
+    # Create a StyleGuide instance
+    style_checker = pycodestyle.StyleGuide()
+
+    # Run PEP 8 check on multiple files
+    result = style_checker.check_files(['nay_pep8.py', 'yay_pep8.py'])
+
+    # Print result of PEP 8 style check
+    print(result.messages)
 ## Operatoren
 |Typ|Operator|Beschreibung|Ergebnis|
 |-|-|-|-|
@@ -88,7 +100,21 @@ Sets haben keinen Index und ein Subset kann nicht mit ```[]``` gemacht werden. S
 Mit ```s.add(x)``` wird ein einzelner Wert hinzugefügt, mit ```s.update(<list>)``` können mehrere Elemente auf einmal integriert werden. Mit ```s.discard(<val>)``` können Werte sicher entfernt werden. Mit ```s.pop()``` wird "zufällig" ein Wert aus dem Set entfernt. Sets können mit den Methoden ```s.union(s2)``` (or), ```s.intersection(s2)``` (and) mengenmäßig verarbeitet werden. Mit ```s.difference(s2)``` bekommt man alle Datensätze in s, die nicht in s2 waren. Die Anzahl der Datensätze in einem Set kann mit ```len(set)``` abgefragt werden.
 ### Counter (package: collections)
 Sonderform von Dictionaries. Nach ```from collections import Counter``` kann man mit ```Counter(<dict>)``` ein Aggregat erzeugen, in dem das Vorkommen jedes Schlüssels gezählt wird. Mit ```.most_common(x)``` erhält man die Keys absteigend sortiert nach Anzahl von Vorkommen. Mit x kann man das leicht auf die Top x beschränken.
-### Tuples
+### Iterators (package: itertools)
+Built-in Modul zum Erstellen und nutzen von Iterators. ```import itertools```. 
+|Typ|Name||
+|Infinite iterators|```count```,```cycle```,```repeat```||
+|Finite iterators|```accumulate```,```chain```,```zip_longest```||
+|Combination iterators|```product```,```permutation```,```combinations```||
+    # Beispiel: Unique Kombinationen
+    base = ['Bug','Fire','Ghost']
+    from itertools import combinations
+    combos_obj = combinations(base,2)
+    # ergibt ein ```itertools.combination``` Objekt mit allen möglichen 2er-Kombinationen aus: hier also 3 (n Fakultät)
+    # in Liste umwandeln
+    lst = [*compos_obj]
+
+## Tuples
 Tupel werden mit der Syntax ```t=("Wert1","Wert2", ...)``` gebildet - oder mit der Tupel-Funktion aus einer anderen Datenstruktur erzeugt ```t=tuple(list)```.
 Tuples sind unveränderbar (immutable)
 - keine Änderung bestehender Werte
@@ -295,6 +321,8 @@ Daten schreiben (Modus Write Binary = "wb"):
 
 ```df=pd.read_csv(file,nrows=i, header=None, sep="\t", comment="#", na_values=["Nothing"])```. Optional kann das auch in ein Numpy-Array umgewandelt werden: ```df.to_numpy(df)```.
 
+```xls=pd.read_excel(url, sheet_name=None')``` lädt alle Reiter eines Excel-Sheets als ein Dictionary. Jeder Reiter wird ein Key.
+
 Pickled Files: Python data-File, in binär-Form
 ```import pickle```   
 ```with open("file.pkl","rb") as file:  ```
@@ -407,15 +435,59 @@ Unix-Timestamp (Anzahl Sekunden seit 1.1.1970) lesen: ```datetime.fromtimestamp(
 
 Zeit-Angaben mit Zeitangaben anreichern: ```rides[start_dt].dt.tz_localize('America/New_York', ambiguous='NaT')```. Die Zeitzone ändern geht mit ```rides[start_dt].dt.tz_convert('Europe/London', ambiguous='NaT')``` 
 
+## Web-Scraping
+### Package urlretrieve
+    from urllib.request import urlretrieve
+
+    # Assign url of file: url
+    url = 'https://assets.datacamp.com/production/course_1606/datasets/winequality-red.csv'
+
+    # Save file locally
+    urlretrieve(url, 'winequality-red.csv')
+
+Anderes Beispiel: komplette HTML-Seite herunterladen und als Text-Objekt in den Speicher übernehmen
+
+    from urllib.request import urlopen, Request
+    url='https://www.spiegel.de'
+    request=Request(url)
+    response=urlopen(request)
+    html= response.read()
+    response.close()
+
 ### Package requests
 URL-Aufrufe erzeugen
+
+    import requests
+    response = requests.get(url="https://app.database.com")
+    # Text-Attribut auslesen
+    text = response.text
 
 |Befehl|Ergebnis|
 |-|-|
 |```requests.get(url="https://app.database.com")```|Responsecodes erhalten|
 
+### Beautiful soup (HTML-Parser/Beautifier)
+    from bs4 import BeautifulSoup
+    import requests
+    url = 'https://www.crummy.com/software/BeautifulSoup'
+    r = request.get(url)
+    html_doc = r.text
+    # Create a BeautifulSoup object from the HTML: soup
+    soup = BeautifulSoup(html_doc)
+    # Prettify the BeautifulSoup object: pretty_soup
+    pretty_soup = soup.prettify()
+    # Print the response
+    print(pretty_soup)
+    # Get the title and text of Guido's webpage
+    guido_title = soup.title
+    guido_text = soup.text
+    # Find all 'a' tags (which define hyperlinks): a_tags
+    a_tags = soup.find_all('a')
+    # Print the URLs to the shell
+    for link in a_tags:
+        print(link.get('href'))
 
-### Package pandas
+## Package pandas
 ```import pandas as pd```. Wichtigste Klasse, die bereitgestellt wird: ```pandas.core.frame.DataFrame``` - weiter nur noch DataFrame (oder df) genannt.
 
 Erzeugen: mit pd.DataFrame(<list>, <dict>)
@@ -425,7 +497,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.read_csv(<path/filename/URL>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
@@ -444,6 +516,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.dtypes||Zeigt NUR die Datentypen aller Attribute an|
 |df.describe(include='all')|Tabelle/Spalte|Zusammenfassungen/Statistiken; default NUR numerisch, dann mit include='all' angepasst werden|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
+|df['col'].values|Numpy-Array|Eine Liste aller Werte einer Spalte|
 |df["attrib"].nbytes||Speicherbedarf Spalte|
 |df.columns|Liste|Liste aller Spalten-Namen|
 |df.rename(columns = {'col_old':'col_new','col2_old':'col2_new'}, inplace = True)|Spalte umbenennen|
@@ -477,7 +550,34 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
 
-## set Operationen
+### Zeilen in Dataframes bearbeiten
+
+#### df.iterrows()
+Beispiel: Index und Zeile mit .iterrows() - 
+    for i,row in pit_df.iterrows():
+        print(str(i) + ":" + str(row) + " Einzelwert: " + row[2])
+
+#### df.itertupel()
+Effizienter (und Attribute können mit .<Attribut-Name> angesprochen werden):
+    for row_namedtuple in df.itertuples():
+        print(row_namedtuple.Index)
+
+#### df.apply()
+Am effizientesten: mit .apply() eine Funktion auf Spalten (axis=0) oder Zeilen (axis = 1) anwenden. Beispiel: 
+    run_diffs_apply = baseball_df.apply(
+        lambda row: calc_run_diff(row['RS'], row['RA']),
+        axis = 1)
+    baseball_df['RD'] = run_diffs_apply
+
+## Arbeiten mit dem set Datentyp
+Sets sind Mengen EINDEUTIGER Elemente.
+Wenn man Listen in Sets umwandelt, kann man set-Methoden anwenden:
+|Methode|Resultat|Beispiel]
+|intersection()|Nur Elemente, die in BEIDEN Mengen sind|set_a.intersect(set_b)|
+|difference()|Elemente die nur in A sind aber nicht in B|set_a.difference(set_b)|
+|symmetric_difference()|Alle Elemente, die genau in EINER Menge sind|set_a.symmetric_difference(set_b)|
+|union()|Jedes Element, das in A oder B enthalten ist|set_a.union(set_b)|
+
 ```diff = set(df1['col']).difference(df2['col'])``` findet in df1 Kategorien in col, die nicht in den Werten von df2 sind. Solche Inkonsistenzen kann man mit ```df['col'].isin(diff)``` finden - und bereinigen. Oder per Negation per Tilde nur saubere Datensätze ausgeben ```df['col'].isin(~diff)```.
 
 ## Reshaping: LONG vs. WIDE - pivot und melt
@@ -541,6 +641,17 @@ df.isna().sum(axis = 0): Anzahl der fehlenden Werte (Spalte (default): axis = 0,
 ## pandas und JSON
 Mit dem Package ```from pandas import json_normalize``` kann man
 nested json in einen Dataframe umwandeln: ```json_normalize(df)```. Bei komplexeren Strukturen kann ein Unterziel angeben, um nur Unter-Strukturen zu bekommen: ```json_normalize(df, record_path='<key>')```. Optional können noch zusätzliche Über-Attribute übernommen werdne ```json_normalize(df, record_path='<key>', meta=['val1','val2'])``` 
+Alternative: Das ganze Modul einlesen: ```import pandas.io.json```. Dann auf einen Bereich des JSONs einschränken und den Separator für die neuen Spalten-Namen angeben 
+    json_normalize(df['Abschnitt'], 
+                       sep='_',
+                       record_path='categories',
+                       meta = [
+                         'sub_col1',
+                         'sub_col2',
+                         ['sub-sub_col_a', 'sub-sub_col_b']']
+                       ],
+                       meta_prefix ='pre_'
+                       )
 
 ### pandas: Schwellwert (mehr als 5% n/a Werte pro Spalte => verwerfen )
 1. ```threshold = len(df) * 0.05```  
@@ -665,6 +776,31 @@ Die WRatio gibt die Ähnlichkeit an (von 0 überhaupt nicht ähnlich bis 100 ide
 Voraussetzung: Modul mit ```import json``` laden.   
 Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSON-String in Python dict umwandeln) und das Ergebnis in ein Series-Objekt umwandeln (jeden Key in eine eigene Spalte umwandeln): ```books=collection['books'].apply(json.loads).apply(pd.series)```. Danach kann man die Spalte mit den nested data löschen ```collection = collection.drop(columns='books')``` und dann die verbleibenden Spalten mit den aufgespaltenen nested data zusammenführen: ```pd.concat([collections, books], axis=1)```.   
 Anderer Ansatz: Nested column in eine List umwandeln ```books = collection['books'].apply(json_loads).to_list```. Dann das JSON Objekt in einen String umwandeln: ```books_dump=json.dumps(books)``` und den JSON-String dann in eine Dataframe einlesen: ```new_books = pd.read_json(books_dump)```. Im Anschluss wieder die "Meta-Spalten" (als DataFrame!) mit dem neuen Dataframe zusammenbringen ```pd.concat([collection['writers'], new_books], axis=1)```.
+
+Alternative: ```pd.read_json(<file>, orient="split")``` mit orient-Vorgabe, wie der Import dargestellt werden soll.
+
+    # JSON aus File laden
+    import json
+    with open ('file.json', 'r') as json_file:
+        json_data = json.load(json_file)
+    # => ergibt Datentyp dict
+    # Print each key-value pair in json_data
+    for k in json_data.keys():
+        print(k + ': ', json_data[k])
+    
+    # json per API holen
+    # Import package
+    import requests
+    # Assign URL to variable: url
+    url = 'http://www.omdbapi.com/?apikey=72bc447a&t=social+network'
+    # Package the request, send the request and catch the response: r
+    r = requests.get(url)
+    # Decode the JSON data into a dictionary: json_data
+    json_data = r.json()
+    # Print each key-value pair in json_data
+    for k in json_data.keys():
+        print(k + ': ', json_data[k])
+
 
 ## Eigene Funktionen erstellen
 Ratschläge: DRY (don't repeat yourself) and "Do ONE thing" (einfacher verständlich, besser testbar, leichter zu debuggen)
