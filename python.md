@@ -8,7 +8,9 @@ Zeilen-Umbrüche: Backslash ```\```(Shift+option+7)
 MUSS: EIN Wort - keine Leerzeichen.   
 Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstrich ODER ```CamelCase```: keine Leerzeichen, Beginn eines Wortes wird durch Großbuchstaben gekennzeichnet
 
-## pycodestyle - prüfen auf PEP8 - Styleguide - Compliance
+## PEP8 - Styleguide + Packages
+Im Python Enhancement Proposal 8 sind Style-Guide-Empfehlungen für gut lesbaren Code enthalten
+### pycodestyle - prüfen auf PEP8 - Compliance
     # Import needed package
     import pycodestyle
     
@@ -20,6 +22,62 @@ Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstri
 
     # Print result of PEP 8 style check
     print(result.messages)
+
+### Python Packages
+Minimum-Anforderungen:
+- Ordner (der Name ist der Name des Packages) - all lower case
+- Basis-Python File  ```__init__.py```
+
+#### Ordnerstruktur:
+    workdir/
+    |-- my_package/
+    |    |-- __init__.py
+    |    |-- functions.py
+    |    |-- my_class.py
+    |-- requirements.txt
+    |-- setup.py
+
+#### File __init__.py
+    # alles, was vom Package gebraucht wird
+    from .my_class import MyClass
+
+Für Portability sind zwei Files notwendig:
+#### requirements.txt
+    # needed packages/versions
+    matplotlib
+    pycodestyle>=2.4.0
+#### setup.py
+    # steuert Package-Erstellung
+    from setuptools import setup
+
+    setup(name='my_package',
+          version='0.0.1',
+          description='Ein Beispiel-Package',
+          author='X',
+          author_email='X@y.com',
+          packages=['my_package'],
+          install_requires=['matplotlib',
+                            'pycodestyle>=2.4.0'])
+
+#### my_class.py
+    """my_class documentation
+    
+    weitere Infos
+
+    :param x: input 1
+    :return: result
+
+    >>> Beispiel Aufruf 
+    Ergebnis
+    """ 
+    class Document:
+        def __init__(self, attrib):
+            self.attrib = attrib
+
+#### Vorgehen bei Package erstellen und installieren
+1. Umgebung erstellen: ```pip install -r requirements.txt```  
+~/workdir $ pip install .
+
 ## Operatoren
 |Typ|Operator|Beschreibung|Ergebnis|
 |-|-|-|-|
@@ -50,6 +108,21 @@ Python ermittelt Datentypen anhand der Eingabe. Sie müssen nicht vorab definier
 |Zeichenkette, String|```str```|'a'|kann sowohl mit einfachem ' als auch doppelten " definiert werden|
 |Bool|```bool```|```True``` oder ```False```|Werte MÜSSEN mit Großbuchstaben beginnen!|
 
+## Regular Expressions
+In Python werden RegExp über das Modul  ```import re``` bereitgestellt.
+Muster-Input sollte immer in "raw" Format sein, d.h. ein kleines `r` VOR den String eingeben (```r'RegEx'```).
+|Methode|Verarbeitung|Beispielcode|
+|-|-|-|
+|split|anhand Muster in Listenaufteilen|re.split(r'regex', input)|
+|sub|bestimmte Muster substituieren (ersetzen)|re.sub(r'regex', 'neu', input|
+|findall|alle Vorkommnisse finden|re.findall(r'regex', input)|
+
+|Metacharacter|Muster|Bedeutung|
+|-|-|-|
+|\d|Digit|Zahl|
+|\D|Non-Digit|Nicht-Zahl|
+|\w|Word|
+
 ## Arbeiten mit Strings
 
 Multi-Zeilen-Eingabe beginnt und endet im drei doppelten Anführungszeichen ```"""```.
@@ -64,17 +137,59 @@ Multi-Zeilen-Eingabe beginnt und endet im drei doppelten Anführungszeichen ```"
 |in|"lang" in "Ein langes Leben"|True||
 |"".join(iterable)|', '|', '.join(["1","2"])|"1, 2"|
 
+### Text-Funktionen
+```text.split(sep= " ", maxsplit = 2)``` spaltet am Leerzeichen von links aus und macht max 2 Trennungen.
+```text.rsplit(sep= " ", maxsplit = 2)``` macht das gleiche - bloß beginnt rechts mit dem Aufsplitten.
+Mit einer negativen Schrittzahl beim Index kann man einen String umkehren. Der Test "Anfang" wird mit  ```text[::-1]``` in "gnafna" umgewandelt.  
+Mit ```text.splitlines()``` werden bei Zeilenumbrüchen (\n) im Text neue Zeilen erzeugt.  
+Mit ```sep.join(iterable)``` kann man die Elemente eines Interables so verbinden, dass jedes Element im Iterable mit dem sep-String zu einem einzigen String verbunden wird. ```string.find(substr,start,end)``` bekommt man den kleinsten Index, an dem der Suchstring "substr" gefunden wird und -1, wenn es nicht gefunden wird.  
+Vorkommnisse zählen ermöglichte ```string.count(substr, start, end)```.
+
 ### String-Ausgaben
 ### f-Strings (formatierter Ausgabe-String):  
 Mit ```f""``` kann man Variablen mit anderen Python-Konstanten zu einem String-Objekt kombinieren und "leserlich" ausgeben.
 Beispiel:
 ```
-  cookie_name="Brownie"
-  cookie_price=4.22
+    cookie_name="Brownie"
+    cookie_price=4.22
 
-  print(f"Jeder {cookie_name} kostet {cookie_price}.")
+    print(f"Jeder {cookie_name} kostet {cookie_price}.")
+    # Output: Jeder Brownie kostet 4.22
+    # Weitere Formatierungen: 
+    #  !r - mit Hochkomma eingerahmt
+    #  !s - als String
+    #  Zahlentypen nach `:` f = float, d = Zahl, e = wissenschaftlich
+    print(f"Jeder {cookie_name!r} kostet {cookie_price:.1f}.")
+    # Output: Jeder 'Brownie' kostet 4.2
+
+    from datetime import datetime
+    now = datetime.now()
+    print(f"Current date: {now:%B %d, %Y}")
+    # Output: "Current date: October 05, 2023"  
+
+    # Dictionary access
+    data = {"name": "Alice", "age": 30}
+    print(f"Name: {data['name']}, Age: {data['age']}")
+    # Output: "Name: Alice, Age: 30"
+
+    # Inline operations und Function calls
+    def add(a, b):
+    return a + b
+    print(f"Sum: {add(5, 3)}")
+    # Output: "Sum: 8"
 ```  
 Mit f-Strings kann man auch FLOAT lesbar ausgeben: ```print(f"{0.0001:f})"``` kommt dann 0.0001 anstatt des Standards 1e-04. Float wird im Standard auf 6 Nachkommastellen gerundet. Will man mehr haben, ```print(f"{0.0000001:.7f})"```, muss man das mitgeben.
+
+### Template Strings
+- einfachere Syntax im Vergleich zu f Strings
+- langsamer als f Strings
+- gut für die Arbeit mit extern formatierten Strings
+
+    from string import Template
+    my_string = Template("Data Science is $identifier")
+    my_string.substitute(identifier="brain-teasing")
+      output: 'Data Science is brain-teasing' 
+    Wenn eine Variable direkt von Buchstaben gefolgt werden soll, muss sie in {} gesetzt werden. Beispiel: ${pay}ly macht aus month - monthly.
 
 ## Lists
 Lists werden mit eckigen Klammern definiert - die einzelnen Elemente durch Komma getrennt. Die Elemente sind gem. Eingabe geordnet. Anhand ihrer Position (=Index) kann man auf sie zugreifen. WICHTIG: 1. Position ist die 0 (Zero-based indexing). Das letzte Element kann man mit dem Index ```list[-1]``` erreichen. Subsetting: die Elemente e1 bis en können mit ```list[<e1>:<e(n+1>)]``` ermittelt werden (n+1, weil das n+1-Element NICHT mit ausgegeben wird). Vom ersten bis n-ten Element: ```list[:(n+1)]```, ab dem n-ten bis zum Ende: ```list[n+1:]```. Mit doppeltem Doppelpunkt kann jedes n-te Element extrahieren - hier: jedes zweite ```list[::2]``` oder hier: jedes Dritte, starten an Position 2 ```list[1::3]```.  
@@ -236,6 +351,7 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 |string|Zeichenketten-Manipulation|
 |logging|Informationen loggen|
 |subprocess|Terminal-Kommandos absetzen|
+|re|Regular expressions|
 
 ### os - nützliche Beispiele
 |Funktion/Konstanten|Output/Klasse|Beschreibung|
@@ -257,6 +373,15 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 ## Packages
 Packages sind eine Sammlung von MEHREREN Modulen - auch Library oder Bibliothek genannt. Sie müssen erst aus dem PyPI (Python Package Index) über ein Terminal heruntergeladen werden, bevor sie importiert werden können.  
 ```python3 -m pip install <package name>```. Danach kann es Python mit ```import <package name> as <alias>``` verfügbar gemacht werden.
+
+### Package re (Regular Expressions)
+
+    import re
+    my_string = "temparature:75.6 F"
+    # Finde das Muster Zahlen(d) -  gefolgt von . - gefolgt von Zahlen
+    temp = re.search("\d+\.\d+", my_string)
+    # den ersten Fund als Zahl ausgeben
+    print(float(temp.group(0))))
 
 ### Package NumPy
 Numpy eignet sich besonders zum Arbeiten mit Zahlen. Das Package muss mit ```import numpy as np``` geladen werden.
@@ -504,6 +629,8 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.duplicated(subset = column_names, keep = False)|Zeilen in df|subset: Liste mit zu prüfenden Spalten, keep: "first" = erstes Vorkommen, "last" = letztes Vorkommen, "False" = ALLE erhalten|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
+|df.n_smallest(i, ['col'])|<value>|i kleinsten Werte der Spalte|
+|df.n_greatest(i, ['col'])|<value>|i größten Werte der Spalte|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
 |pd.to_datetime(df["char_time_col"], infer_datetime_format=True,errors = 'coerce')|<value>|Spaltenwert in Zeit umwandeln; errors 'coerce' erzeugt NA, wenn das Format nicht erkannt wird|
 |df["new_col"]=pd.to_datetime(df[["year","month","day"]])||Mehrere Spalten zu einem Datum zusammenfassen|
@@ -532,8 +659,9 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["col"].str.contains("<searchstring>|<searchstring2>")|Boolean Series|als Filter|
 |df["col"].isin(['x','y','z'])|auf bestimmte String-Werte filtern|
 |df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
-|df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame|
+|df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame (axis=1 => Spalte löschen|
 |df.drop(df[df['col']> 4].index, inplace = True)|alle Datensätze gem. Bedingung löschen|
+|df.dropna(subset=['col', 'col2'])|alle Datensätze löschen, die in 'col' und 'col2' na haben|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
 |df.agg(["mean","std"])|MEHRERE Aggregat-Funktionen auf ALLE numerischen Spalten anwenden||
@@ -762,11 +890,6 @@ Updates in Series: Beispiel "maybe" => "no"
 ```replace_map={"Noo":"No"}```  
 ```dogs["get_along_cats"].replace(replace_map, inplace=True)```
 
-### one-hot-encoding
-Eine Kategorie-Spalte mit X Werten in X Spalten mit Werten 0/1 und Spaltennamen "Kategorie-Spalte + "_<Kategorie x>" umwandeln. Wichtig: Bei get_dummies bleiben numerische Spalten unverändert. Die Original-Spalte wird gelöscht.
-```df_one_hot = pd.get_dummies(df[["cols to encode","col2"]])```   
-Wenn nur eine Spalte geändert werden soll, ist die Syntax:
-```df_one_hot = pd.get_dummies(df, columns=["col to encode"], prefix="")```   
 ## String-Vergleiche 
   from thefuzz import fuzz
   fuzz.WRatio('str1','str2')
@@ -803,7 +926,8 @@ Alternative: ```pd.read_json(<file>, orient="split")``` mit orient-Vorgabe, wie 
 
 
 ## Eigene Funktionen erstellen
-Ratschläge: DRY (don't repeat yourself) and "Do ONE thing" (einfacher verständlich, besser testbar, leichter zu debuggen)
+Ratschläge: DRY (don't repeat yourself) and "Do ONE thing" (einfacher verständlich, besser testbar, leichter zu debuggen).
+
 ### Definition einer Funktion
 Eine Funktions-Definition hat folgende Struktur:
     # Definitionskopf
@@ -875,6 +999,47 @@ oder als Mehrzeiler machen. Dabei gilt:
 -   eingerückt: für jedes Argument (und dessen akzeptierten Datentypen) eine eigene Zeile
 - "Returns" ohne Einrückung
 -   eingerückt: für jede Return-Option Erläuterungen - Datentyp + Beschreibung
+### verschiedene Doku-Stile mit `pyment``
+```pyment -w -o <Stil> <package>.py```
+Nimmt File <package>.py, fügt ein Skelett im Stil (numpydoc|google|...) (Option -o für Output) hinzu bzw. ändert einen anderen Stil in den Ziel-Stil und überschreibt das genannte File (Option -w).
+
+### Package-Directory-Struktur
+    package/     <-- outer directory
+    |-- package  <--- inner directory mit Source Code
+    |   |-- __init__.py
+    |   |-- subpackage1
+    |   |   |-- __init__.py
+    |   |   |-- functionx.py
+    |   |-- subpackage2
+    |   |   |-- __init__.py
+    |   |   |-- function2.py
+    |   |-- utils.py       <-- collection of internal helpers
+    |-- tests              <-- test directory
+    |   |-- __init__.py
+    |   |-- subpackage1
+    |   |   |-- __init__.py
+    |   |   |-- test_functionx.py  <-- tests for all code with 'assert'
+    |   |-- subpackage2
+    |   |   |-- __init__.py
+    |   |   |-- test_function2.py
+    |-- setup.py           <-- setup script in outer
+    |-- requirements.txt   <-- env packages, mit ```pip freeze > requirements.txt```erstellt
+    |-- LICENSE.txt
+    |-- README.md          <-- package infos
+    |-- MANIFEST.in        <-- Liste anderer Files im Package jenseits des Codes - auf jeden Fall LICENSE.txt und README.txt
+Package-Doku gehört auf oberste Ebene im Package-Ordner in das File in package_dir/__init__.py   
+    """
+    Titel
+    =====
+
+    Beschreibung
+    """
+
+Sub-Package-Doku gehört in den Sub-Package-Ordner package_dir/subpackage_dir/__init__.py   
+    """
+    Subpackage Beschreibung
+    """
+
 ## Context Manager
 Ein Kontext-Manager
 1. setzt den Kontext für folgenden Code
@@ -1111,9 +1276,31 @@ Specificity: Anteil der richtig erkannten Falses (TN) / (FP +  TN)
 Alpha: beschreibt die Wahrscheinlichkeit eines Type I Errors
 
 # Machine learning
+## Preprocessing
+### Encoding-Methoden
+    # LabelEncoder
+    from sklearn.preprocessing import LabelEncoder
+
+    le = LabelEncoder()
+    # Input: Spalte 'subscribed' mit y / n -Werten
+    users['sub_le_enc'] = le.fit_transform(users['subscribed'])
+    # danach enthält 'sub_le_enc' mit 0 und 1 - Werten
+
+### one-hot-encoding
+Eine Kategorie-Spalte mit n Werten in n Spalten mit Werten 0/1 und Spaltennamen "Kategorie-Spalte + "_<Kategorie n>" umwandeln. Wichtig: Bei get_dummies bleiben numerische Spalten unverändert. Die Original-Spalte wird gelöscht.
+```df_one_hot = pd.get_dummies(df[["cols to encode","col2"]])```   
+Wenn nur eine Spalte geändert werden soll, ist die Syntax:
+```df_one_hot = pd.get_dummies(df, columns=["col to encode"], prefix="")```   
+### Vectorizing text (TF/IDF)
+    from sklearm.feature_extraction.text import TfidfVectorizer
+    tfidf_vec = TfidfVectorizer()
+    text_tfidf = tfidf_vec.fit_transform(documents)
 
 ## Supervised Learning
-Voraussetzung: Numpy-Arrays - OHNE NA-Werte
+Voraussetzungen: 
+- Numpy-Arrays - OHNE NA-Werte
+- alles numerisch 
+
 
 ### Linear Regression
     # X: Features/independent variables    
@@ -1173,6 +1360,7 @@ Voraussetzung: Numpy-Arrays - OHNE NA-Werte
         test_score = model.score(X_test_scaled, y_test)
         print("{} Test Set Accuracy: {}".format(name, test_score))
 
+
 # OpenAI und Python
 ## completion request
 from openai import OpenAI
@@ -1219,3 +1407,18 @@ response = client.chat.completions.create(
     messages = [{"role":"user", "content": prompt}]
 )
 print(response.choices[0].message.content)
+
+# ETL/ELT-Helper
+## Modul ```logging```
+    import logging
+    # aktuellen Level einstellen
+    logging.basicConfig(format='%(levelname)s: %(message)s, level=logging.DEBUG)
+    # Beispiele für unterschiedliche Einträge
+    logging.debug(f"Variable has value {path}")
+    # DEBUG: Variable has value raw_file.csv
+    logging.info("Data has been transformed and will now be loaded")
+    # INFO: Data has been transformed and will now be loaded
+    logging.warning("Unexpected number of rows detected.")
+    # WARNING: Unexpected number of rows detected.
+    logging.error("{ke} arose in execution")
+    # ERROR: KeyError arose in execution
