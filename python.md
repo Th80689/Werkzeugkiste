@@ -60,6 +60,8 @@ Für Portability sind zwei Files notwendig:
                             'pycodestyle>=2.4.0'])
 
 #### my_class.py
+
+class my_class
     """my_class documentation
     
     weitere Infos
@@ -108,20 +110,116 @@ Python ermittelt Datentypen anhand der Eingabe. Sie müssen nicht vorab definier
 |Zeichenkette, String|```str```|'a'|kann sowohl mit einfachem ' als auch doppelten " definiert werden|
 |Bool|```bool```|```True``` oder ```False```|Werte MÜSSEN mit Großbuchstaben beginnen!|
 
+## Klassen
+Attribute und Methoden einer Klasse kann man über ```dir(<class>)``` abfragen.
+
+Eine leere Klasse kann mit ```pass``` definiert werden:
+    class ClassName:
+        # 
+        pass
+
+Methoden einer Klasse werden als Funktionen definiert - meist mit ```self``` als erstem Argument (=Referenz auf Instanz).
+    class Customer:
+        """Docstring-Beschreibung"""
+        # class-Attribute: gelten für ALLE Instanzen; Namenskonvention: GROSS
+        MIN_SALARY = 30000
+            
+        # __init__ Block  # wird beim Instanziieren aufgerufen
+        # erstellt Object-Attribute
+        def __init__(self, attr1=<default1>, attr2=<default2>):
+            self.attr1 = attr1
+            if attr2 > Customer.MIN_SALARY:
+                self.attr2 = attr2
+            else self.attr2 = Customer.MIN_SALARY
+
+        # class-Methode
+        @classmethod
+        # cls argument refers to the class
+        def my_awesome_method(cls, args, ...):
+            # code...
+            # CANNOT use any instance attributes!
+
+        # Attribut über Setter-Methode setzen
+        def set_name(self, new_name):
+            self.name = new_name
+        # Methode 
+        def identity(self):
+            print("My name is " + self.name)
+
+### Best Practices "Klassen"
+1. Attribute immer im __init__ Block initialisieren
+2. Naming: Klassen mit CamelCase, Methoden und Attribute mit lower_snake_case
+3. Keep ```self``` as ```self```
+4. Use docstrings
+
+### Type hints
+Type hints werden nicht vom Python Interpreter durchgesetzt - helfen aber dem "Future me" und Kollegen, den Code besser zu verstehen.
+Mit der Typing Library können diverse Top-Level Typen importiert werden, auf die dann verwiesen werden kann, z.B. ```from typing import List, Dict```
+|Ziel-Objekt|Syntax|Beispiel|
+|-|-|
+|variable|variable : type|name : str ="Frost"|
+|functions/methods:|def func(parameter : type) -> Return type :|def get_x(inp : int) -> dict:|
+|Top Level Objekte|variable: TopLevelObject[Details] = [Input]|names : List[str] = ["a","b"]|
+|Objekt|variable : Klasse = Klasse(input)|
+
+### Vererbung
+
+Eine Childklasse wird definiert, indem der Aufruf die Parent-Klasse als Parameter erhält. Beispiel einer (leeren) Childklasse: 
+    class SuperCustomer(Customer):
+        pass
+
 ## Regular Expressions
 In Python werden RegExp über das Modul  ```import re``` bereitgestellt.
 Muster-Input sollte immer in "raw" Format sein, d.h. ein kleines `r` VOR den String eingeben (```r'RegEx'```).
-|Methode|Verarbeitung|Beispielcode|
-|-|-|-|
-|split|anhand Muster in Listenaufteilen|re.split(r'regex', input)|
-|sub|bestimmte Muster substituieren (ersetzen)|re.sub(r'regex', 'neu', input|
-|findall|alle Vorkommnisse finden|re.findall(r'regex', input)|
+|Methode|Verarbeitung|Beispielcode|Ergebnis|
+|-|-|-|-|
+|split|anhand Muster in aufteilen|re.split(r'regex', input)|Liste|
+|sub|bestimmte Muster substituieren (ersetzen)|re.sub(r'regex', 'neu', input|geänderter String|
+|findall|alle Vorkommnisse finden|re.findall(r'regex', input)|Liste|
+|search|sucht im gesamten String|re.search(r'regex', input)|Match-Object mit "span" (Anfang + Ende-Position im String)|
+|match|beginnt Suche an 1. Position|re.match(r'regex', input)|Match-Object mit "span" (Anfang + Ende-Position im String|
+```search``` stellt die Methode ```group()``` bereit. Der Gesamt-String hat Index 0, Untergruppen haben dann Index 1 - ... .
+
 
 |Metacharacter|Muster|Bedeutung|
 |-|-|-|
 |\d|Digit|Zahl|
 |\D|Non-Digit|Nicht-Zahl|
-|\w|Word|
+|\w|Word|Buchstabe|Liste|
+|\W|Non-Word|Nicht-Buchstabe|Liste|
+|\s|Whitespace|Leerzeichen, Tab, ...|Liste|
+|\S|Non-Whitespace|Nicht-Leerzeichen|Liste|
+|\g|global ersetzen||
+|{n,m}|Quantifier - greedy|Eingabe von Zähler(n: Minimum, m: Maximum)||
+|+|Quantifier once or multiple - greedy|Vorgaben zur Anzahl Vorkommen|
+|*|Quantifier zero or more times - greedy||
+|?|Quantifier zero or once - greedy||
+|`greedy Quantifier` ?|macht den Quantifier lazy (shortest match)||
+|.|"any" Character except newline||
+|^|Beginn String||
+|$|Ende String||
+|\|Escape Character für Metachars||
+|pipe|ODER||
+|[]|Options-Sammlung|a-Z: [a-zA-Z]|
+|[^]|Negation/NOT||
+|()|Prioritäten/Gruppe|bei komplexen Mustern werden nur die Gruppen ausgegeben|
+|?:|non-capturing group|relevantes Pattern, das NICHT ausgegeben wird|
+|?P|Gruppen Namen vergeben|Beispiel-Format(Name in <>): ```(?P<name>regex)```|
+
+Backreferences zu Gruppen   
+    sentence = "I wish you a happy happy birthday"
+    # finde Wort-Wiederholungen
+    re.findall(r"(\w+)\s\1", sentence)
+    # das doppelte eliminieren
+    re.sub((r"(?P<word>\w+)\s(P=<word>", r"\g<word>", sentence )
+    # positive look ahead - txt gefolgt von transferred
+    re.findall(r"\w*\.txt(?=\stransferred)", my_text)
+    # negative look ahead - txt NICHT gefolgt von transferred
+    re.findall(r"\w*\.txt(?!\stransferred)", my_text)
+    # positive look behind - txt nach Member
+    re.findall(r"(?<=Member:\s)\w+\s\w+)", my_text)
+    # negative look behind - brown NICHT nach cat|dog
+    re.findall(r"(?<!brown\s)(cat|dog))", my_text)
 
 ## Arbeiten mit Strings
 
@@ -145,7 +243,9 @@ Mit ```text.splitlines()``` werden bei Zeilenumbrüchen (\n) im Text neue Zeilen
 Mit ```sep.join(iterable)``` kann man die Elemente eines Interables so verbinden, dass jedes Element im Iterable mit dem sep-String zu einem einzigen String verbunden wird. ```string.find(substr,start,end)``` bekommt man den kleinsten Index, an dem der Suchstring "substr" gefunden wird und -1, wenn es nicht gefunden wird.  
 Vorkommnisse zählen ermöglichte ```string.count(substr, start, end)```.
 
-### String-Ausgaben
+### String-Ausgaben mit ```str.format()```
+
+print("The email {email_example} is a valid email".format(email_example=example)
 ### f-Strings (formatierter Ausgabe-String):  
 Mit ```f""``` kann man Variablen mit anderen Python-Konstanten zu einem String-Objekt kombinieren und "leserlich" ausgeben.
 Beispiel:
@@ -264,7 +364,7 @@ Ein Iterable kann auch mit ```range(start, end+1)``` erzeugt werden. ```start```
 ```
 while <Bedingung is True>:
    action
-   if <Bedingung2 is True>
+   if <Bedingung2> == True
      break
 ```  
 Über die Tastatur kann man einen while-Loop mit CTRL+C abbrechen.
@@ -279,6 +379,12 @@ Nach einem ```else``` kann man auch ein eingerücktes ```raise <Error Type> ("sp
 |- verhindert Fehler und Programm-Abbruch|- Erzeugt Fehler mit Programm-Abbruch|
 |- Nachfolgender Code wird ausgeführt|- Nachfolgender Code wird NICHT ausgeführt|
 
+    # Beispiel mit Prüfung
+    try:
+        if validate_name(name) == False:
+            raise ValueError("konkrete Fehlermeldung")
+    except:
+        return False
 
 ## Eingebaute Funktionen
 |Funktion|Ergebnis|
@@ -402,6 +508,7 @@ Der Datentyp in einem Array wird aus dem "höchstwertigen" Typ bei Erstellung de
 |np.array([<list>], dtype=np.<Datentyp>)|Liste in 1-dimensionales Numpy-Array umwandeln|
 |np.array([[<list>],[<list>]])|List of lists in 2-dimensionales Numpy-Array umwandeln|
 |np.array(<2D List 1>,<2D List 2>,<2D List 1>)|aus 3 2-dimensionalen Arrays eine 3D Array erstellen|
+|np.flatten()|n-dimensionales Array in ein 1-dimensionales Array umwandeln|
 |np.zeros((<r>, <c>))|Array mit Nullen mit r Zeilen und c Spalten aufbauen|
 |np.random.random((r,c))|Array aus Zufallszahlen (0-1) mir r Zeilen und c Spalten aufbauen|
 |np.arange(s,e)|Liste mit einer (ganzzahligen) Zahlenfolge von Start s bis Ende e|
