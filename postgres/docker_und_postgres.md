@@ -15,4 +15,16 @@ Auf dem Rechner: unter \users\DockerTests
 mkdir pg
 docker pull postgres:latest
 
-docker run --name pg-playground -e POSTGRES_PASSWORD=mypppw -d postgres
+docker run --name pg-metabase -e POSTGRES_PASSWORD=pg_admin -d metabase
+
+# Postgres-Vorbereitung für Metabase
+
+```CREATE USER metabase WITH LOGIN PASSWORD 'mb_home';```   
+```CREATE DATABASE metabase_home;```   
+```GRANT ALL PRIVILEGES ON DATABASE metabase_home TO metabase;```   
+```CREATE SCHEMA metabase;```  
+```GRANT USAGE ON SCHEMA metabase TO metabase;```
+
+### Schemas 
+Default-Schema ist immer ```public```.
+Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeichen b) Startet mit Buchstabe oder "_", c) darf nicht mit 'pq_' beginnen. Der Zugriff auf das Schema kann mit ```GRANT USAGE ON SCHEMA <schema_name> TO <user_name>``` gegeben werden.

@@ -4,6 +4,7 @@ Andere Beispiele für den Einstieg:
 - https://neon.tech/postgresql/tutorial
 ## Datenbank anlegen
 ```CREATE DATABASE <db_name>;```
+```GRANT ALL PRIVILEGES ON DATABASE <db_name> TO <user_name>```  
 ### Schemas 
 Default-Schema ist immer ```public```.
 Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeichen b) Startet mit Buchstabe oder "_", c) darf nicht mit 'pq_' beginnen. Der Zugriff auf das Schema kann mit ```GRANT USAGE ON SCHEMA <schema_name> TO <user_name>``` gegeben werden.
@@ -31,11 +32,13 @@ Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeich
 ||DATE|YYYY-MM-DD|
 ||TIME|hh24:mi:ss|
 
-Tabelle anlegen:  
+## Tabelle anlegen  
+```CREATE TABLE x (column_name NOT NULL);```  
+
+## Spalten anlegen
 ```ALTER TABLE test ALTER COLUMN x TYPE INTEGER [SET|DROP] NOT NULL```  
 
 ## Unique constraints
-```CREATE TABLE x (column_name NOT NULL);```  
 ```ALTER TABLE x ADD CONSTRAINT some_name UNIQUE(column_name);```
 
 ### Regular primary
@@ -67,7 +70,7 @@ CONCURRENTLY: Daten können geladen werden, auch wenn die Tabelle gerade geladen
 
 ## User-Verwaltung und PRIVILEGEs
 Jede Postgres-Datenbank hat den Superuser ```postgres```, der u.a. Datenbanken anlegen (CREATE db) und Löschen (DROP db) kann.
-Ein neuer User wird mit ```CREATE USER <user_name>``` angelegt, der dann ein eigenes Schema erhält. Danach hat der User aber noch kein Passwort. ```CREATE USER <user_name> WITH PASSWORD '<secret>'``` behoben werden. Der User kann das wieder ändern mit ```ALTER USER <user_name> WITH PASSWORD '<new_secret>'```.  
+Ein neuer User wird mit ```CREATE USER <user_name>'``` angelegt, der dann ein eigenes Schema erhält. Danach hat der User aber noch kein Passwort. ```CREATE USER <user_name>  WITH LOGIN PASSWORD '<secret>'``` behoben werden. Der User kann das wieder ändern mit ```ALTER USER <user_name> WITH PASSWORD '<new_secret>'```.  
 Usern und Rollen können Detail-Rechte (privileges) wie SELECT, INSERT, UPDATE, DELETE mit der Syntax ```GRANT <privilege> ON <object> TO <grantee = user/role>``` zugewiesen werden.
 DDLs darf immer nur der OWNER durchführen. Diese Eigentümerschaft kann aber auch mit ```ALTER TABLE <table_name> OWNER TO <new owner>``` geändert werden. Das kann auch auf Schema-Ebene mit ```GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA <schema_name> TO <user_name>``` geschehen.  
 Neben Usern können auch Gruppen angelegt werden ```CREATE GROUP <group_name>```. Diese können dann über ```GRANT USAGE ON SCHEMA <schema_name> TO <group_name>``` und ```GRANT INSERT, UPDATE, SELECT, DELETE ON ALL TABLES IN SCHEMA <schema_name> TO <group_name>``` mit allen Rechten versehen werden. Danach können dann alle Nutzer, die der neuen Gruppe mit ```ALTER GROUP <group_name> ADD USER <user_name>``` zugewiesen werden über diese Gruppenrechte zugreifen. Erhöhte Stufe ist: ```GRANT ALL PRIVILEGES ON <schema_name>.* TO <user_name>```.
