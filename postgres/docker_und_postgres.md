@@ -28,3 +28,36 @@ docker run --name pg-metabase -e POSTGRES_PASSWORD=pg_admin -d metabase
 ### Schemas 
 Default-Schema ist immer ```public```.
 Syntax ist ```CREATE SCHEMA <schema_name>```. Namensregeln sind a) max. 31 Zeichen b) Startet mit Buchstabe oder "_", c) darf nicht mit 'pq_' beginnen. Der Zugriff auf das Schema kann mit ```GRANT USAGE ON SCHEMA <schema_name> TO <user_name>``` gegeben werden.
+
+
+# Postgres + Docker Tutorial
+https://www.datacamp.com/tutorial/postgresql-docker
+
+## Running PostgreSQL in a Docker container
+
+Einfach:
+```docker run --name postgres-db -e POSTGRES_PASSWORD=mypassword postgres````
+
+## Bessere Konfiguration
+### Docker Volume anlegen (persistente Speicherung)
+```docker volume create postgres-data```
+
+Spezifikationen für das Volume postgres-data anschauen: ```docker volume inspect postgres-data```
+
+
+### Neuen Container postgres-db starten
+docker run --name postgres-db \
+  -e POSTGRES_PASSWORD=pgAdmin_M1 \
+  -e POSTGRES_USER=pgadmin \
+  -e POSTGRES_DB=finanzen \
+  -p 127.0.0.1:5432:5432 \
+  -v postgres-data:/var/lib/postgresql/data \
+  -d postgres
+
+### psql über Terminal aufrufen + Funktionstests
+```docker exec -it postgres-db psql -U pgadmin -d finanzen````
+
+```SELECT current_database(), current_user;```
+
+### svg to pdf conversion
+sips -s format pdf -o output2.pdf output2.svg

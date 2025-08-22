@@ -8,6 +8,78 @@ Zeilen-Umbrüche: Backslash ```\```(Shift+option+7)
 MUSS: EIN Wort - keine Leerzeichen.   
 Es gibt zwei Varianten: ```snake_case``` - alles klein, getrennt durch Unterstrich ODER ```CamelCase```: keine Leerzeichen, Beginn eines Wortes wird durch Großbuchstaben gekennzeichnet
 
+## PEP8 - Styleguide + Packages
+Im Python Enhancement Proposal 8 sind Style-Guide-Empfehlungen für gut lesbaren Code enthalten
+### pycodestyle - prüfen auf PEP8 - Compliance
+    # Import needed package
+    import pycodestyle
+    
+    # Create a StyleGuide instance
+    style_checker = pycodestyle.StyleGuide()
+
+    # Run PEP 8 check on multiple files
+    result = style_checker.check_files(['nay_pep8.py', 'yay_pep8.py'])
+
+    # Print result of PEP 8 style check
+    print(result.messages)
+
+### Python Packages
+Minimum-Anforderungen:
+- Ordner (der Name ist der Name des Packages) - all lower case
+- Basis-Python File  ```__init__.py```
+
+#### Ordnerstruktur:
+    workdir/
+    |-- my_package/
+    |    |-- __init__.py
+    |    |-- functions.py
+    |    |-- my_class.py
+    |-- requirements.txt
+    |-- setup.py
+
+#### File __init__.py
+    # alles, was vom Package gebraucht wird
+    from .my_class import MyClass
+
+Für Portability sind zwei Files notwendig:
+#### requirements.txt
+    # needed packages/versions
+    matplotlib
+    pycodestyle>=2.4.0
+#### setup.py
+    # steuert Package-Erstellung
+    from setuptools import setup
+
+    setup(name='my_package',
+          version='0.0.1',
+          description='Ein Beispiel-Package',
+          author='X',
+          author_email='X@y.com',
+          packages=['my_package'],
+          install_requires=['matplotlib',
+                            'pycodestyle>=2.4.0'])
+
+#### my_class.py
+
+class my_class
+    """my_class documentation
+    
+    weitere Infos
+
+    :param x: input 1
+    :return: result
+
+    >>> Beispiel Aufruf 
+    Ergebnis
+    """ 
+    class Document:
+        def __init__(self, attrib):
+            self.attrib = attrib
+
+#### Vorgehen bei Package erstellen und installieren
+1. Umgebung erstellen: ```pip install -r requirements.txt```  
+~/workdir $ pip install .
+
 ## Operatoren
 |Typ|Operator|Beschreibung|Ergebnis|
 |-|-|-|-|
@@ -38,6 +110,117 @@ Python ermittelt Datentypen anhand der Eingabe. Sie müssen nicht vorab definier
 |Zeichenkette, String|```str```|'a'|kann sowohl mit einfachem ' als auch doppelten " definiert werden|
 |Bool|```bool```|```True``` oder ```False```|Werte MÜSSEN mit Großbuchstaben beginnen!|
 
+## Klassen
+Attribute und Methoden einer Klasse kann man über ```dir(<class>)``` abfragen.
+
+Eine leere Klasse kann mit ```pass``` definiert werden:
+    class ClassName:
+        # 
+        pass
+
+Methoden einer Klasse werden als Funktionen definiert - meist mit ```self``` als erstem Argument (=Referenz auf Instanz).
+    class Customer:
+        """Docstring-Beschreibung"""
+        # class-Attribute: gelten für ALLE Instanzen; Namenskonvention: GROSS
+        MIN_SALARY = 30000
+            
+        # __init__ Block  # wird beim Instanziieren aufgerufen
+        # erstellt Object-Attribute
+        def __init__(self, attr1=<default1>, attr2=<default2>):
+            self.attr1 = attr1
+            if attr2 > Customer.MIN_SALARY:
+                self.attr2 = attr2
+            else self.attr2 = Customer.MIN_SALARY
+
+        # class-Methode
+        @classmethod
+        # cls argument refers to the class
+        def my_awesome_method(cls, args, ...):
+            # code...
+            # CANNOT use any instance attributes!
+
+        # Attribut über Setter-Methode setzen
+        def set_name(self, new_name):
+            self.name = new_name
+        # Methode 
+        def identity(self):
+            print("My name is " + self.name)
+
+### Best Practices "Klassen"
+1. Attribute immer im __init__ Block initialisieren
+2. Naming: Klassen mit CamelCase, Methoden und Attribute mit lower_snake_case
+3. Keep ```self``` as ```self```
+4. Use docstrings
+
+### Type hints
+Type hints werden nicht vom Python Interpreter durchgesetzt - helfen aber dem "Future me" und Kollegen, den Code besser zu verstehen.
+Mit der Typing Library können diverse Top-Level Typen importiert werden, auf die dann verwiesen werden kann, z.B. ```from typing import List, Dict```
+|Ziel-Objekt|Syntax|Beispiel|
+|-|-|
+|variable|variable : type|name : str ="Frost"|
+|functions/methods:|def func(parameter : type) -> Return type :|def get_x(inp : int) -> dict:|
+|Top Level Objekte|variable: TopLevelObject[Details] = [Input]|names : List[str] = ["a","b"]|
+|Objekt|variable : Klasse = Klasse(input)|
+
+### Vererbung
+
+Eine Childklasse wird definiert, indem der Aufruf die Parent-Klasse als Parameter erhält. Beispiel einer (leeren) Childklasse: 
+    class SuperCustomer(Customer):
+        pass
+
+## Regular Expressions
+In Python werden RegExp über das Modul  ```import re``` bereitgestellt.
+Muster-Input sollte immer in "raw" Format sein, d.h. ein kleines `r` VOR den String eingeben (```r'RegEx'```).
+|Methode|Verarbeitung|Beispielcode|Ergebnis|
+|-|-|-|-|
+|split|anhand Muster in aufteilen|re.split(r'regex', input)|Liste|
+|sub|bestimmte Muster substituieren (ersetzen)|re.sub(r'regex', 'neu', input|geänderter String|
+|findall|alle Vorkommnisse finden|re.findall(r'regex', input)|Liste|
+|search|sucht im gesamten String|re.search(r'regex', input)|Match-Object mit "span" (Anfang + Ende-Position im String)|
+|match|beginnt Suche an 1. Position|re.match(r'regex', input)|Match-Object mit "span" (Anfang + Ende-Position im String|
+```search``` stellt die Methode ```group()``` bereit. Der Gesamt-String hat Index 0, Untergruppen haben dann Index 1 - ... .
+
+
+|Metacharacter|Muster|Bedeutung|
+|-|-|-|
+|\d|Digit|Zahl|
+|\D|Non-Digit|Nicht-Zahl|
+|\w|Word|Buchstabe|Liste|
+|\W|Non-Word|Nicht-Buchstabe|Liste|
+|\s|Whitespace|Leerzeichen, Tab, ...|Liste|
+|\S|Non-Whitespace|Nicht-Leerzeichen|Liste|
+|\g|global ersetzen||
+|{n,m}|Quantifier - greedy|Eingabe von Zähler(n: Minimum, m: Maximum)||
+|+|Quantifier once or multiple - greedy|Vorgaben zur Anzahl Vorkommen|
+|*|Quantifier zero or more times - greedy||
+|?|Quantifier zero or once - greedy||
+|`greedy Quantifier` ?|macht den Quantifier lazy (shortest match)||
+|.|"any" Character except newline||
+|^|Beginn String||
+|$|Ende String||
+|\|Escape Character für Metachars||
+|pipe|ODER||
+|[]|Options-Sammlung|a-Z: [a-zA-Z]|
+|[^]|Negation/NOT||
+|()|Prioritäten/Gruppe|bei komplexen Mustern werden nur die Gruppen ausgegeben|
+|?:|non-capturing group|relevantes Pattern, das NICHT ausgegeben wird|
+|?P|Gruppen Namen vergeben|Beispiel-Format(Name in <>): ```(?P<name>regex)```|
+
+Backreferences zu Gruppen   
+    sentence = "I wish you a happy happy birthday"
+    # finde Wort-Wiederholungen
+    re.findall(r"(\w+)\s\1", sentence)
+    # das doppelte eliminieren
+    re.sub((r"(?P<word>\w+)\s(P=<word>", r"\g<word>", sentence )
+    # positive look ahead - txt gefolgt von transferred
+    re.findall(r"\w*\.txt(?=\stransferred)", my_text)
+    # negative look ahead - txt NICHT gefolgt von transferred
+    re.findall(r"\w*\.txt(?!\stransferred)", my_text)
+    # positive look behind - txt nach Member
+    re.findall(r"(?<=Member:\s)\w+\s\w+)", my_text)
+    # negative look behind - brown NICHT nach cat|dog
+    re.findall(r"(?<!brown\s)(cat|dog))", my_text)
+
 ## Arbeiten mit Strings
 
 Multi-Zeilen-Eingabe beginnt und endet im drei doppelten Anführungszeichen ```"""```.
@@ -52,17 +235,61 @@ Multi-Zeilen-Eingabe beginnt und endet im drei doppelten Anführungszeichen ```"
 |in|"lang" in "Ein langes Leben"|True||
 |"".join(iterable)|', '|', '.join(["1","2"])|"1, 2"|
 
-### String-Ausgaben
+### Text-Funktionen
+```text.split(sep= " ", maxsplit = 2)``` spaltet am Leerzeichen von links aus und macht max 2 Trennungen.
+```text.rsplit(sep= " ", maxsplit = 2)``` macht das gleiche - bloß beginnt rechts mit dem Aufsplitten.
+Mit einer negativen Schrittzahl beim Index kann man einen String umkehren. Der Test "Anfang" wird mit  ```text[::-1]``` in "gnafna" umgewandelt.  
+Mit ```text.splitlines()``` werden bei Zeilenumbrüchen (\n) im Text neue Zeilen erzeugt.  
+Mit ```sep.join(iterable)``` kann man die Elemente eines Interables so verbinden, dass jedes Element im Iterable mit dem sep-String zu einem einzigen String verbunden wird. ```string.find(substr,start,end)``` bekommt man den kleinsten Index, an dem der Suchstring "substr" gefunden wird und -1, wenn es nicht gefunden wird.  
+Vorkommnisse zählen ermöglichte ```string.count(substr, start, end)```.
+
+### String-Ausgaben mit ```str.format()```
+
+print("The email {email_example} is a valid email".format(email_example=example)
 ### f-Strings (formatierter Ausgabe-String):  
 Mit ```f""``` kann man Variablen mit anderen Python-Konstanten zu einem String-Objekt kombinieren und "leserlich" ausgeben.
 Beispiel:
 ```
-  cookie_name="Brownie"
-  cookie_price=4.22
+    cookie_name="Brownie"
+    cookie_price=4.22
 
-  print(f"Jeder {cookie_name} kostet {cookie_price}.")
+    print(f"Jeder {cookie_name} kostet {cookie_price}.")
+    # Output: Jeder Brownie kostet 4.22
+    # Weitere Formatierungen: 
+    #  !r - mit Hochkomma eingerahmt
+    #  !s - als String
+    #  Zahlentypen nach `:` f = float, d = Zahl, e = wissenschaftlich
+    print(f"Jeder {cookie_name!r} kostet {cookie_price:.1f}.")
+    # Output: Jeder 'Brownie' kostet 4.2
+
+    from datetime import datetime
+    now = datetime.now()
+    print(f"Current date: {now:%B %d, %Y}")
+    # Output: "Current date: October 05, 2023"  
+
+    # Dictionary access
+    data = {"name": "Alice", "age": 30}
+    print(f"Name: {data['name']}, Age: {data['age']}")
+    # Output: "Name: Alice, Age: 30"
+
+    # Inline operations und Function calls
+    def add(a, b):
+    return a + b
+    print(f"Sum: {add(5, 3)}")
+    # Output: "Sum: 8"
 ```  
 Mit f-Strings kann man auch FLOAT lesbar ausgeben: ```print(f"{0.0001:f})"``` kommt dann 0.0001 anstatt des Standards 1e-04. Float wird im Standard auf 6 Nachkommastellen gerundet. Will man mehr haben, ```print(f"{0.0000001:.7f})"```, muss man das mitgeben.
+
+### Template Strings
+- einfachere Syntax im Vergleich zu f Strings
+- langsamer als f Strings
+- gut für die Arbeit mit extern formatierten Strings
+
+    from string import Template
+    my_string = Template("Data Science is $identifier")
+    my_string.substitute(identifier="brain-teasing")
+      output: 'Data Science is brain-teasing' 
+    Wenn eine Variable direkt von Buchstaben gefolgt werden soll, muss sie in {} gesetzt werden. Beispiel: ${pay}ly macht aus month - monthly.
 
 ## Lists
 Lists werden mit eckigen Klammern definiert - die einzelnen Elemente durch Komma getrennt. Die Elemente sind gem. Eingabe geordnet. Anhand ihrer Position (=Index) kann man auf sie zugreifen. WICHTIG: 1. Position ist die 0 (Zero-based indexing). Das letzte Element kann man mit dem Index ```list[-1]``` erreichen. Subsetting: die Elemente e1 bis en können mit ```list[<e1>:<e(n+1>)]``` ermittelt werden (n+1, weil das n+1-Element NICHT mit ausgegeben wird). Vom ersten bis n-ten Element: ```list[:(n+1)]```, ab dem n-ten bis zum Ende: ```list[n+1:]```. Mit doppeltem Doppelpunkt kann jedes n-te Element extrahieren - hier: jedes zweite ```list[::2]``` oder hier: jedes Dritte, starten an Position 2 ```list[1::3]```.  
@@ -88,7 +315,21 @@ Sets haben keinen Index und ein Subset kann nicht mit ```[]``` gemacht werden. S
 Mit ```s.add(x)``` wird ein einzelner Wert hinzugefügt, mit ```s.update(<list>)``` können mehrere Elemente auf einmal integriert werden. Mit ```s.discard(<val>)``` können Werte sicher entfernt werden. Mit ```s.pop()``` wird "zufällig" ein Wert aus dem Set entfernt. Sets können mit den Methoden ```s.union(s2)``` (or), ```s.intersection(s2)``` (and) mengenmäßig verarbeitet werden. Mit ```s.difference(s2)``` bekommt man alle Datensätze in s, die nicht in s2 waren. Die Anzahl der Datensätze in einem Set kann mit ```len(set)``` abgefragt werden.
 ### Counter (package: collections)
 Sonderform von Dictionaries. Nach ```from collections import Counter``` kann man mit ```Counter(<dict>)``` ein Aggregat erzeugen, in dem das Vorkommen jedes Schlüssels gezählt wird. Mit ```.most_common(x)``` erhält man die Keys absteigend sortiert nach Anzahl von Vorkommen. Mit x kann man das leicht auf die Top x beschränken.
-### Tuples
+### Iterators (package: itertools)
+Built-in Modul zum Erstellen und nutzen von Iterators. ```import itertools```. 
+|Typ|Name||
+|Infinite iterators|```count```,```cycle```,```repeat```||
+|Finite iterators|```accumulate```,```chain```,```zip_longest```||
+|Combination iterators|```product```,```permutation```,```combinations```||
+    # Beispiel: Unique Kombinationen
+    base = ['Bug','Fire','Ghost']
+    from itertools import combinations
+    combos_obj = combinations(base,2)
+    # ergibt ein ```itertools.combination``` Objekt mit allen möglichen 2er-Kombinationen aus: hier also 3 (n Fakultät)
+    # in Liste umwandeln
+    lst = [*compos_obj]
+
+## Tuples
 Tupel werden mit der Syntax ```t=("Wert1","Wert2", ...)``` gebildet - oder mit der Tupel-Funktion aus einer anderen Datenstruktur erzeugt ```t=tuple(list)```.
 Tuples sind unveränderbar (immutable)
 - keine Änderung bestehender Werte
@@ -123,7 +364,7 @@ Ein Iterable kann auch mit ```range(start, end+1)``` erzeugt werden. ```start```
 ```
 while <Bedingung is True>:
    action
-   if <Bedingung2 is True>
+   if <Bedingung2> == True
      break
 ```  
 Über die Tastatur kann man einen while-Loop mit CTRL+C abbrechen.
@@ -131,13 +372,19 @@ while <Bedingung is True>:
 ### try - except
 Innerhalb einer Funktion kann man das gewünschte Verhalten mit den akzeptierten Inputs in einen ```try``` Block aufnehmen und danach einen ```except```Block anschließen, der bei Fehlern im ersten Block ausgeführt wird.
 ### raise
-Nach einem ```else``` kann man auch ein eingerücktes ```raise <Error Type>"spezifische Fehlermeldung"``` integrieren.
+Nach einem ```else``` kann man auch ein eingerücktes ```raise <Error Type> ("spezifische Fehlermeldung")``` integrieren.
 
 |try - except|raise|
 |-|-|
 |- verhindert Fehler und Programm-Abbruch|- Erzeugt Fehler mit Programm-Abbruch|
 |- Nachfolgender Code wird ausgeführt|- Nachfolgender Code wird NICHT ausgeführt|
 
+    # Beispiel mit Prüfung
+    try:
+        if validate_name(name) == False:
+            raise ValueError("konkrete Fehlermeldung")
+    except:
+        return False
 
 ## Eingebaute Funktionen
 |Funktion|Ergebnis|
@@ -210,25 +457,37 @@ Komplette Liste: https://docs.python.org/3/py-modindex.html
 |string|Zeichenketten-Manipulation|
 |logging|Informationen loggen|
 |subprocess|Terminal-Kommandos absetzen|
+|re|Regular expressions|
 
 ### os - nützliche Beispiele
-```|Funktion/Konstanten|Output/Klasse|Beschreibung|
-|os.getcwd()|str|Kompletter Pfad des aktuellen Verzeichnisses|
-|os.chdir("target")|n.a.|Arbeitsverzeichnis wechseln|
-|os.environ|dict|Informationen zur Umgebung|
-```
+|Funktion/Konstanten|Output/Klasse|Beschreibung|
+|-|-|-|
+|```os.getcwd()```|str|Kompletter Pfad des aktuellen Verzeichnisses|
+|```os.chdir("target")```|n.a.|Arbeitsverzeichnis wechseln|
+|```os.environ```|dict|Informationen zur Umgebung|
+
 ### string - nützliche Beispiele
 |Funktion/Konstanten|Output/Klasse|Beschreibung|
-||||
+|-|-|-|
 ||||
 
 ### datetime - nützliche Beispiele
-```|Funktion/Konstanten|Output/Klasse|Beschreibung|
-|date(yyyy,m,d)|datetime.date|Datum aus Integer-Werten erzeugen|
-```
+|Funktion/Konstanten|Output/Klasse|Beschreibung|
+|-|-|-|
+|```date(yyyy,m,d)```|datetime.date|Datum aus Integer-Werten erzeugen|
+
 ## Packages
 Packages sind eine Sammlung von MEHREREN Modulen - auch Library oder Bibliothek genannt. Sie müssen erst aus dem PyPI (Python Package Index) über ein Terminal heruntergeladen werden, bevor sie importiert werden können.  
 ```python3 -m pip install <package name>```. Danach kann es Python mit ```import <package name> as <alias>``` verfügbar gemacht werden.
+
+### Package re (Regular Expressions)
+
+    import re
+    my_string = "temparature:75.6 F"
+    # Finde das Muster Zahlen(d) -  gefolgt von . - gefolgt von Zahlen
+    temp = re.search("\d+\.\d+", my_string)
+    # den ersten Fund als Zahl ausgeben
+    print(float(temp.group(0))))
 
 ### Package NumPy
 Numpy eignet sich besonders zum Arbeiten mit Zahlen. Das Package muss mit ```import numpy as np``` geladen werden.
@@ -249,6 +508,7 @@ Der Datentyp in einem Array wird aus dem "höchstwertigen" Typ bei Erstellung de
 |np.array([<list>], dtype=np.<Datentyp>)|Liste in 1-dimensionales Numpy-Array umwandeln|
 |np.array([[<list>],[<list>]])|List of lists in 2-dimensionales Numpy-Array umwandeln|
 |np.array(<2D List 1>,<2D List 2>,<2D List 1>)|aus 3 2-dimensionalen Arrays eine 3D Array erstellen|
+|np.flatten()|n-dimensionales Array in ein 1-dimensionales Array umwandeln|
 |np.zeros((<r>, <c>))|Array mit Nullen mit r Zeilen und c Spalten aufbauen|
 |np.random.random((r,c))|Array aus Zufallszahlen (0-1) mir r Zeilen und c Spalten aufbauen|
 |np.arange(s,e)|Liste mit einer (ganzzahligen) Zahlenfolge von Start s bis Ende e|
@@ -259,8 +519,24 @@ Der Datentyp in einem Array wird aus dem "höchstwertigen" Typ bei Erstellung de
 |np.split(array, <Anzahl Zeilen in Ziel-Liste>, axis=i)|axis=0 sind Zeilen|
 |np.stack(array1, array2, array3, axis=2|drei GLEICHDIMENSTIONALE Array zusammenfügen.|
 
-#### Daten laden/sichern
+## Daten laden/sichern
+
+### python - Standard
+filename="file.txt"
+file = open(filename, mode="r") # 'r' is to read
+text = file.read()
+file.close()
+
+KURZFORM mit Kontext-Manager "with":
+```with open(filename, mode="r") as file:```   
+```   print(file.read())```
+```print(file.read()) # EINE Zeile anzeigen```   
+
+### Daten laden mit Numpy
 Numpy hat kann mit *.txt, *.csv, *.pkl Formate umgehen - aber am effizientesten ist das eigene *.npy Format.
+
+```np.loadtext(filename, delimiter = ",", skiprows=0 use_cols=[0,2], dtype=str)```
+
 
 Daten einlesen (Modus Read Binary = "rb"):   
   with open("<path+file_name>", "rb") as f:
@@ -269,13 +545,46 @@ Daten einlesen (Modus Read Binary = "rb"):
   plt.imshow(array) // als Bild-Ausgabe vorsehen
   plt.show() 
 
-Daten einlesen (Modus Write Binary = "wb"):   
+Daten schreiben (Modus Write Binary = "wb"):   
   with open("<path+file_name>", "wb") as f:
     array = np.save(f, <Source>)
 
- 
+### Daten laden mit Pandas
+
+```df=pd.read_csv(file,nrows=i, header=None, sep="\t", comment="#", na_values=["Nothing"])```. Optional kann das auch in ein Numpy-Array umgewandelt werden: ```df.to_numpy(df)```.
+
+```xls=pd.read_excel(url, sheet_name=None')``` lädt alle Reiter eines Excel-Sheets als ein Dictionary. Jeder Reiter wird ein Key.
+
+Pickled Files: Python data-File, in binär-Form
+```import pickle```   
+```with open("file.pkl","rb") as file:  ```
+```    data=pickle.load(file)```
+
+Excel mit Pandas   
+Laden: ```data = pd.ExcelFile("File.xlsx")```, dann die Reiter mit ```data.sheet_names``` anschauen
+Daten aus Reitern einlesen mit ```data.parse("Name Reiter")``` oder ```data.parse(Index Reiter, parse_cols[index (0-based)], skiprows="0",names=['col_name'], comment="#")```  
+
+## Python mit SQL-Datenbanken koppeln
+```from sqlalchemy import create_engine```  
+```engine = create_engine('sqlite:///Northwind.sqlite'```  
+```table_names = engine.table_names()```  
+```print(table_names)```  
+### sqlalchemy - ohne Kontext-Manager
+```con = engine.connect()``` 
+```rs = con.execute('SELECT * FROM Orders')```  
+```df = pd.DataFrame(rs.fetchall())```  
+```df.columns = rs.keys()```  
+```con.close()```  
+### sqlalchemy - mit Kontext-Manager
+```with engine.connect() as con:``` 
+```    rs = con.execute('SELECT OrderID, OrderDate FROM Orders')```  
+```    df = pd.DataFrame(rs.fetchmany(size=5))```  
+```    df.columns = rs.keys()```  
+### sqlalchemy + pandas
+```df = pd.read_sql_query('SELECT * FROM Orders', engine)``` 
 
 
+## Arrays
 |Array-Attribut|Ergebnis|
 |-|-|
 |array.shape Dimensionen| Tupel der Dimensionen (Zeilen, Spalten, ...)|
@@ -306,15 +615,111 @@ Beim Zusammenfügen müssen die Dimensionen passen (beim Hinzufügen von Spalten
 #### In Arrays löschen
 Mit ```np.delete(array, 1, axis=0)``` kann man die 2. Zeile eines Arrays löschen. Mit ```np.delete(array, 1, axis=1)``` kann man die 2. Spalte löschen.
 
+### Package datetime
+import datetime as dt
+today_date = dt.date.today()
+
+oder: 
+    from datetime import datetime
+    two_dates = [date(2016,10,23),date(2017,6,14)]
+    print(two_dates[0].weekday) # Wochentage von 0 Montag bis 6 Sonntag
+
+Ausgabe formatieren: ```dt.strftime("%Y-%m-%d %H:%M:%S"))``` 
+Datumsteile ändern: ```dt.replace(year=2000)```
+ISO8601-Format: ```dt.isoformat()``` ergibt YYYY-MM-DDTHH:MM:SS
+
+Zeit parsen mit ```dt = datetime.strptime("12/30/2003 15:19","%m/%d/%Y %h:%M")```  
+
+|Format-String|Ergebnis|
+|-|-|
+|%Y|4-stelliges Jahr|
+|%m|2-stelliger Monat|
+|%d|2-stelliger Tag|
+|%H|2-stellige Stunde (0-23)|
+|%M|2-stellige Minute|
+|%S|2-stellige Sekunde|
+|%B|Monatsname|
+
+Unix-Timestamp (Anzahl Sekunden seit 1.1.1970) lesen: ```datetime.fromtimestamp(ts)``` 
+
+    from datetime import timedelta #Zeitdifferenzen
+    delta1 = timedelta(days=1, seconds=1)
+
+#### UTC
+
+    from datetime import datetime, timedelta, timezone
+    # US Eastern Standard timezone
+    ET = timezone(timedelta(hours=-5))
+    # Timezone-aware datetime
+    dt = datetime(2017,12,30,15,9,3, tzinfo=ET)
+    # Indian Standard time
+    IST = timezone(timedelta(hours=5, minutes=30))
+
+```print(dt)``` ergäbe dann ```2017-12-30 15:09:03-05:00```. ```print(dt.astimezone(IST))``` wäre dann 10 Stunden später ```2017-12-31 01:39:03-05:00```. Mit ```dt.replace(tzinfo=timezone.utc)``` wird der UTC-Offset gelöscht: dt würde zu ```2017-12-30 15:09:03+00:00```. Mit ```dt.astimezone(timezone.utc)``` wird der Offset gelöscht, aber die Zeit geändert ```2017-12-30 20:09:03+00:00```.
+
+
+#### Timezone Datenbank
+    # Imports
+    from datetime import datetime
+    from dateutils import tz
+    # Eastern time
+    et = tz.gettz('America/New York')
+
+Zeit-Angaben mit Zeitangaben anreichern: ```rides[start_dt].dt.tz_localize('America/New_York', ambiguous='NaT')```. Die Zeitzone ändern geht mit ```rides[start_dt].dt.tz_convert('Europe/London', ambiguous='NaT')``` 
+
+## Web-Scraping
+### Package urlretrieve
+    from urllib.request import urlretrieve
+
+    # Assign url of file: url
+    url = 'https://assets.datacamp.com/production/course_1606/datasets/winequality-red.csv'
+
+    # Save file locally
+    urlretrieve(url, 'winequality-red.csv')
+
+Anderes Beispiel: komplette HTML-Seite herunterladen und als Text-Objekt in den Speicher übernehmen
+
+    from urllib.request import urlopen, Request
+    url='https://www.spiegel.de'
+    request=Request(url)
+    response=urlopen(request)
+    html= response.read()
+    response.close()
+
 ### Package requests
 URL-Aufrufe erzeugen
+
+    import requests
+    response = requests.get(url="https://app.database.com")
+    # Text-Attribut auslesen
+    text = response.text
 
 |Befehl|Ergebnis|
 |-|-|
 |```requests.get(url="https://app.database.com")```|Responsecodes erhalten|
 
+### Beautiful soup (HTML-Parser/Beautifier)
+    from bs4 import BeautifulSoup
+    import requests
+    url = 'https://www.crummy.com/software/BeautifulSoup'
+    r = request.get(url)
+    html_doc = r.text
+    # Create a BeautifulSoup object from the HTML: soup
+    soup = BeautifulSoup(html_doc)
+    # Prettify the BeautifulSoup object: pretty_soup
+    pretty_soup = soup.prettify()
+    # Print the response
+    print(pretty_soup)
+    # Get the title and text of Guido's webpage
+    guido_title = soup.title
+    guido_text = soup.text
+    # Find all 'a' tags (which define hyperlinks): a_tags
+    a_tags = soup.find_all('a')
+    # Print the URLs to the shell
+    for link in a_tags:
+        print(link.get('href'))
 
-### Package pandas
+## Package pandas
 ```import pandas as pd```. Wichtigste Klasse, die bereitgestellt wird: ```pandas.core.frame.DataFrame``` - weiter nur noch DataFrame (oder df) genannt.
 
 Erzeugen: mit pd.DataFrame(<list>, <dict>)
@@ -324,13 +729,17 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|```pd.read_csv(<path/filename>[, chunksize=i], index_col=['coli])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.read_csv(<path/filename/URL>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
+|df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
+|df.duplicated(subset = column_names, keep = False)|Zeilen in df|subset: Liste mit zu prüfenden Spalten, keep: "first" = erstes Vorkommen, "last" = letztes Vorkommen, "False" = ALLE erhalten|
 |df["attrib"].mean()|<value>|Durchschnittswert eines (numerischen) Attributs|
 |df["attrib"].sum()|<value>|Summe eines (numerischen) Attributs|
+|df.n_smallest(i, ['col'])|<value>|i kleinsten Werte der Spalte|
+|df.n_greatest(i, ['col'])|<value>|i größten Werte der Spalte|
 |df["attrib"].to_numeric()|<value>|Spaltenwert in Zahl umwandeln|
-|pd.to_datetime(df["char_time_col"])|<value>|Spaltenwert in Zeit umwandeln|
+|pd.to_datetime(df["char_time_col"], infer_datetime_format=True,errors = 'coerce')|<value>|Spaltenwert in Zeit umwandeln; errors 'coerce' erzeugt NA, wenn das Format nicht erkannt wird|
 |df["new_col"]=pd.to_datetime(df[["year","month","day"]])||Mehrere Spalten zu einem Datum zusammenfassen|
 |df["date_col"].dt.month/day/year|Integer|Wert Datumsbestandteil auslesen|
 |df["attrib"].astype(int|str|float|dict|list|bool)|<value>|Spaltenwert als Integer|... behandeln|
@@ -339,13 +748,16 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |len(df)|Integer|Anzahl Zeilen|
 |df.shape|Tupel (Anzahl Zeilen, Anzahl Spalten)|Struktur |
 |df.dtypes||Zeigt NUR die Datentypen aller Attribute an|
-|df.describe()|Tabelle|Zusammenfassungen/Statistiken|
+|df.describe(include='all')|Tabelle/Spalte|Zusammenfassungen/Statistiken; default NUR numerisch, dann mit include='all' angepasst werden|
 |df.values|Array|Eine Liste aller Rows (wiederum als einzel-Liste|
+|df['col'].values|Numpy-Array|Eine Liste aller Werte einer Spalte|
+|df["attrib"].nbytes||Speicherbedarf Spalte|
 |df.columns|Liste|Liste aller Spalten-Namen|
 |df.rename(columns = {'col_old':'col_new','col2_old':'col2_new'}, inplace = True)|Spalte umbenennen|
 |df.index|RangeIndex|Beschreibung Index mit start, stop, Schrittweite|
 |df.size|Integer|Anzahl Einträge; Alternativ: df.shape[0]|
 |df.sort_values(["Col_name", "Col2", ...] [, ascending=False])|Tabelle|Sortierte Ausgabe Reihen|
+|dr.resample('D', on='Start date')['Duration in Sec'].mean().plot()|Plot|Entwicklung durchschnittliche Dauer pro Tag|
 |df[["Col1", "Col2"]]|Tabelle|Spalten auswählen|
 |df["Col1"].isin(["Val1","Val2"])|Logischer Filter-Vektor|Alle Zeilen-IDs, die einer der Ausprägungen entsprechen|
 |~|Negation|df[Mit ~"Col1"].isin(["Val1"]) sucht man alle Felder, die NICHT den Suchkriterien entsprechen|
@@ -354,7 +766,9 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df["col"].str.contains("<searchstring>|<searchstring2>")|Boolean Series|als Filter|
 |df["col"].isin(['x','y','z'])|auf bestimmte String-Werte filtern|
 |df.drop(columns=["col1"], inplace=True)|reduzierter DataFrame|Spalten löschen|
-|df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame|
+|df.drop(<Index Zeile, axis=0>)|gelöschte Zeile(n)|reduzierter DataFrame (axis=1 => Spalte löschen|
+|df.drop(df[df['col']> 4].index, inplace = True)|alle Datensätze gem. Bedingung löschen|
+|df.dropna(subset=['col', 'col2'])|alle Datensätze löschen, die in 'col' und 'col2' na haben|
 |df.drop_duplicates(subset=['col1','col2'])|df ohne Duplikate|Duplikatserkennung anhand der Liste der Attribute|
 |df['Gruppierungsspalte'].value_counts(sort=True|normalize=True)|Serial|Anzahl sortiert|%-Anteil)|
 |df.agg(["mean","std"])|MEHRERE Aggregat-Funktionen auf ALLE numerischen Spalten anwenden||
@@ -364,11 +778,42 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |df.set_index("Col1")|Ändert "Col1" in Index|Wert statt 0 - n; kann auch mehrere Spalten in einer Liste enthalten|
 |df.reset_index(inplace=True)|Index Reset|Macht aus Index wieder eine Spalte; Option zum Löschen: drop=True|
 |df.loc[['Index-Wert'],['Spaltenwert] ]|Subset|kann auch mit [Liste von Indezes] angesprochen werden; bei Slices ist der letzte Wert ENTHALTEN!|
+|df.loc[df['colname'] == 'x'] = 'Y'||Updates von Spaltenwerten, auf die 'x' zutrifft|
 |df.iloc[[r1:rx],[c1:cn]]|Subset|mit Integer-Werten (oder Slices) selektieren|
 |series.at[x]|Scalar|Wert an Position x|
 |df.at[index[x],"col"]|Scalar|Wert in Zeile index[x], Spalte "col"|
 |df.sort_index()|sortierter df|Optionen: Listen mit level=["col1", "col2"], ascending=[True, False]|
 |df['col2'].dt.year|Jahr aus Datum|Datumswerte extrahieren|
+
+### Zeilen in Dataframes bearbeiten
+
+#### df.iterrows()
+Beispiel: Index und Zeile mit .iterrows() - 
+    for i,row in pit_df.iterrows():
+        print(str(i) + ":" + str(row) + " Einzelwert: " + row[2])
+
+#### df.itertupel()
+Effizienter (und Attribute können mit .<Attribut-Name> angesprochen werden):
+    for row_namedtuple in df.itertuples():
+        print(row_namedtuple.Index)
+
+#### df.apply()
+Am effizientesten: mit .apply() eine Funktion auf Spalten (axis=0) oder Zeilen (axis = 1) anwenden. Beispiel: 
+    run_diffs_apply = baseball_df.apply(
+        lambda row: calc_run_diff(row['RS'], row['RA']),
+        axis = 1)
+    baseball_df['RD'] = run_diffs_apply
+
+## Arbeiten mit dem set Datentyp
+Sets sind Mengen EINDEUTIGER Elemente.
+Wenn man Listen in Sets umwandelt, kann man set-Methoden anwenden:
+|Methode|Resultat|Beispiel]
+|intersection()|Nur Elemente, die in BEIDEN Mengen sind|set_a.intersect(set_b)|
+|difference()|Elemente die nur in A sind aber nicht in B|set_a.difference(set_b)|
+|symmetric_difference()|Alle Elemente, die genau in EINER Menge sind|set_a.symmetric_difference(set_b)|
+|union()|Jedes Element, das in A oder B enthalten ist|set_a.union(set_b)|
+
+```diff = set(df1['col']).difference(df2['col'])``` findet in df1 Kategorien in col, die nicht in den Werten von df2 sind. Solche Inkonsistenzen kann man mit ```df['col'].isin(diff)``` finden - und bereinigen. Oder per Negation per Tilde nur saubere Datensätze ausgeben ```df['col'].isin(~diff)```.
 
 ## Reshaping: LONG vs. WIDE - pivot und melt
 LONG: Pro Zeile EIN Feature, EINE Beobachtung auf MEHRERE Zeilen verteilt   
@@ -385,6 +830,7 @@ WIDE to LONG: melt
 |pd.crosstab(df['col_index'],df['col2'],values=df['col_x]', aggfunc('function(e.g. mean)'))|Tabelle|Berechnet Wert für jede Kombination der Ausprägung der beiden Spalten|
 |df.melt(id_vars='<col(s) Identifier>', value_vars='feature(s)',var_name='neuer feature-name', value_name='neuer value-name')|Df|Umwandeln (unpivot) von "wide" auf "long"-Format.|
 |pd.wide_to_long(df, stubnames = ["prefix1","prefix2"], i="Index1 Ziel-Spalte",j="Index2 Ziel-Spalte")||Optionen: sep="_" (wenn die Zahl nicht direkt folgt), suffix='\w+' (wenn Suffix keine Zahl ist|
+
 ## pandas: Merge Data
 ### Methode merge()
 |Join-Typ|pandas-Befehl|
@@ -425,11 +871,22 @@ Mit ```df.query('query String')``` kann man "SQL-ähnliche Abfragen gegen einen 
 ## pandas: Missing values finden
 df.isna() : pro Wert ausgeben
 df.isna().any() : Info pro Spalte, ob mindestens ein Wert fehlt - oder nicht
-df.isna().sum(): Anzahl der fehlenden Werte  
+df.isna().sum(axis = 0): Anzahl der fehlenden Werte (Spalte (default): axis = 0, für Zeile: axis =1) 
 
 ## pandas und JSON
 Mit dem Package ```from pandas import json_normalize``` kann man
 nested json in einen Dataframe umwandeln: ```json_normalize(df)```. Bei komplexeren Strukturen kann ein Unterziel angeben, um nur Unter-Strukturen zu bekommen: ```json_normalize(df, record_path='<key>')```. Optional können noch zusätzliche Über-Attribute übernommen werdne ```json_normalize(df, record_path='<key>', meta=['val1','val2'])``` 
+Alternative: Das ganze Modul einlesen: ```import pandas.io.json```. Dann auf einen Bereich des JSONs einschränken und den Separator für die neuen Spalten-Namen angeben 
+    json_normalize(df['Abschnitt'], 
+                       sep='_',
+                       record_path='categories',
+                       meta = [
+                         'sub_col1',
+                         'sub_col2',
+                         ['sub-sub_col_a', 'sub-sub_col_b']']
+                       ],
+                       meta_prefix ='pre_'
+                       )
 
 ### pandas: Schwellwert (mehr als 5% n/a Werte pro Spalte => verwerfen )
 1. ```threshold = len(df) * 0.05```  
@@ -440,14 +897,41 @@ Zeilen, die mindestens ein na haben löschen; inplace=True bedeutet: "ändere de
 1. Multi-Index Df umwandeln: wide to long: ```df.stack(level=<Index-Spalte>)``` bzw. long to wide mit ```df.unstack()```
 2. list-like Spalten (mehrere Werte in einer Zelle) auf mehrere Zeilen aufspalten: ```df['column to expand'].explode()``` oder gleich auf den df anwenden: ```df.explode('column to expand')```
 
-### Methoden, um fehlende Werte zu befüllen:
+### Umgang mit fehlenden Werten
+#### Übersicht
+Statistische Übersicht: ```df.isna().sum()```
+Grafische Übersicht
+   import missingno as msno
+   import matplotlib.pyplot as plt
+   msno.matrix(df)
+   plt.show()
+
+#### NA´s Befüllen
+
 1. ```df.fillna(0)```: füllt leere Werte mit 0
 2. Pauschal mit mode() befüllen: ```cols_with_missing_values = df.columns[df.isna().sum()>0] \ for col in cols_with_missing_values[:-1]: \   df[col].fillna(df[col].mode()[0]) ```
 3. Pro Untergruppe berechnen: ```df_dict= df.groupby("group_col")["value_col"].median().to_dict()\ df["value_col"]=df["value_col"].fillna(df["group_col"].map(df_dict))```
 4. ```df.fillna(method="ffill")```: füllt leere Werte mit Wert des Vorgängers
 ### df - unterschiedliche (kategorische) Werte je Spalte analysieren
-1. ```non_numeric = df.select_dtypes("object")```  
-2. ```for col in non_numeric.columns \    print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())```
+```
+    non_numeric = df.select_dtypes("object")```  
+    for col in non_numeric.columns:     
+        print(f"Number of unique values in {col} column: ", non_numeric[col].nunique())
+```  
+Man kann diese Zeichen von dtype="O" (für Objekt) mit .astype("category") in dtype"category" umwandeln. Mit pd.Categorical(<Series>, categories=["A","B","C"], ordered=True) kann man ordinale (geordnete) Kategorien vergeben.
+
+```
+# Gleichmäßige Gruppen mit qcut nach Distribution
+    group_names = ["Kategorie 1", "Kategorie 2", "Kategorie 3"]
+    pd["new_col"]=pd.qcut(df['col'], q = 3, labels = group_names) 
+```
+```
+# Gruppen mit cut nach ranges
+    ranges = [0, 100,200, np.inf]
+    group_names = ["0 - 100", "101 - 200", "201+"]
+    pd["new_col"]=pd.cut(df['col'], bins = ranges, labels = group_names)    
+```
+
 
 ### Series - Daten umwandeln
 df["col"].str.replace("<orig>","<new">)  
@@ -479,53 +963,251 @@ df["new_cat_col"] = pd.cut(df["num_col"],\
                                 labels = labels,\
                                 bins = bins)
 ```  
+### Kategorien über ```mapping``` zusammenfassen
+```
+   # creating mapping dictionary and replace
+   mapping = {'Microsoft':'DesktopOS', 'MacOS':'DesktopOS', 'IOS':'MobileOS', 'Android':'MobileOS'}
+   devices['operation_system'] = devices['operating_system'].replace(mapping)
+```
+### Arbeiten mit Kategorien
+Kategorie-Series haben ```cat``` Eigenschaften.
+Mit ```Series.cat.categories``` werden die definierten Kategorien angezeigt. 
+
+Series.cat.set_categories Accessor - Parameter:
+- ```new_categories```: Liste neuer Kategorien
+- ```inplace```: Boolean - soll das Update ggf. bestehende Serie überschreiben oder nicht
+- ```ordered```: Boolean - sind die Kategorien sortiert - beginnen mit der kleinsten in der Liste
+Weitere Accessors: 
+- add_categories(): neue Kategorien definieren (über ```series.cat.categories``` einsehbar) (noch keine Vergabe) ```Series.cat.add_categories(<Liste mit neuen Kategorien>)```
+- remove_categories(): Kategorien löschen ```series.cat.remove_categories(removals=["<zu löschende Kategorie>"]```
+- rename_categories(new_categories=<dict>)
+- reorder_categories(new_categories=<dict>, ordered=True/False) ```Series.cat.reorder_categories(removals=[new_categories=<dict>, ordered=True, inplace=True]```  
+
+Codes für Kategorien anlegen: ```df["Kategorie"]=df["Kategorie_Code"].astype("category").cat.codes```. Info: Alphabetische Kategorien werden aufsteigend sortiert - A bekommt 1, ...
+Danach kann man ein "Code Book" anlegen:  
+1. ```codes=df["Kategorie_Code"].astype("category").cat.codes```
+2. ```categories=df["Kategorie_Code"]```
+3. ```name_map= dict(zip(codes, categories))```
+
+Verteilung in einer Serie anschauen: ```series.value_counts(dropna=False)```
+
+Updates in Series: Beispiel "maybe" => "no"
+```dogs.loc[dogs["likes_children"] == "maybe", "likes_children"] = "no"```   
+```dogs["get_along_cats"] = dogs["get_along_cats"].str.strip()```   
+```replace_map={"Noo":"No"}```  
+```dogs["get_along_cats"].replace(replace_map, inplace=True)```
+
+## String-Vergleiche 
+  from thefuzz import fuzz
+  fuzz.WRatio('str1','str2')
+Die WRatio gibt die Ähnlichkeit an (von 0 überhaupt nicht ähnlich bis 100 identisch).
+
 ## Mit JSON arbeiten
 Voraussetzung: Modul mit ```import json``` laden.   
 Dann kann man eine Spalte mit nested data laden, darauf json.loads anwenden(=JSON-String in Python dict umwandeln) und das Ergebnis in ein Series-Objekt umwandeln (jeden Key in eine eigene Spalte umwandeln): ```books=collection['books'].apply(json.loads).apply(pd.series)```. Danach kann man die Spalte mit den nested data löschen ```collection = collection.drop(columns='books')``` und dann die verbleibenden Spalten mit den aufgespaltenen nested data zusammenführen: ```pd.concat([collections, books], axis=1)```.   
 Anderer Ansatz: Nested column in eine List umwandeln ```books = collection['books'].apply(json_loads).to_list```. Dann das JSON Objekt in einen String umwandeln: ```books_dump=json.dumps(books)``` und den JSON-String dann in eine Dataframe einlesen: ```new_books = pd.read_json(books_dump)```. Im Anschluss wieder die "Meta-Spalten" (als DataFrame!) mit dem neuen Dataframe zusammenbringen ```pd.concat([collection['writers'], new_books], axis=1)```.
 
+Alternative: ```pd.read_json(<file>, orient="split")``` mit orient-Vorgabe, wie der Import dargestellt werden soll.
+
+    # JSON aus File laden
+    import json
+    with open ('file.json', 'r') as json_file:
+        json_data = json.load(json_file)
+    # => ergibt Datentyp dict
+    # Print each key-value pair in json_data
+    for k in json_data.keys():
+        print(k + ': ', json_data[k])
+    
+    # json per API holen
+    # Import package
+    import requests
+    # Assign URL to variable: url
+    url = 'http://www.omdbapi.com/?apikey=72bc447a&t=social+network'
+    # Package the request, send the request and catch the response: r
+    r = requests.get(url)
+    # Decode the JSON data into a dictionary: json_data
+    json_data = r.json()
+    # Print each key-value pair in json_data
+    for k in json_data.keys():
+        print(k + ': ', json_data[k])
+
+
 ## Eigene Funktionen erstellen
+Ratschläge: DRY (don't repeat yourself) and "Do ONE thing" (einfacher verständlich, besser testbar, leichter zu debuggen).
+
 ### Definition einer Funktion
 Eine Funktions-Definition hat folgende Struktur:
-```
-# Definitionskopf
-```def <Funktionsname>([Argument[, ...]]):
+    # Definitionskopf
+    def <Funktionsname>([Argument[, ...]]):
+    """Docstring - Documentation"""
     # eingerückte Anweisungen
-    ... 
+       try:  
+       # Code 
     # Ausgabe (optional)
-    return <output>
-```
-Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden
-"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
+        return <output>
+       except TypeError:
+         print("spezifische Fehlermeldung")
+    # Code, der IMMER ausgeführt werden muss
+       finally:
+           print("Das wird IMMER ausgeführt")
+
+Argumente können positionsbezogen (Position Wert in einer mit Komma getrennten Liste) oder benannt (<keyword>=<Wert>) sein. Bei benannten Attributen kann ein Default-Wert festgelegt werden. Wenn der Default LEER ist, gilt ```paramer=None```.  
+Wenn einem Argument-Namen mit dem = ein Wert zugeordnet wird, ist das der Default-Wert.  
+"Undefiniert viele" Argumente können mit vorangestelltem * (<function(*args)>) zugelassen werden. Dabei wird alles, was einem * folgt, wie EINE Datenstruktur (= Tupel) behandelt. Für Keyword-Arrays kann man zwei ** verwenden: ```**kwargs```. Über das Input kann man dann mit ```for kwarg in kwargs.values():``` iterieren.
+### Scope
+Such-Reihenfolge des Python-Interpreters:
+1) local
+2) non-local
+3) global
+4) built-in
+### Closures
+Funktion speichern Kontext-Informationen wie Variablen in "Closures" (nonlocal Variable, die an eine Funktion angehängt wird). Ob und wieviele es gibt, kann mit ```len(func.__closure__)``` abgefragt werden. Was darin steckt, wird über```func.__closure__.cell_contents``` ermittelt.
+### Decorators (Wrapper-Funktion)
+Mit einem Decorator kann man Funktionen "uminterpretieren/ergänzen". Beispiel:
+
+    from functools import wraps
+    
+    def print_before_and_after(func):
+      # dekorieren, damit Metadaten nicht verloren gehen
+      @wraps(func)
+      def wrapper(*args):
+        print('Before {}'.format(func.__name__))
+        # Call the function being decorated with *args
+        func(*args)
+        print('After {}'.format(func.__name__))
+      # Return the nested function
+      return wrapper
+
+    @print_before_and_after
+    def multiply(a, b):
+      print(a * b)
+
+    multiply(5, 10)
+    
+    # ergibt als Output:
+    Before multiply
+    50
+    After multiply
+
+    # Metadaten abfragen
+    print(multiply.__docstring__)
+    # 
 
 ### Docstrings
-Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils zwei Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n).
+Mit Docstrings kann den Code dokumentieren und über help() den Anwendern anzeigen. Wenn man NUR die Doku sehen will, kann man mit ```<Funktion>.__doc__``` (doc mit jeweils ZWEI Unterstrichen eingerahmt) aufrufen. Das nennt man auch "dunder-doc" Attribut. Der Output ist ein String (mit Sonderzeichen zur Formatierung wie \n). Alternative mit dem ```inspect``` Package: ```inspect.getdoc(function)```.  
 Das erfolgt entweder als Einzeiler 
 - Text mit jeweils DREI doppelten Anführungszeichen eingerahmt) oder 
 - als zugewiesenen Wert des Attribut <function>.__doc__   
 oder als Mehrzeiler machen. Dabei gilt:
-- Der ganze Block mit """ eingerahmt
-- Zusammenfassung erste Zeile
+- Der ganze Block mit 2x drei doppelten Anführungszeichen (""") eingerahmt
+- Zusammenfassung: erste Zeile
 - leere Zeile
 - "Args" ohne Einrückung
 -   eingerückt: für jedes Argument (und dessen akzeptierten Datentypen) eine eigene Zeile
 - "Returns" ohne Einrückung
--   eingerückt: für jede Return-Option Erläuterungen
+-   eingerückt: für jede Return-Option Erläuterungen - Datentyp + Beschreibung
+### verschiedene Doku-Stile mit `pyment``
+```pyment -w -o <Stil> <package>.py```
+Nimmt File <package>.py, fügt ein Skelett im Stil (numpydoc|google|...) (Option -o für Output) hinzu bzw. ändert einen anderen Stil in den Ziel-Stil und überschreibt das genannte File (Option -w).
+
+### Package-Directory-Struktur
+    package/     <-- outer directory
+    |-- package  <--- inner directory mit Source Code
+    |   |-- __init__.py
+    |   |-- subpackage1
+    |   |   |-- __init__.py
+    |   |   |-- functionx.py
+    |   |-- subpackage2
+    |   |   |-- __init__.py
+    |   |   |-- function2.py
+    |   |-- utils.py       <-- collection of internal helpers
+    |-- tests              <-- test directory
+    |   |-- __init__.py
+    |   |-- subpackage1
+    |   |   |-- __init__.py
+    |   |   |-- test_functionx.py  <-- tests for all code with 'assert'
+    |   |-- subpackage2
+    |   |   |-- __init__.py
+    |   |   |-- test_function2.py
+    |-- setup.py           <-- setup script in outer
+    |-- requirements.txt   <-- env packages, mit ```pip freeze > requirements.txt```erstellt
+    |-- LICENSE.txt
+    |-- README.md          <-- package infos
+    |-- MANIFEST.in        <-- Liste anderer Files im Package jenseits des Codes - auf jeden Fall LICENSE.txt und README.txt
+Package-Doku gehört auf oberste Ebene im Package-Ordner in das File in package_dir/__init__.py   
+    """
+    Titel
+    =====
+
+    Beschreibung
+    """
+
+Sub-Package-Doku gehört in den Sub-Package-Ordner package_dir/subpackage_dir/__init__.py   
+    """
+    Subpackage Beschreibung
+    """
+
+## Context Manager
+Ein Kontext-Manager
+1. setzt den Kontext für folgenden Code
+2. führt Code aus
+3. entfernt den Kontext.
+
+Beispiel mit optionalem ```as```: Objekt, das der Kontext-Manager zur weiteren Verwendung erstellt
+    with open('file.txt) as file
+Struktur eines Kontext-Managers:
+
+    @contextlib.contextmanager
+    def my_context():
+        # Code zum Aufsetzen des Kontext
+        yield
+        # Code zum Entfernen des Kontext
+        @contextlib.contextmanager
+
+Beispiel: timer()
+    # Add a decorator that will make timer() a context manager
+    @contextlib.contextmanager
+    def timer():
+      """Time the execution of a context block.
+
+      Yields:
+        None
+      """
+      start = time.time()
+      # Send control back to the context block
+      yield
+      end = time.time()
+      print('Elapsed: {:.2f}s'.format(end - start))
+    
+    with timer():
+      print('This should take approximately 0.25 seconds')
+      time.sleep(0.25)
 
 ## Lambda Funktionen
 Mit  ```lambda argument(s): expression``` kann man einfache oder auch "anonyme" Funktionen erstellen, die weder eine "def"-Zeile noch eine "Return"-Anweisung benötigen.
 ### mit einem Argument (Einzelwert): 
-```(lambda x: x*1.2)(25)``` 
+```(lambda x: x*1.2, 25)``` 
 ### mit einem Argument (Liste): 
-```(lambda x: sum(x) / len(x))[3,6,9]``` 
+```(lambda x: sum(x) / len(x),[3,6,9])``` 
 ### mit zwei Argumenten: 
-```(lambda x,y: x**y)[2,3]```
+```(lambda x,y: x**y, [2,3])```
 ### mit Iterables
 ```
 names=["Thomas","Sabine", "Maya", "Finja"]
 capitalize=map(lambda x: x.capitalize(), names) #erzeugt ein map-Objekt
 list(capitalize)
 ```
+
+### Beispiel: auf DataFrame-Spalte filtern und als Liste "result" ausgeben
+result = filter(lambda x: x[0:2]=="RT" , tweets_df['text'])
+
+### mit reduce (auf EINEN Rückgabewert verdichten)
+from functools import reduce  
+liste = ['a', 'e', 'i', 'o', 'u']
+result = reduce(lambda item1,item2: item1+item2, liste)
+
+### Testing mit assert
+Erfolgreiche Tests wie ```assert 1+1 == 2 ``` geben keine Rückmeldung. Gescheiterte Tests wie ```assert 1+1 == 3``` ergeben "AssertionError".
 
 # matplotlib
 import matplotlib.pyplot as plt
@@ -550,7 +1232,7 @@ plt.show()
 Geht NUR mit matplotlib!! Danach: ```import seaborn as sns```. Beispiel für Histogramm: 
 ## Histplot: Anzahl von Vorkommen von (x)
 sns.histplot(data=df, x='<col>',binwidth=1)
-### Alternative: Countplot 
+## Alternative: Countplot 
 sns.countplot(data=df, x="col")
 ## Boxplot: Spread von (y) je (x)
 sns.boxplot(data=df, x='<col1>',y='<col2>')
@@ -563,6 +1245,20 @@ Greift NUR numerische Werte auf!
 sns.pairplot(data=df, vars=["<optionale Liste der Spalten"])
 ## KDE (kernel density estimation):
 sns.kdeplot(data=df, x="col", hue="col1", cut=0)
+## catplots
+sns.catplot(x="col", hue="col1", data=df, kind="box")
+sns.catplot(x="col", y="col1", data=df, kind="bar")
+sns.catplot(x="col", y="col1", data=df, kind="point", hue="col2", dodge=True/False, join=True/False)
+sns.catplot(x="col", kind="count", col="facet split variable", col_wrap=<Anz. Plots pro Reihe>, palette=sns.color_palette("Set1"), data=df, hue="col1") http://seaborn.pydata.org/tutorial/color_palettes.html
+
+sns.set(font_scale=0.1)
+sns.set_style("whitegrid")
+
+### Seaborn Plots anpassen mit matplotlib-Funktionen
+Zuerst als ax-Objekt sichern - dann auf ax matplotlib-Funktionen anwenden
+- Titel: ```ax.fig.suptitle("Mein Titel")```
+- Achsen-Beschriftungen: ```ax.set_axis_labels("x-Achsen-Label","y-Achsen-Label")```
+- Titel-Höhe: ```plt.subplots_adjust(top=0.9)```  
 
 # Statistik in python
 ```import numpy as np```
@@ -580,6 +1276,13 @@ Interquartile Range (IQR): Entfernung zwischen 25% und 75% Percentile. ```from s
 iqr(df['col1'])```   
 Standard-Outlier: kleiner as 1.5 * IQR - 25 Quantil ODER größer als 1.5 * IQR + 75 Quantil  
 Alle auf einmal: ```df['col1'].describe()``` 
+## Outliers
+Zur Beschreibung von Outliern/Ausreißern kann man folgende Maße nehmen:
+### Leverage
+Gibt an, wie "extrem" die Werte explanatorischen/unabhängigen Variable sind. Bei der Modell-Erstellung kann man den Wert für Leverate aus der Zusammenfassung ```z = model.get_influence().summary_frame()``` über den Wert ```z["hat_diag"]``` herausziehen. 
+### Influence
+Gibt für jeden Messpunkt an, wie sehr sich das Vorhersage-Modell ändern würde, wenn man ihn bei der Modell-Erstellung weglassen würde. Der Wert für Influence wird als Cooks Distanz bezeichnet ```z["cooks_d"]```
+
 ## Stichproben
 ### Sampling
 Sample ```df['col'].sample(<Anzahl>, replace=True|False)```. Alternative für Anzahl; Für <Anzahl>: ```df['col'].sample(frac=0.1)``` mit Anteil "frac" der Population. Für Reproduzierbarkeit: ```np.random.seed(<integer>)``` setzen (oder Sample mit Parameter , random_state=<Seed integer>) aufrufen.  
@@ -601,15 +1304,14 @@ df.iloc[::interval] # Jeden Sample aus den konkreten Index im Interval-Arrays ho
 ### Bootstrapping
 Ein Sample (mit Replacement) in der Größe des Original-Samples erstellen, um sich durch Kombination mehrerer Bootstrap-Samples der realen Population zu nähern. Bootstrap verbessert nicht den Durchschnitt eines Samples, gibt aber eine bessere Annäherung an die Standard-Abweichung der Population.
 
-Code: ```
-import numpy as np
-mean_x=[]
-for i in range(x):
-    mean_x.append(
-        np.mean(orig_sample.sample(frac=1, replace=True)['attrib'])   
-    )   
-bootstrap_distn=mean_x   
-```
+Code:
+    import numpy as np
+    mean_x=[]
+    for i in range(x):
+        mean_x.append(
+            np.mean(orig_sample.sample(frac=1, replace=True)['attrib'])   
+        )   
+    bootstrap_distn=mean_x   
 
 ### Uniforme Distribution
 ```from scipy.stats import uniform```  
@@ -639,6 +1341,132 @@ Die Pearsson Produkt-Moment-Korrelation: ```df['col1'].corr(df['col2'])``` ist N
 1. Zufällige Zuweisung zu Treatment/Control Group (macht Gruppen "vergleichbar")
 2. Placebo statt Treatment nehmen
 3. Double Blind Versuch (auch der Versuchsleiter weiß nicht, ob der Proband Placebo oder Treatment bekommt)
+
+## Regressionsmodelle
+### Lineare Regression und Vorhersagen
+    # ols = ordinary least squares
+    from statsmodels.formula.api import ols
+    import numpy as np
+
+    model = ols("y ~x",  # Formel
+                data = dataset
+            ).fit()
+
+    print(model.params)  # ergibt intercept und Steigung
+
+    # Vorhersagen vorbereiten
+    explanatory_data = pd.DataFrame({'x': np.arange(0, 11)})
+    prediction = model.predict(explanatory_data)
+    
+    # Dataframe mit Vorhersagen erzeugen
+    predictions = explanatory_data.assign(prediction = model.predict(explanatory_data))
+### Logistische Regression
+Logistische Regression muss angewendet werden, wenn die Reponse-Variable logisch ist (0 oder 1).
+
+    from statsmodels.formula.api import logit
+    import numpy as np
+
+    model = logit("y ~x",  # Formel
+                data = dataset
+            ).fit()
+### Confusion matrix, accuracy, sensitivity, specificity
+
+TN = True Negative ```conf_matrix[0,0]```  
+TP = True Positive ```conf_matrix[1,1]```  
+FN = False Negative ```conf_matrix[1,0]```   Type I Error (reject a true null hypothesis)   
+TN = False Negative ```conf_matrix[0,1]```   Type II Error (failing to reject a false null hypothesis)     
+
+Accuracy: Anteil der korrekten Vorhersagen (TN + TP) / (TN+FN+TP+FP)
+Sensitivity: Anteil der richtig erkannten Trues (TP) / (TP + FN)
+Specificity: Anteil der richtig erkannten Falses (TN) / (FP +  TN) 
+
+Alpha: beschreibt die Wahrscheinlichkeit eines Type I Errors
+
+# Machine learning
+## Preprocessing
+### Encoding-Methoden
+    # LabelEncoder
+    from sklearn.preprocessing import LabelEncoder
+
+    le = LabelEncoder()
+    # Input: Spalte 'subscribed' mit y / n -Werten
+    users['sub_le_enc'] = le.fit_transform(users['subscribed'])
+    # danach enthält 'sub_le_enc' mit 0 und 1 - Werten
+
+### one-hot-encoding
+Eine Kategorie-Spalte mit n Werten in n Spalten mit Werten 0/1 und Spaltennamen "Kategorie-Spalte + "_<Kategorie n>" umwandeln. Wichtig: Bei get_dummies bleiben numerische Spalten unverändert. Die Original-Spalte wird gelöscht.
+```df_one_hot = pd.get_dummies(df[["cols to encode","col2"]])```   
+Wenn nur eine Spalte geändert werden soll, ist die Syntax:
+```df_one_hot = pd.get_dummies(df, columns=["col to encode"], prefix="")```   
+### Vectorizing text (TF/IDF)
+    from sklearm.feature_extraction.text import TfidfVectorizer
+    tfidf_vec = TfidfVectorizer()
+    text_tfidf = tfidf_vec.fit_transform(documents)
+
+## Supervised Learning
+Voraussetzungen: 
+- Numpy-Arrays - OHNE NA-Werte
+- alles numerisch 
+
+
+### Linear Regression
+    # X: Features/independent variables    
+    # y: Target/Predictor/dependent variable 
+    # Import the module
+    from sklearn.linear_model import LinearRegression
+
+    reg = LinearRegression() # instantiate the model
+    reg.fit(X, y)
+    predictions = reg.predict(X)
+
+### Categorical data: Beispiel KNN (k-nearest neighbors)
+    
+    # X: Features/independent variables    
+    # y: Target/Predictor/dependent variable 
+    
+    # Import the module
+    from sklearn.model_selection import train_test_split
+
+    # Split into training and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+    knn = KNeighborsClassifier(n_neighbors=5)
+
+    # Fit the classifier to the training data
+    knn.fit(X_train, y_train)
+
+    # Print the accuracy
+    print(knn.score(X_test, y_test))
+
+## Workflow Bewertung Klassifikationsmodelle
+    import matplotlib.pyplot from numpy
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.model_selection import cross_val_score, KFold, train_test_split
+    from sklearn.neighbors import KNeighborsClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.tree import DecisionTreeClassifier
+
+    X = music.drop("genre", axis=1).values # Attribute/Predictors/Features
+    y = music["genre"].values # Target
+    X_train, y_train, X_test, y_test = train_test_split(X, y, random_state = 42)
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    # dictionary mit zu testenden Models erstellen
+    models = {"Logistic Regression":LogisticRegression(), "KNN": KNeighborsClassifier(), "Decision Tree": DecisionTreeClassifier()}
+    results = [] # leere Liste
+    for model in models.values():
+        kf = KFold(n_splits=6, random_state = 42, shuffle=True)
+        cv_results = cross_val_score(model, X_train_scaled, y_train, cv=kf)
+        results.append(cv_results)
+    plt.boxplot(results, labels=models.keys())
+    plt.show()
+
+    # Test-Set Performance 
+    for name, model in models.item()
+        model.fit(X_train_scaled, y_train)
+        test_score = model.score(X_test_scaled, y_test)
+        print("{} Test Set Accuracy: {}".format(name, test_score))
+
 
 # OpenAI und Python
 ## completion request
@@ -686,3 +1514,18 @@ response = client.chat.completions.create(
     messages = [{"role":"user", "content": prompt}]
 )
 print(response.choices[0].message.content)
+
+# ETL/ELT-Helper
+## Modul ```logging```
+    import logging
+    # aktuellen Level einstellen
+    logging.basicConfig(format='%(levelname)s: %(message)s, level=logging.DEBUG)
+    # Beispiele für unterschiedliche Einträge
+    logging.debug(f"Variable has value {path}")
+    # DEBUG: Variable has value raw_file.csv
+    logging.info("Data has been transformed and will now be loaded")
+    # INFO: Data has been transformed and will now be loaded
+    logging.warning("Unexpected number of rows detected.")
+    # WARNING: Unexpected number of rows detected.
+    logging.error("{ke} arose in execution")
+    # ERROR: KeyError arose in execution
