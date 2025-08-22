@@ -70,7 +70,8 @@ CONCURRENTLY: Daten können geladen werden, auch wenn die Tabelle gerade geladen
 
 ## User-Verwaltung und PRIVILEGEs
 Jede Postgres-Datenbank hat den Superuser ```postgres```, der u.a. Datenbanken anlegen (CREATE db) und Löschen (DROP db) kann.
-Ein neuer User wird mit ```CREATE USER <user_name>'``` angelegt, der dann ein eigenes Schema erhält. Danach hat der User aber noch kein Passwort. ```CREATE USER <user_name>  WITH LOGIN PASSWORD '<secret>'``` behoben werden. Der User kann das wieder ändern mit ```ALTER USER <user_name> WITH PASSWORD '<new_secret>'```.  
+Ein neuer User wird mit ```CREATE USER <user_name>'``` angelegt, der dann ein eigenes Schema erhält. Danach hat der User aber noch kein Passwort. ```CREATE USER <user_name>
+  WITH LOGIN PASSWORD '<secret>'``` behoben werden. Der User kann das wieder ändern mit ```ALTER USER <user_name> WITH PASSWORD '<new_secret>'```.  
 Usern und Rollen können Detail-Rechte (privileges) wie SELECT, INSERT, UPDATE, DELETE mit der Syntax ```GRANT <privilege> ON <object> TO <grantee = user/role>``` zugewiesen werden.
 DDLs darf immer nur der OWNER durchführen. Diese Eigentümerschaft kann aber auch mit ```ALTER TABLE <table_name> OWNER TO <new owner>``` geändert werden. Das kann auch auf Schema-Ebene mit ```GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA <schema_name> TO <user_name>``` geschehen.  
 Neben Usern können auch Gruppen angelegt werden ```CREATE GROUP <group_name>```. Diese können dann über ```GRANT USAGE ON SCHEMA <schema_name> TO <group_name>``` und ```GRANT INSERT, UPDATE, SELECT, DELETE ON ALL TABLES IN SCHEMA <schema_name> TO <group_name>``` mit allen Rechten versehen werden. Danach können dann alle Nutzer, die der neuen Gruppe mit ```ALTER GROUP <group_name> ADD USER <user_name>``` zugewiesen werden über diese Gruppenrechte zugreifen. Erhöhte Stufe ist: ```GRANT ALL PRIVILEGES ON <schema_name>.* TO <user_name>```.
