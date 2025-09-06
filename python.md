@@ -729,7 +729,7 @@ Erzeugen: mit pd.DataFrame(<list>, <dict>)
 |Methode/Funktion|Ergebnis|Beschreibung|
 |-|-|-|
 |```pd.DataFrame([dict/list/array])```|DataFrame|Erstellt aus Input einen DataFrame (tabellarische Struktur)|
-|```pd.read_csv(<path/filename/URL>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
+|```pd.read_csv(<path/filename/URL>[, chunksize=i], index_col=['col'], dtype=<Dictionary mit "col_name":"dtype" Paar(en)>, usecols=["col1", "col3"], parse_dates=['col_d1','col_d2'])```|DataFrame|Liest ein csv-File in einen DataFrame ein|
 |pd.to_csv(<path/filename>)|File|erstellt ein csv-File aus einem DataFrame|
 |df.head()|DataFrame|zeigt die ersten 5 Zeilen eines df|
 |df.size()|DataFrame|Zeigt die Anzahl der Einträge - bzw. bei gruppierten Dataframes die Einträge in den Gruppen des df|
