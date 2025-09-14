@@ -59,5 +59,14 @@ docker run --name postgres-db \
 
 ```SELECT current_database(), current_user;```
 
+```CREATE TABLE AUSGABEN(
+  DATUM        DATE,
+  BETRAG       DECIMAL(10,2),
+  WER	         VARCHAR,
+  ZAHLUNGSART  VARCHAR,
+  AUSGABE      VARCHAR,
+  KATEGORIE  VARCHAR);
+```
+
 ### svg to pdf conversion
 sips -s format pdf -o output2.pdf output2.svg
